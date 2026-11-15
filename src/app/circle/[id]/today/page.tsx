@@ -55,7 +55,7 @@ export default async function ElderTodayPage({ params, searchParams }: { params:
     <div lang={lang} className="min-h-full flex-1 text-[22px]">
       <header className="wrap flex max-w-3xl flex-wrap items-center justify-between gap-4 py-5">
         <p className="font-serif text-[32px] text-primary">{t(lang, "greeting", { name: elder.display_name })}</p>
-        <nav aria-label={t(lang, "language")} className="flex items-center gap-2">
+        <nav aria-label={t(lang, "language")} className="flex flex-wrap items-center gap-2">
           {(Object.keys(DICTS) as UiLang[]).map((l) => (
             <Link
               key={l}
