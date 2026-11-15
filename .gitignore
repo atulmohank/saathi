@@ -12,3 +12,5 @@ next-env.d.ts
 shots/
 .playwright-cli/
 AGENTS.md
+docs/refs/*.jpg
+docs/refs/*.png

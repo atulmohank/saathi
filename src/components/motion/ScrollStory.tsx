@@ -64,14 +64,12 @@ function Stage({
   line1,
   line2,
   still,
-  assetBase,
 }: {
   step: number;
   steps: StoryStep[];
   line1: MotionValue<number> | number;
   line2: MotionValue<number> | number;
   still: boolean;
-  assetBase: string;
 }) {
   const show = (from: number) => ({ opacity: step >= from ? 1 : 0, y: step >= from ? 0 : 10 });
   const label = { fontSize: 15, fontWeight: 600, fill: C.ink, textAnchor: "middle" } as const;
@@ -100,7 +98,9 @@ function Stage({
           transition={{ duration: 2.8, ease: "easeOut", repeat: Infinity, repeatDelay: 0.6 }}
         />
       )}
-      <image href={`${assetBase}/avatars/kamala.svg`} x="48" y="150" width="104" height="104" />
+      <clipPath id="ss-kamala"><circle cx="100" cy="202" r="50" /></clipPath>
+      <circle cx="100" cy="202" r="54" fill="#FFFDF9" />
+      <image href="/images/kamala-avatar.webp" x="50" y="152" width="100" height="100" preserveAspectRatio="xMidYMid slice" clipPath="url(#ss-kamala)" />
       <text x="100" y="278" style={label}>
         Kamala
       </text>
@@ -125,7 +125,9 @@ function Stage({
 
       {/* Caretaker on duty + refill task */}
       <motion.g initial={false} animate={{ opacity: step >= 2 ? 1 : 0.35 }} transition={{ duration: 0.8 }}>
-        <image href={`${assetBase}/avatars/lakshmi.svg`} x="330" y="40" width="96" height="96" />
+        <clipPath id="ss-lakshmi"><circle cx="378" cy="88" r="46" /></clipPath>
+        <circle cx="378" cy="88" r="50" fill="#FFFDF9" />
+        <image href="/images/lakshmi-avatar.webp" x="332" y="42" width="92" height="92" preserveAspectRatio="xMidYMid slice" clipPath="url(#ss-lakshmi)" />
         <text x="378" y="158" style={label}>
           Lakshmi
         </text>
@@ -176,7 +178,6 @@ export type ScrollStoryProps = {
 export function ScrollStory({
   steps = DEFAULT_STORY,
   heading = "One missed dose. Zero panic.",
-  assetBase = "/brand",
   className = "",
 }: ScrollStoryProps) {
   const four = steps.length >= 4 ? steps.slice(0, 4) : DEFAULT_STORY;
@@ -198,7 +199,7 @@ export function ScrollStory({
       <section className={`px-6 py-20 ${className}`} style={{ color: C.ink }} aria-label={heading}>
         <div className="mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-2">
           <div>
-            <h2 className="mb-8 text-3xl md:text-4xl" style={{ fontFamily: SERIF }}>
+            <h2 className="mb-8 text-[2.25rem] font-medium leading-tight md:text-[3.25rem]" style={{ fontFamily: SERIF }}>
               {heading}
             </h2>
             <ol className="space-y-6">
@@ -215,7 +216,7 @@ export function ScrollStory({
               ))}
             </ol>
           </div>
-          <Stage step={3} steps={four} line1={1} line2={1} still assetBase={assetBase} />
+          <Stage step={3} steps={four} line1={1} line2={1} still />
         </div>
       </section>
     );
@@ -226,7 +227,7 @@ export function ScrollStory({
       <div className="sticky top-0 flex h-screen items-center overflow-hidden px-6">
         <div className="mx-auto grid w-full max-w-6xl items-center gap-6 md:grid-cols-2 md:gap-12">
           <div className="order-2 md:order-1">
-            <h2 className="mb-6 text-2xl md:mb-10 md:text-4xl" style={{ fontFamily: SERIF }}>
+            <h2 className="mb-6 text-[2rem] font-medium leading-tight md:mb-10 md:text-[3.25rem]" style={{ fontFamily: SERIF }}>
               {heading}
             </h2>
             <div className="flex gap-5">
@@ -259,7 +260,7 @@ export function ScrollStory({
             </div>
           </div>
           <div className="order-1 mx-auto w-full max-w-[26rem] md:order-2 md:max-w-none">
-            <Stage step={step} steps={four} line1={line1} line2={line2} still={false} assetBase={assetBase} />
+            <Stage step={step} steps={four} line1={line1} line2={line2} still={false} />
           </div>
         </div>
       </div>

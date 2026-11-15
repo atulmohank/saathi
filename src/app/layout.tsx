@@ -1,10 +1,24 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter, Noto_Sans_Devanagari, Noto_Sans_Kannada, Noto_Sans_Malayalam, Noto_Sans_Tamil, Noto_Sans_Telugu } from "next/font/google";
+import {
+  Caveat,
+  Fraunces,
+  Inter,
+  Kalam,
+  Noto_Sans_Devanagari,
+  Noto_Sans_Kannada,
+  Noto_Sans_Malayalam,
+  Noto_Sans_Tamil,
+  Noto_Sans_Telugu,
+} from "next/font/google";
 import "./globals.css";
 import { MotionProvider, PaperGrain } from "@/components/motion";
 
-const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"] });
+// Display serif with optical sizing + the "SOFT" axis for the big, warm wordmark.
+const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"], axes: ["opsz", "SOFT"] });
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
+// Script accent (Latin) and a handwritten Devanagari for "साथी" (Caveat has no Devanagari glyphs).
+const caveat = Caveat({ variable: "--font-caveat", subsets: ["latin"], weight: ["600", "700"] });
+const kalam = Kalam({ variable: "--font-kalam", subsets: ["devanagari"], weight: ["400", "700"], preload: false });
 const deva = Noto_Sans_Devanagari({ variable: "--font-deva", subsets: ["devanagari"] });
 // Indic scripts: not preloaded; the browser fetches each only when its glyphs appear (unicode-range).
 const tamil = Noto_Sans_Tamil({ variable: "--font-tamil", subsets: ["tamil"], preload: false });
@@ -20,10 +34,12 @@ export const metadata: Metadata = {
     "A shared medication & appointment platform for elders, caretakers and family that adapts to how independent the elder is.",
 };
 
+const fontVars = [fraunces, inter, caveat, kalam, deva, tamil, telugu, kannada, malayalam].map((f) => f.variable).join(" ");
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${inter.variable} ${deva.variable} ${tamil.variable} ${telugu.variable} ${kannada.variable} ${malayalam.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">
+    <html lang="en" className={`${fontVars} h-full antialiased`}>
+      <body className="relative min-h-full flex flex-col">
         <a href="#main" className="skip-link">
           Skip to content
         </a>
