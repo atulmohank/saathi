@@ -2,44 +2,28 @@
 import { demoPhoto } from "@/lib/demo/photos";
 import { isOpen } from "@/lib/next-dose";
 import { CalendarLink } from "@/components/CalendarLink";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { StatTiles } from "@/components/dashboard/StatTiles";
+import { TimeMachinePanel } from "@/components/dashboard/TimeMachinePanel";
+import { MODE_INFO, ROLE_LABEL, STATUS_STYLE } from "@/components/dashboard/labels";
 import Link from "next/link";
 import { after } from "next/server";
-import { TimeMachineControls } from "@/components/TimeMachine";
 import { escalationFeed, recentEmails } from "@/lib/demo-feed";
 import { lazyTick } from "@/lib/scheduler";
 import { notFound, redirect } from "next/navigation";
 import { AppointmentForm, MarkDose, MedicineForm, ProposalDecision, RemoveAppointment } from "@/components/DashboardActions";
 import { MembersPanel } from "@/components/MembersPanel";
-import { TimelineReveal } from "@/components/motion";
 import { Pill } from "@/components/Pill";
 import { Pillbox } from "@/components/Pillbox";
-import { SignOut } from "@/components/SignOut";
 import { authorize } from "@/lib/auth/access";
 import { AuthError, requireActor } from "@/lib/auth/guard";
 import { fmtDateTime, fmtTime, getCircle, getElderCare } from "@/lib/data";
 import { describeDiff } from "@/lib/describe";
 import { resolveChangeFlow } from "@/lib/engine/changes";
 import { istDate } from "@/lib/engine/schedule";
-import type { Mode, Role } from "@/lib/engine/types";
 import { uuid } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
-
-const MODE_INFO: Record<Mode, { label: string; line: string; tone: string }> = {
-  independent: { label: "Independent", line: "{name} marks their own doses and approves every change.", tone: "bg-[#E4EFEA] text-primary" },
-  assisted: { label: "Assisted", line: "Changes apply now; {name} gets a plain-language note. {name} and the caretaker are reminded together.", tone: "bg-[#FDF3E2] text-[#7A4B00]" },
-  supported: { label: "Supported", line: "The caretaker marks doses; the decision partner approves changes.", tone: "bg-[#F1ECE4] text-ink" },
-};
-
-const ROLE_LABEL: Record<Role, string> = { elder: "Elder", caretaker: "Caretaker", family: "Family", decision_partner: "Decision partner" };
-
-const STATUS_STYLE: Record<string, string> = {
-  taken: "bg-[#E4F1E8] text-success",
-  skipped: "bg-[#FDF3E2] text-[#7A4B00]",
-  missed: "bg-[#FBEDEC] text-danger",
-  due: "bg-[#FDF3E2] text-[#7A4B00]",
-  upcoming: "bg-[#F1ECE4] text-ink",
-};
 
 export default async function CirclePage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ elder?: string }> }) {
   const { id } = await params;
@@ -81,159 +65,18 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
 
   return (
     <div className="flex-1">
-      <header className="on-dark relative overflow-hidden bg-green-deep pb-28 text-[#D7E4DC]">
-        <div aria-hidden="true" className="blob -right-24 -top-32 size-96 bg-accent opacity-20" />
-        <div aria-hidden="true" className="blob -bottom-40 left-1/4 size-[28rem] bg-primary opacity-60" />
-        <div className="wrap relative flex flex-wrap items-center justify-between gap-3 py-5">
-          <div className="flex items-center gap-3">
-            <img src="/brand/saathi-lockup-light.svg" alt="Saathi" width={112} height={34} className="h-8 w-auto" />
-            <span className="hidden text-sm text-[#B9CCC2] sm:inline">{circle.name}</span>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-1 gap-y-1 text-sm">
-            <Link href={`/circle/${id}/emergency?elder=${elder.id}`} className="btn-ghost text-white">
-              Emergency card
-            </Link>
-            <Link href={`/circle/${id}/audit`} className="btn-ghost text-white">
-              Audit trail
-            </Link>
-            <span className="hidden px-2 md:inline">
-              Signed in as <strong className="text-white">{actor.name}</strong> · {ROLE_LABEL[actor.role]}
-            </span>
-            <SignOut className="!text-white" />
-          </div>
-        </div>
-
-        <div className="wrap relative mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="flex items-center gap-5">
-            {photo ? (
-              <img src={photo} alt="" width={112} height={112} className="size-20 shrink-0 rounded-full object-cover ring-4 ring-white/25 sm:size-28" />
-            ) : (
-              <span aria-hidden="true" className="grid size-20 shrink-0 place-items-center rounded-full bg-primary font-serif text-4xl text-white ring-4 ring-white/25 sm:size-28">
-                {elder.display_name.slice(0, 1)}
-              </span>
-            )}
-            <div>
-              <h1 id="who-h" className="text-[2.5rem] font-medium leading-none text-white sm:text-[3.5rem]" style={{ fontVariationSettings: '"opsz" 36' }}>
-                {elder.display_name}
-                {elder.age ? <span className="text-[#9FB8AC]">, {elder.age}</span> : null}
-              </h1>
-              <p className="mt-3 flex flex-wrap items-center gap-2">
-                <span className="badge bg-white/12 text-white ring-1 ring-white/25">{mode.label} mode</span>
-                <span className="text-[#D7E4DC]">{mode.line.replaceAll("{name}", elder.display_name)}</span>
-              </p>
-            </div>
-          </div>
-          {elders.length > 1 && (
-            <nav aria-label="Choose elder" className="flex gap-2">
-              {elders.map((e) => (
-                <Link
-                  key={e.id}
-                  href={`?elder=${e.id}`}
-                  aria-current={e.id === elder.id ? "page" : undefined}
-                  className={`inline-flex min-h-11 items-center rounded-full px-5 font-semibold transition-colors ${e.id === elder.id ? "bg-accent text-ink" : "bg-white/10 text-white ring-1 ring-white/25 hover:bg-white/20"}`}
-                >
-                  {e.display_name}
-                </Link>
-              ))}
-            </nav>
-          )}
-        </div>
-      </header>
+      <DashboardHeader id={id} circleName={circle.name} actorName={actor.name} roleLabel={ROLE_LABEL[actor.role]} elder={elder} elders={elders} photo={photo} mode={mode} />
 
       <main id="main" className="wrap relative -mt-20 flex flex-col gap-8 pb-16">
-        <section aria-label={`${elder.display_name} at a glance`}>
-          <dl className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            <div className="rounded-[28px] bg-[linear-gradient(160deg,#FFFDF9_0%,#E7EFE9_100%)] p-5 shadow-[var(--lift-2)] sm:p-6">
-              <dt className="text-sm font-medium text-ink-soft">Taken, last 7 days</dt>
-              <dd className="mt-2 font-serif text-[2.5rem] font-semibold leading-none text-primary">{care.adherence.overallRate ?? "–"}%</dd>
-            </div>
-            <div className="rounded-[28px] bg-[linear-gradient(160deg,#FFFDF9_0%,#F6E3D3_100%)] p-5 shadow-[var(--lift-2)] sm:p-6">
-              <dt className="text-sm font-medium text-ink-soft">Not counting {elder.display_name}&apos;s own choices</dt>
-              <dd className="mt-2 font-serif text-[2.5rem] font-semibold leading-none text-[#9A4F2A]">{care.adherence.rateExcludingChoices ?? "–"}%</dd>
-            </div>
-            <div className="rounded-[28px] bg-[linear-gradient(160deg,#FFFDF9_0%,#FBEACB_100%)] p-5 shadow-[var(--lift-2)] sm:p-6">
-              <dt className="text-sm font-medium text-ink-soft">Today</dt>
-              <dd className="mt-2 font-serif text-[2.5rem] font-semibold leading-none text-saffron-ink">
-                {care.todayDoses.filter((d) => d.status === "taken").length}
-                <span className="text-xl text-ink-soft"> of {care.todayDoses.length} taken</span>
-              </dd>
-            </div>
-            <div className="rounded-[28px] bg-paper p-5 shadow-[var(--lift-2)] sm:p-6">
-              <dt className="text-sm font-medium text-ink-soft">Next doctor visit</dt>
-              <dd className="mt-2 text-lg font-semibold leading-snug text-ink">
-                {nextAppt ? (
-                  <>
-                    {nextAppt.doctor_name}
-                    <span className="block text-sm font-normal text-ink-soft">{fmtDateTime(nextAppt.starts_at)}</span>
-                  </>
-                ) : (
-                  "None booked"
-                )}
-              </dd>
-            </div>
-          </dl>
-        </section>
+        <StatTiles
+          elderName={elder.display_name}
+          adherence={care.adherence}
+          todayTaken={care.todayDoses.filter((d) => d.status === "taken").length}
+          todayTotal={care.todayDoses.length}
+          nextAppt={nextAppt}
+        />
 
-        {circle.is_demo && (
-          <section aria-labelledby="tm-h" className="relative overflow-hidden rounded-[40px] border border-[#F0D9BF] bg-[linear-gradient(150deg,#FFF6E6_0%,#F6E3D3_60%,#FBF7F0_100%)] p-5 shadow-[var(--lift-1)] sm:p-8">
-            <span aria-hidden="true" data-text="Demo" className="outline-title absolute -right-4 -top-6 hidden text-[8rem] text-saffron-ink/15 before:content-[attr(data-text)] lg:block" />
-            <h2 id="tm-h" className="h-section relative flex items-center gap-3">
-              <span aria-hidden="true" className="grid size-10 place-items-center rounded-full bg-accent text-lg">⏩</span> Time machine
-            </h2>
-            <p className="mt-1 text-sm text-[#3D4A43]">
-              Demo circle only. Plays out a missed dose through each care mode&apos;s escalation ladder. Real emails go only to the
-              demo test inbox.
-            </p>
-            <div className="mt-4">
-              <TimeMachineControls />
-            </div>
-            <div className="mt-6 grid gap-6 lg:grid-cols-2">
-              <div>
-                <h3 className="font-semibold">Escalation timeline</h3>
-                {feed.length === 0 ? (
-                  <p className="mt-2 text-sm text-muted">Nothing yet. Simulate a missed dose.</p>
-                ) : (
-                  feed.map(({ title, items }, i) => (
-                    <div key={i} className="mt-3">
-                    <p className="text-sm font-semibold text-primary">{title}</p>
-                    <TimelineReveal
-                      className="mt-3"
-                      stagger={0.35}
-                      label={`Escalation steps for ${title}`}
-                      steps={items.map((it) => ({
-                        time: it.time,
-                        title: it.text,
-                        detail: it.severity ? `${it.severity === "urgent" ? "Urgent" : "Gentle"} email` : undefined,
-                        tone: it.kind === "resolved" ? "resolved" : it.kind === "start" ? "info" : it.severity === "urgent" ? "urgent" : "gentle",
-                      }))}
-                    />
-                    </div>
-                  ))
-                )}
-              </div>
-              <div>
-                <h3 className="font-semibold">Email previews</h3>
-                {emails.length === 0 ? (
-                  <p className="mt-2 text-sm text-muted">No emails yet.</p>
-                ) : (
-                  <ul className="mt-3 flex flex-col gap-2" role="list">
-                    {emails.map((em) => (
-                      <li key={em.id}>
-                        <details className="card p-3 text-sm">
-                          <summary className="min-h-11 cursor-pointer content-center font-medium">
-                            {em.subject}
-                            <span className={`ml-2 badge text-xs ${em.sent ? "bg-[#E4F1E8] text-success" : "bg-[#FBEDEC] text-danger"}`}>{em.sent ? "sent" : "not sent"}</span>
-                          </summary>
-                          <pre className="mt-2 whitespace-pre-wrap break-words font-sans text-sm text-ink">{em.body_text.replace(/https?:\/\/\S+/g, "[one-time link]")}</pre>
-                        </details>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-          </section>
-        )}
+        {circle.is_demo && <TimeMachinePanel feed={feed} emails={emails} />}
 
         <section aria-labelledby="pb-h" className="card p-5 sm:p-8">
           <h2 id="pb-h" className="h-section">

@@ -15,10 +15,10 @@ export const DEMO_PASSCODE = "1234";
  * Deletes any existing demo circle first (cascade). Used by `npm run seed` and "Reset demo".
  */
 export async function seedDemo(sb: SupabaseClient, now = new Date()): Promise<{ circleId: string }> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const must = (r: { data: unknown; error: { message: string } | null }, what: string): any => {
+  /** Unwraps a Supabase result or throws with the step name. */
+  const must = <T = { id: string }>(r: { data: unknown; error: { message: string } | null }, what: string): T => {
     if (r.error || r.data === null) throw new Error(`seed ${what}: ${r.error?.message ?? "no data"}`);
-    return r.data;
+    return r.data as T;
   };
 
   await sb.from("care_circles").delete().eq("is_demo", true);
@@ -29,7 +29,7 @@ export async function seedDemo(sb: SupabaseClient, now = new Date()): Promise<{ 
   );
   const cid = circle.id as string;
 
-  const elders = must(
+  const elders = must<{ id: string; display_name: string }[]>(
     await sb
       .from("elders")
       .insert([
@@ -64,12 +64,12 @@ export async function seedDemo(sb: SupabaseClient, now = new Date()): Promise<{ 
       ], { defaultToNull: false })
       .select("id, display_name"),
     "elders",
-  ) as { id: string; display_name: string }[];
+  );
   const kamala = elders.find((e) => e.display_name === "Kamala")!.id;
   const joseph = elders.find((e) => e.display_name === "Joseph")!.id;
 
   const hash = await bcrypt.hash(DEMO_PASSCODE, 10);
-  const members = must(
+  const members = must<{ id: string; display_name: string }[]>(
     await sb
       .from("members")
       .insert([
@@ -81,10 +81,10 @@ export async function seedDemo(sb: SupabaseClient, now = new Date()): Promise<{ 
       ], { defaultToNull: false })
       .select("id, display_name"),
     "members",
-  ) as { id: string; display_name: string }[];
+  );
   const mid = (n: string) => members.find((m) => m.display_name === n)!.id;
 
-  const meds = must(
+  const meds = must<{ id: string; elder_id: string; name: string; times: string[] }[]>(
     await sb
       .from("medicines")
       .insert([
@@ -97,7 +97,7 @@ export async function seedDemo(sb: SupabaseClient, now = new Date()): Promise<{ 
       ], { defaultToNull: false })
       .select("id, elder_id, name, times"),
     "medicines",
-  ) as { id: string; elder_id: string; name: string; times: string[] }[];
+  );
 
   // 7 days of history up to today (IST). Past doses get a realistic mix.
   const today = istDate(now);
