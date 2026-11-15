@@ -6,6 +6,23 @@
 
 **Live:** https://saathi-theta-five.vercel.app · *साथी (Saathi) means "companion" in Hindi.*
 
+## Problem statement, line by line
+
+> Elderly Care & Medication Management Platform — a shared ecosystem for elders, caretakers and family, with secure passcode-based access, medication schedules, adherence tracking, doctor appointments and proactive email reminders, smart and accessible, with the elder at the centre of decisions.
+
+| Requirement (quoted) | | How Saathi meets it | Source |
+|---|---|---|---|
+| “A shared ecosystem for elders, caretakers and family” | ✅ | One care circle per family; roles Elder, Caretaker, Family, Decision partner; members panel with on-duty switch | [engine/permissions.ts](src/lib/engine/permissions.ts), [MembersPanel.tsx](src/components/MembersPanel.tsx), [api/members](src/app/api/members/route.ts) |
+| “Secure, passcode-based access” | ✅ | Circle code + per-member bcrypt passcode, 5-try lockout, per-IP rate limit, signed httpOnly session | [api/auth/login](src/app/api/auth/login/route.ts), [auth/lockout.ts](src/lib/auth/lockout.ts), [auth/jwt.ts](src/lib/auth/jwt.ts) |
+| “View, add, edit and manage medication schedules” | ✅ | Medicine add/edit/stop with times, dose, pill look, stock, critical flag; edits routed through the change-flow engine | [api/medicines](src/app/api/medicines/route.ts), [engine/changes.ts](src/lib/engine/changes.ts), [engine/schedule.ts](src/lib/engine/schedule.ts) |
+| “Track adherence” | ✅ | Dose log, 7-day pillbox, two adherence numbers (overall, and not counting the elder's own choices) | [engine/adherence.ts](src/lib/engine/adherence.ts), [Pillbox.tsx](src/components/Pillbox.tsx), [api/doses/mark](src/app/api/doses/mark/route.ts) |
+| “Monitor upcoming doctor appointments” | ✅ | Appointments with Doctor Visit Brief and *Add to Google Calendar* | [api/appointments](src/app/api/appointments/route.ts), [lib/brief.ts](src/lib/brief.ts), [lib/calendar.ts](src/lib/calendar.ts) |
+| “Proactive email reminders for missed medications, upcoming doses and appointments” | ✅ | Scheduler every 5 min: T-10 reminders, missed-dose escalation ladder per mode, appointment 24 h / 2 h, single-use action links | [lib/scheduler.ts](src/lib/scheduler.ts), [engine/escalation.ts](src/lib/engine/escalation.ts), [email/templates.ts](src/lib/email/templates.ts), [api/cron/tick](src/app/api/cron/tick/route.ts) |
+| “Smart, accessible, reliable, collaborative” | ✅ | Reason-aware escalation, double-dose guard, refill forecast, change proposals, read-aloud elder view in 6 languages, Lighthouse accessibility 100 | [engine/doseGuard.ts](src/lib/engine/doseGuard.ts), [engine/stock.ts](src/lib/engine/stock.ts), [ElderToday.tsx](src/components/ElderToday.tsx), [i18n](src/i18n) |
+| “The elder remains at the centre of decisions” | ✅ | Independent mode: the elder approves every change; “I chose to skip” respected without alarms; every change in the audit trail | [engine/changes.ts](src/lib/engine/changes.ts), [api/proposals/[id]](src/app/api/proposals/[id]/route.ts), [audit page](src/app/circle/[id]/audit/page.tsx) |
+
+Honest scope: a hackathon prototype, **not a certified medical device**; the doctor decides.
+
 ## Try it in 60 seconds
 
 1. Open the live link → **Try the demo as…** and pick **Kamala** (68, Independent), **Priya** (daughter), **Nurse Lakshmi** (caretaker), **Joseph** (84, Supported) or **Ravi** (Joseph's decision partner). One click, no passcode.
@@ -103,7 +120,15 @@ See [SECURITY.md](SECURITY.md). `npm audit --omit=dev`: 0 vulnerabilities (7 mod
 
 ## Testing
 
-`npm test` → **306 tests, 9 files, all passing** (Vitest, table-driven):
+`npm test` → **342 tests, 11 files, all passing** · `npm run test:coverage` → v8 coverage with thresholds (CI fails below them)
+
+| Coverage (v8, `src/lib`) | Statements | Branches | Functions | Lines |
+|---|---|---|---|---|
+| Rules engine `lib/engine` (threshold 95%) | 100% | 99.1% | 100% | 100% |
+| Auth `lib/auth` | 63.3% | 63.6% | 58.8% | 66.7% |
+| All of `src/lib` (threshold 40%) | 47.2% | 45.4% | 50% | 48.1% |
+
+API routes are covered by integration tests ([src/app/api/__tests__/routes.test.ts](src/app/api/__tests__/routes.test.ts)) that run the real handlers against a fake database: sign-in, mark-dose, cron and change-proposal, each with a happy path, an auth failure and a validation failure. (Vitest, table-driven):
 
 - **Engine:** full role × mode × action permission matrix (72), escalation per mode × reason × critical, already-notified roles, resolved stops all, change flow incl. doctor-instruction bypass, double-dose guard, refill forecast, adherence incl. "chose to skip", schedule expansion across IST midnight.
 - **Security:** action token expired / reused / tampered / wrong secret / oversized / session-token-as-action rejected; session expiry; lockout after 5 tries; circle A member can't read or edit circle B; cron route rejects missing/wrong secret (401).
@@ -117,10 +142,13 @@ Manual: playwright-cli runs at 375 px and 1440 px for the demo flows, time machi
 
 Semantic landmarks, skip link, visible focus rings, labels on every input, `aria-live` for results and errors, keyboard-focusable pillbox cells with full aria-labels (state is never colour-only: each has a glyph), touch targets ≥ 44–48 px, elder view text ≥ 22 px, `lang` switches with the chosen language, read-aloud falls back to "Voice not available on this device", decorative images `alt=""`, and all motion respects `prefers-reduced-motion` (hydration-safe; Framer Motion `reducedMotion="user"`). Lighthouse results: [`docs/`](docs).
 
-## Google services
+## Google services used
 
-- **Google Gemini** (`@google/genai`, model from `GEMINI_MODEL`, falls back to `gemini-3.5-flash-lite`, then to the deterministic template): rewrites the Doctor Visit Brief in plain English **and** the elder's language. Labelled "Generated with Google Gemini".
+- **Google Gemini** (`@google/genai`, model from `GEMINI_MODEL`, falling back to `gemini-3.5-flash-lite`, then to a deterministic template): writes the Doctor Visit Brief in plain English and in the elder's language, labelled "Generated with Google Gemini" — [lib/brief-server.ts](src/lib/brief-server.ts).
+- **Google Calendar**: every appointment has an *Add to Google Calendar* link (calendar template URL, no API key, opens in a new tab) — [lib/calendar.ts](src/lib/calendar.ts), [CalendarLink.tsx](src/components/CalendarLink.tsx).
+- **Google Fonts** (via `next/font`, self-hosted at build time): Fraunces, Inter, Caveat, Kalam and Noto Sans for Devanagari, Tamil, Telugu, Kannada and Malayalam — [app/layout.tsx](src/app/layout.tsx).
 - Gmail SMTP for email reminders.
+- Deployable to **Google Cloud Run** (see below).
 
 ## Assumptions
 
@@ -154,3 +182,21 @@ Design system: [DESIGN.md](DESIGN.md) — cream, ink, deep green and saffron wit
 ## Photo credits
 
 Photographs of Indian families are from [Unsplash](https://unsplash.com) under the Unsplash Licence and are used as **demo personas — not real users**: Richard Saunders (Kamala), Pranav Rasal (Joseph), Ashwini Chaudhary (Monty) (Priya), Fotos (Lakshmi), Wilfred Sequeira (Ravi), Trương Tuyết Ly (hands), Frederick Shaw (elders laughing), Miles Burke (pill organiser), National Cancer Institute (doctor visit), WorldSikhOrg (family at home). Cropped and converted to WebP (< 150 KB each) in `public/images/`.
+
+## Deploy to Google Cloud Run
+
+The live app runs on Vercel; the same build also runs as a container. A [Dockerfile](Dockerfile) is included (docs only — the Vercel deploy is unchanged).
+
+```bash
+gcloud builds submit --tag asia-south1-docker.pkg.dev/PROJECT/saathi/web
+```
+
+```bash
+gcloud run deploy saathi --image asia-south1-docker.pkg.dev/PROJECT/saathi/web --region asia-south1 --allow-unauthenticated --set-secrets SUPABASE_SERVICE_ROLE_KEY=supabase-key:latest,SESSION_SECRET=session-secret:latest,ACTION_LINK_SECRET=action-secret:latest,CRON_SECRET=cron-secret:latest,GMAIL_APP_PASSWORD=gmail-app-password:latest,GEMINI_API_KEY=gemini-key:latest --set-env-vars SUPABASE_URL=https://YOUR.supabase.co,GMAIL_USER=you@gmail.com,GEMINI_MODEL=gemini-3.8-flash,APP_BASE_URL=https://YOUR-SERVICE.run.app,DEMO_EMAIL_SINK=you@gmail.com
+```
+
+Use **asia-south1 (Mumbai)** to sit next to the Supabase database, keep secrets in Secret Manager, and point cron-job.org at `https://YOUR-SERVICE.run.app/api/cron/tick` (or use Cloud Scheduler with the `x-cron-secret` header).
+
+## Continuous integration
+
+[.github/workflows/ci.yml](.github/workflows/ci.yml) runs on every push and pull request: `npm ci` → lint → typecheck → tests with coverage thresholds → production build. [Dependabot](.github/dependabot.yml) checks npm and GitHub Actions weekly.
