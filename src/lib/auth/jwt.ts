@@ -58,12 +58,7 @@ export const actionClaims = z.object({
 export type ActionClaims = z.infer<typeof actionClaims>;
 
 /** Signs an email action-link JWT (audience saathi:action), capped at 12 h. */
-export async function signActionToken(
-  c: ActionClaims,
-  secret: string,
-  now = new Date(),
-  ttlSeconds = ACTION_TTL_SECONDS,
-): Promise<string> {
+export async function signActionToken(c: ActionClaims, secret: string, now = new Date(), ttlSeconds = ACTION_TTL_SECONDS): Promise<string> {
   const iat = Math.floor(now.getTime() / 1000);
   return new SignJWT({ purpose: c.purpose, ref_id: c.ref_id, member_id: c.member_id })
     .setProtectedHeader({ alg: "HS256" })
@@ -97,12 +92,7 @@ export interface TokenStore {
 }
 
 /** Verifies then consumes an action token through a single-use store; null if invalid or already used. */
-export async function redeemActionToken(
-  token: string,
-  secret: string,
-  store: TokenStore,
-  now = new Date(),
-): Promise<ActionClaims | null> {
+export async function redeemActionToken(token: string, secret: string, store: TokenStore, now = new Date()): Promise<ActionClaims | null> {
   const claims = await verifyActionToken(token, secret, now);
   if (!claims) return null;
   return (await store.consume(claims.jti, now)) ? claims : null;

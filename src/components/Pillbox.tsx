@@ -28,10 +28,14 @@ export function Pillbox({ days, today }: { days: Day[]; today: string }) {
           <caption className="sr-only">Seven-day pillbox. Each compartment shows whether that time&apos;s medicines were taken.</caption>
           <thead>
             <tr>
-              <th scope="col" className="w-14 sm:w-20"><span className="sr-only">Time of day</span></th>
+              <th scope="col" className="w-14 sm:w-20">
+                <span className="sr-only">Time of day</span>
+              </th>
               {days.map((d) => (
                 <th key={d.day} scope="col" className={`text-xs sm:text-sm font-semibold ${d.day === today ? "text-primary" : "text-muted"}`}>
-                  <span className="sm:hidden" aria-hidden="true">{d.short}</span>
+                  <span className="sm:hidden" aria-hidden="true">
+                    {d.short}
+                  </span>
                   <span className="max-sm:sr-only">{d.label}</span>
                   {d.day === today && <span className="block text-xs">Today</span>}
                 </th>
@@ -47,9 +51,7 @@ export function Pillbox({ days, today }: { days: Day[]; today: string }) {
                 {days.map((d) => {
                   const c = d.slots.find((s) => s.slot === slot)!;
                   const st = cellState(c);
-                  const detail = c.doses
-                    .map((x) => `${x.medName} ${x.display}${x.reason ? ` (${x.reason.replace(/_/g, " ")})` : ""}`)
-                    .join(", ");
+                  const detail = c.doses.map((x) => `${x.medName} ${x.display}${x.reason ? ` (${x.reason.replace(/_/g, " ")})` : ""}`).join(", ");
                   return (
                     <td key={d.day} className="p-0">
                       {st === "empty" ? (

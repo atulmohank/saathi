@@ -28,7 +28,12 @@ export async function DELETE(req: Request) {
   try {
     const { elderId, appointmentId } = deleteBody.parse(await readJson(req));
     const { actor } = await requirePermission(elderId, "edit_medicine");
-    const { data: before } = await db().from("appointments").select("id, elder_id, doctor_name, specialty, location, starts_at, notes").eq("id", appointmentId).eq("elder_id", elderId).maybeSingle();
+    const { data: before } = await db()
+      .from("appointments")
+      .select("id, elder_id, doctor_name, specialty, location, starts_at, notes")
+      .eq("id", appointmentId)
+      .eq("elder_id", elderId)
+      .maybeSingle();
     if (!before) return NextResponse.json({ error: "Not found." }, { status: 404 });
     await db().from("appointments").delete().eq("id", appointmentId);
     await audit({ circleId: actor.circleId, actor: actor.memberId, action: "appointment_removed", entity: "appointment", entityId: appointmentId, before });

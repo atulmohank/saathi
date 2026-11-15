@@ -48,9 +48,18 @@ export async function POST(req: Request) {
 
     // Simulate a missed dose: reset that dose, then replay the mode's ladder at T+each step.
     const sc = SCENARIOS[action];
-    const { data: elder } = await db().from("elders").select("id, autonomy_mode, display_name").eq("circle_id", circle.id).eq("display_name", sc.elder).single();
+    const { data: elder } = await db()
+      .from("elders")
+      .select("id, autonomy_mode, display_name")
+      .eq("circle_id", circle.id)
+      .eq("display_name", sc.elder)
+      .single();
     if (!elder) return NextResponse.json({ error: "Demo elder not found. Reset the demo." }, { status: 404 });
-    const { data: medsData } = await db().from("medicines").select("id, elder_id, name, dose_text, times, pill_look, instructions, stock_count, is_critical, active").eq("elder_id", elder.id).eq("active", true);
+    const { data: medsData } = await db()
+      .from("medicines")
+      .select("id, elder_id, name, dose_text, times, pill_look, instructions, stock_count, is_critical, active")
+      .eq("elder_id", elder.id)
+      .eq("active", true);
     const meds = ((medsData ?? []) as MedicineRow[]).filter((m) => m.times.includes(sc.time)).sort((a, b) => Number(b.is_critical) - Number(a.is_critical));
     const med = meds[0];
     if (!med) return NextResponse.json({ error: `No ${sc.time} medicine for ${sc.elder}.` }, { status: 404 });
@@ -64,17 +73,35 @@ export async function POST(req: Request) {
       scheduled = fromZonedTime(`${day}T${sc.time}:00`, IST);
     }
     await ensureDoses([med], scheduled);
-    await db().from("dose_events").upsert({ medicine_id: med.id, scheduled_at: scheduled.toISOString() }, { onConflict: "medicine_id,scheduled_at", ignoreDuplicates: true });
+    await db()
+      .from("dose_events")
+      .upsert({ medicine_id: med.id, scheduled_at: scheduled.toISOString() }, { onConflict: "medicine_id,scheduled_at", ignoreDuplicates: true });
     const { data: row } = await db()
       .from("dose_events")
-      .update({ status: "pending", reason: null, marked_by: null, marked_at: null, resolved_by: null, escalation_level: 0, notified_roles: [], reminded_upcoming: true })
+      .update({
+        status: "pending",
+        reason: null,
+        marked_by: null,
+        marked_at: null,
+        resolved_by: null,
+        escalation_level: 0,
+        notified_roles: [],
+        reminded_upcoming: true,
+      })
       .eq("medicine_id", med.id)
       .eq("scheduled_at", scheduled.toISOString())
       .select("id")
       .single();
     if (!row) return NextResponse.json({ error: "Could not prepare the dose." }, { status: 500 });
 
-    await audit({ circleId: circle.id, actor: actor.memberId, action: "demo_simulated_miss", entity: "dose_event", entityId: row.id, after: { med: med.name, elder: sc.elder, at: scheduled.toISOString() } });
+    await audit({
+      circleId: circle.id,
+      actor: actor.memberId,
+      action: "demo_simulated_miss",
+      entity: "dose_event",
+      entityId: row.id,
+      after: { med: med.name, elder: sc.elder, at: scheduled.toISOString() },
+    });
 
     let emails = 0;
     for (const step of ladder) {

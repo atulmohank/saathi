@@ -38,7 +38,12 @@ export async function applyMedicineChange(args: {
     await audit({ circleId: args.circleId, actor: args.actorId, action: "medicine_created", entity: "medicine", entityId: data.id, after: cols });
     return data.id;
   }
-  const { data: before } = await db().from("medicines").select("id, elder_id, name, dose_text, times, pill_look, instructions, stock_count, is_critical, active").eq("id", args.medicineId).eq("elder_id", args.elderId).single();
+  const { data: before } = await db()
+    .from("medicines")
+    .select("id, elder_id, name, dose_text, times, pill_look, instructions, stock_count, is_critical, active")
+    .eq("id", args.medicineId)
+    .eq("elder_id", args.elderId)
+    .single();
   if (!before) throw new Error("medicine not found");
   await db()
     .from("medicines")

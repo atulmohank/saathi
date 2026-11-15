@@ -2,12 +2,12 @@
 
 Captured 15 Nov 2026 at 1440×900 in the in-app browser. Behance refuses headless Playwright with HTTP 400/403, so the screenshots came from the desktop browser pane. Images stay local (gitignored: third-party work); only these notes are committed.
 
-| Ref | Files |
-|---|---|
-| E-Joy (Behance) | `ejoy-0…4.jpg` |
-| Petsyboo (Behance) | `petsyboo-0…4.jpg` |
-| Home Instead | `homeinstead-0.jpg` |
-| Honor | `honor-0…1.jpg` |
+| Ref                | Files               |
+| ------------------ | ------------------- |
+| E-Joy (Behance)    | `ejoy-0…4.jpg`      |
+| Petsyboo (Behance) | `petsyboo-0…4.jpg`  |
+| Home Instead       | `homeinstead-0.jpg` |
+| Honor              | `honor-0…1.jpg`     |
 
 ## 10 things that make them premium (and how Saathi applies each)
 
@@ -23,6 +23,7 @@ Captured 15 Nov 2026 at 1440×900 in the in-app browser. Behance refuses headles
 10. **Trust signals as objects, not lists.** Petsyboo's FAQ cards hold a photo each; Home Instead leads with "Who needs care?" choices; E-Joy uses colourful 3D-style icons in raised cards. → Trust strip of 4 raised cards with colourful duotone icons (passcodes, email alerts, elder decides, 6 languages); persona cards with real photos and coloured role bands.
 
 ## Also noted
+
 - Pill-shaped CTAs (Petsyboo's coral pills, Home Instead's lime pill phone CTA). Primary = saffron pill on cream; secondary = outlined pill.
 - Type pairing: a soft geometric/grotesque for UI + a characterful display. We keep Fraunces (display, optical size up to 144) + Inter (UI) + Caveat (script).
 - Motion: almost none on the sites themselves; the premium feel comes from composition. Keep one hero entrance, the story scroll, and hover lifts.

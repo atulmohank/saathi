@@ -44,7 +44,13 @@ export const IconBell = ({ className }: P) => (
 export const IconHandHeart = ({ className }: P) => (
   <Shell id="ic-hand" from="#F8D2C2" to="#D9875A" className={className}>
     <path d="M36 34c-7-5-12-9-12-14a5.5 5.5 0 0 1 12-2 5.5 5.5 0 0 1 12 2c0 5-5 9-12 14z" fill="#B3261E" opacity=".9" />
-    <path d="M14 46c6-1 10 0 14 3h10a3.5 3.5 0 0 1 0 7H29m9 0h9l9-7a3.5 3.5 0 0 1 5 5l-10 9H24l-10-3z" fill="#FFFDF9" stroke="#FFFDF9" strokeWidth="1.5" strokeLinejoin="round" />
+    <path
+      d="M14 46c6-1 10 0 14 3h10a3.5 3.5 0 0 1 0 7H29m9 0h9l9-7a3.5 3.5 0 0 1 5 5l-10 9H24l-10-3z"
+      fill="#FFFDF9"
+      stroke="#FFFDF9"
+      strokeWidth="1.5"
+      strokeLinejoin="round"
+    />
   </Shell>
 );
 
@@ -52,9 +58,13 @@ export const IconLanguages = ({ className }: P) => (
   <Shell id="ic-lang" from="#D5DCF2" to="#6B7FBF" className={className}>
     <rect x="13" y="17" width="30" height="22" rx="9" fill="#FFFDF9" />
     <path d="M20 39l-3 7 9-7z" fill="#FFFDF9" />
-    <text x="28" y="33" textAnchor="middle" fontSize="13" fontWeight="700" fill="#2B3A67" fontFamily="system-ui, Nirmala UI, Noto Sans, sans-serif">अ</text>
+    <text x="28" y="33" textAnchor="middle" fontSize="13" fontWeight="700" fill="#2B3A67" fontFamily="system-ui, Nirmala UI, Noto Sans, sans-serif">
+      अ
+    </text>
     <rect x="31" y="31" width="28" height="20" rx="8" fill="#E8A33D" />
     <path d="M52 51l3 6-8-6z" fill="#E8A33D" />
-    <text x="45" y="45.5" textAnchor="middle" fontSize="12" fontWeight="700" fill="#1F2A24" fontFamily="system-ui, Nirmala UI, Noto Sans, sans-serif">த</text>
+    <text x="45" y="45.5" textAnchor="middle" fontSize="12" fontWeight="700" fill="#1F2A24" fontFamily="system-ui, Nirmala UI, Noto Sans, sans-serif">
+      த
+    </text>
   </Shell>
 );

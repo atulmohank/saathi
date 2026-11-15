@@ -18,7 +18,13 @@ import { uuid } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
 
-export default async function ElderTodayPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ lang?: string; sky?: string }> }) {
+export default async function ElderTodayPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ lang?: string; sky?: string }>;
+}) {
   const { id } = await params;
   if (!uuid.safeParse(id).success) notFound();
   const { lang: langParam, sky: skyParam } = await searchParams;
@@ -83,7 +89,11 @@ export default async function ElderTodayPage({ params, searchParams }: { params:
               lang={l}
               aria-current={l === lang ? "true" : undefined}
               className={`inline-flex min-h-11 items-center rounded-full px-4 text-[18px] font-semibold transition-colors ${
-                l === lang ? "bg-primary text-white shadow-[var(--lift-1)]" : dark ? "bg-white/12 text-[#FBF7F0] ring-1 ring-white/30 hover:bg-white/20" : "bg-white/70 text-primary ring-1 ring-primary/25 hover:bg-white"
+                l === lang
+                  ? "bg-primary text-white shadow-[var(--lift-1)]"
+                  : dark
+                    ? "bg-white/12 text-[#FBF7F0] ring-1 ring-white/30 hover:bg-white/20"
+                    : "bg-white/70 text-primary ring-1 ring-primary/25 hover:bg-white"
               }`}
             >
               {LANG_LABELS[l]}
@@ -93,9 +103,18 @@ export default async function ElderTodayPage({ params, searchParams }: { params:
 
         <div className="mt-8 flex items-center gap-5">
           {photo ? (
-            <img src={photo} alt="" width={96} height={96} className="size-20 shrink-0 rounded-full object-cover ring-4 ring-white/80 shadow-[var(--lift-2)] sm:size-24" />
+            <img
+              src={photo}
+              alt=""
+              width={96}
+              height={96}
+              className="size-20 shrink-0 rounded-full object-cover ring-4 ring-white/80 shadow-[var(--lift-2)] sm:size-24"
+            />
           ) : (
-            <span aria-hidden="true" className="grid size-20 shrink-0 place-items-center rounded-full bg-primary font-serif text-4xl text-white ring-4 ring-white/80 sm:size-24">
+            <span
+              aria-hidden="true"
+              className="grid size-20 shrink-0 place-items-center rounded-full bg-primary font-serif text-4xl text-white ring-4 ring-white/80 sm:size-24"
+            >
               {elder.display_name.slice(0, 1)}
             </span>
           )}
@@ -110,10 +129,15 @@ export default async function ElderTodayPage({ params, searchParams }: { params:
         </div>
 
         {total > 0 && (
-          <p className={`mt-6 inline-flex flex-wrap items-center gap-3 rounded-[22px] px-5 py-2.5 text-[20px] font-semibold ${dark ? "bg-white/12 text-[#FBF7F0] ring-1 ring-white/25" : "bg-white/75 text-ink shadow-[var(--lift-1)]"}`}>
+          <p
+            className={`mt-6 inline-flex flex-wrap items-center gap-3 rounded-[22px] px-5 py-2.5 text-[20px] font-semibold ${dark ? "bg-white/12 text-[#FBF7F0] ring-1 ring-white/25" : "bg-white/75 text-ink shadow-[var(--lift-1)]"}`}
+          >
             <span aria-hidden="true" className="flex gap-1.5">
               {care.todayDoses.map((d) => (
-                <span key={d.id} className={`size-3.5 rounded-full ${d.status === "taken" ? "bg-success" : d.status === "skipped" ? "bg-accent" : dark ? "bg-white/35" : "bg-[#D6CFC3]"}`} />
+                <span
+                  key={d.id}
+                  className={`size-3.5 rounded-full ${d.status === "taken" ? "bg-success" : d.status === "skipped" ? "bg-accent" : dark ? "bg-white/35" : "bg-[#D6CFC3]"}`}
+                />
               ))}
             </span>
             {t(lang, "takenToday", { taken, total })}
@@ -151,7 +175,8 @@ export default async function ElderTodayPage({ params, searchParams }: { params:
             <ul className="mt-3 flex flex-col gap-2" role="list">
               {care.recentChanges.map((c) => (
                 <li key={c.id}>
-                  {t(lang, "changedLine", { who: c.actorName ?? "", med: c.medName })}: {describeDiff(camel(c.after ?? {}), lang, c.action === "medicine_created")}
+                  {t(lang, "changedLine", { who: c.actorName ?? "", med: c.medName })}:{" "}
+                  {describeDiff(camel(c.after ?? {}), lang, c.action === "medicine_created")}
                 </li>
               ))}
             </ul>
@@ -187,7 +212,14 @@ export default async function ElderTodayPage({ params, searchParams }: { params:
             </p>
             <p>{fmtDateTime(appt.starts_at)}</p>
             {appt.location && <p className="text-ink-soft">{appt.location}</p>}
-            <CalendarLink title={`${elder.display_name}: ${appt.doctor_name}`} startsAt={appt.starts_at} location={appt.location} label={t(lang, "addToCalendar")} newTabText={t(lang, "newTab")} className="mt-3 text-[22px]" />
+            <CalendarLink
+              title={`${elder.display_name}: ${appt.doctor_name}`}
+              startsAt={appt.starts_at}
+              location={appt.location}
+              label={t(lang, "addToCalendar")}
+              newTabText={t(lang, "newTab")}
+              className="mt-3 text-[22px]"
+            />
           </section>
         )}
 

@@ -1,0 +1,12 @@
+node_modules
+.next
+coverage
+public
+docs/refs/*.jpg
+docs/shots
+package-lock.json
+*.webp
+*.svg
+*.sql
+Dockerfile
+.dockerignore

@@ -17,11 +17,7 @@ export class AuthError extends Error {
 export async function requireActor(): Promise<Actor & { name: string; demo: boolean }> {
   const s = await getSession();
   if (!s) throw new AuthError(401, "Please sign in.");
-  const { data, error } = await db()
-    .from("members")
-    .select("id, circle_id, role, elder_id, display_name")
-    .eq("id", s.sub)
-    .maybeSingle();
+  const { data, error } = await db().from("members").select("id, circle_id, role, elder_id, display_name").eq("id", s.sub).maybeSingle();
   if (error || !data || data.circle_id !== s.cid) throw new AuthError(401, "Please sign in again.");
   return {
     memberId: data.id,

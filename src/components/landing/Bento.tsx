@@ -9,9 +9,23 @@ const week: ("taken" | "skipped" | "missed" | "upcoming")[][] = [
   ["taken", "taken", "taken", "taken", "skipped", "taken", "upcoming"],
 ];
 
-function Tile({ title, body, className = "", tone = "bg-paper", children }: { title: string; body: string; className?: string; tone?: string; children: React.ReactNode }) {
+function Tile({
+  title,
+  body,
+  className = "",
+  tone = "bg-paper",
+  children,
+}: {
+  title: string;
+  body: string;
+  className?: string;
+  tone?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <article className={`relative flex flex-col overflow-hidden rounded-[32px] border border-[var(--line)] p-6 shadow-[var(--lift-1)] sm:p-8 ${tone} ${className}`}>
+    <article
+      className={`relative flex flex-col overflow-hidden rounded-[32px] border border-[var(--line)] p-6 shadow-[var(--lift-1)] sm:p-8 ${tone} ${className}`}
+    >
       <h3 className="text-[1.5rem] font-semibold leading-tight text-ink">{title}</h3>
       <p className="mt-2 max-w-[44ch] text-ink-soft">{body}</p>
       <div aria-hidden="true" className="mt-6 flex flex-1 items-end">
@@ -24,7 +38,12 @@ function Tile({ title, body, className = "", tone = "bg-paper", children }: { ti
 export function Bento() {
   return (
     <div className="grid gap-5 md:grid-cols-6">
-      <Tile title="A pillbox for the whole week" body="Every compartment fills as doses are taken. Skipped and missed doses show their own mark, never colour alone." className="md:col-span-4" tone="bg-[linear-gradient(160deg,#FFFDF9_0%,#E7EFE9_100%)]">
+      <Tile
+        title="A pillbox for the whole week"
+        body="Every compartment fills as doses are taken. Skipped and missed doses show their own mark, never colour alone."
+        className="md:col-span-4"
+        tone="bg-[linear-gradient(160deg,#FFFDF9_0%,#E7EFE9_100%)]"
+      >
         <div className="w-full rounded-3xl bg-paper/80 p-4 shadow-[var(--lift-1)]">
           <div className="grid grid-cols-[3.5rem_repeat(7,1fr)] items-center gap-1.5 text-center text-[11px] font-semibold text-muted sm:gap-2">
             <span />
@@ -45,17 +64,29 @@ export function Bento() {
         </div>
       </Tile>
 
-      <Tile title="“Not now” has reasons" body="One tap says why. Ran out makes a refill task; her own choice is respected without alarms." className="md:col-span-2" tone="bg-[linear-gradient(160deg,#FFFDF9_0%,#F6E3D3_100%)]">
+      <Tile
+        title="“Not now” has reasons"
+        body="One tap says why. Ran out makes a refill task; her own choice is respected without alarms."
+        className="md:col-span-2"
+        tone="bg-[linear-gradient(160deg,#FFFDF9_0%,#F6E3D3_100%)]"
+      >
         <div className="flex w-full flex-wrap gap-2">
           {["I ran out", "It makes me unwell", "I forgot", "I chose to skip", "Not feeling well"].map((r, i) => (
-            <span key={r} className={`rounded-full px-3.5 py-2 text-sm font-semibold ${i === 3 ? "bg-primary text-white" : "bg-paper text-primary ring-1 ring-primary/30"}`}>
+            <span
+              key={r}
+              className={`rounded-full px-3.5 py-2 text-sm font-semibold ${i === 3 ? "bg-primary text-white" : "bg-paper text-primary ring-1 ring-primary/30"}`}
+            >
               {r}
             </span>
           ))}
         </div>
       </Tile>
 
-      <Tile title="She approves the changes" body="In independent mode, family edits arrive as requests. Doctor’s instructions apply at once." className="md:col-span-2">
+      <Tile
+        title="She approves the changes"
+        body="In independent mode, family edits arrive as requests. Doctor’s instructions apply at once."
+        className="md:col-span-2"
+      >
         <div className="w-full rounded-3xl bg-cream p-4">
           <p className="text-sm font-semibold text-ink">Priya wants to change Vitamin D3</p>
           <p className="mt-1 text-sm text-ink-soft">time → 9:00 AM · with breakfast</p>
@@ -77,7 +108,12 @@ export function Bento() {
         </div>
       </Tile>
 
-      <Tile title="A brief for the doctor" body="Adherence, side effects and skip reasons, rewritten in plain language with Google Gemini." className="md:col-span-2" tone="bg-[linear-gradient(160deg,#FFFDF9_0%,#F6E3D3_100%)]">
+      <Tile
+        title="A brief for the doctor"
+        body="Adherence, side effects and skip reasons, rewritten in plain language with Google Gemini."
+        className="md:col-span-2"
+        tone="bg-[linear-gradient(160deg,#FFFDF9_0%,#F6E3D3_100%)]"
+      >
         <div className="w-full rounded-3xl bg-paper p-4 shadow-[var(--lift-1)]">
           <div className="flex items-center justify-between">
             <p className="font-serif text-lg font-semibold text-ink">Dr. Meera Nair</p>
@@ -92,7 +128,12 @@ export function Bento() {
         </div>
       </Tile>
 
-      <Tile title="Her language, read aloud" body="The elder’s screen speaks six Indian languages, with large text and a read-aloud button." className="md:col-span-6" tone="bg-green-deep on-dark !text-white [&_h3]:!text-white [&_p]:!text-[#D7E4DC]">
+      <Tile
+        title="Her language, read aloud"
+        body="The elder’s screen speaks six Indian languages, with large text and a read-aloud button."
+        className="md:col-span-6"
+        tone="bg-green-deep on-dark !text-white [&_h3]:!text-white [&_p]:!text-[#D7E4DC]"
+      >
         <div className="flex w-full flex-wrap items-center gap-3">
           {[
             ["नमस्ते", "hi"],
@@ -102,7 +143,11 @@ export function Bento() {
             ["നമസ്കാരം", "ml"],
             ["Namaste", "en"],
           ].map(([w, l]) => (
-            <span key={l} lang={l} className="system-indic rounded-full bg-white/10 px-5 py-2.5 text-xl font-semibold text-white ring-1 ring-white/20 sm:text-2xl">
+            <span
+              key={l}
+              lang={l}
+              className="system-indic rounded-full bg-white/10 px-5 py-2.5 text-xl font-semibold text-white ring-1 ring-white/20 sm:text-2xl"
+            >
               {w}
             </span>
           ))}

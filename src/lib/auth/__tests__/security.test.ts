@@ -1,13 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { authorize, type Actor, type TargetElder } from "../access";
-import {
-  redeemActionToken,
-  signActionToken,
-  signSession,
-  verifyActionToken,
-  verifySession,
-  type TokenStore,
-} from "../jwt";
+import { redeemActionToken, signActionToken, signSession, verifyActionToken, verifySession, type TokenStore } from "../jwt";
 import { evaluateLogin, GENERIC_LOGIN_ERROR, LOCKED_ERROR, MAX_FAILED_ATTEMPTS } from "../lockout";
 
 const SECRET = "a".repeat(40);
@@ -48,12 +41,15 @@ describe("email action tokens", () => {
 
   it.each([
     ["wrong secret", async (t: string) => verifyActionToken(t, OTHER, plus(1))],
-    ["tampered payload", async (t: string) => {
-      const [h, p, s] = t.split(".");
-      const body = JSON.parse(Buffer.from(p, "base64url").toString());
-      body.member_id = U(9);
-      return verifyActionToken(`${h}.${Buffer.from(JSON.stringify(body)).toString("base64url")}.${s}`, SECRET, plus(1));
-    }],
+    [
+      "tampered payload",
+      async (t: string) => {
+        const [h, p, s] = t.split(".");
+        const body = JSON.parse(Buffer.from(p, "base64url").toString());
+        body.member_id = U(9);
+        return verifyActionToken(`${h}.${Buffer.from(JSON.stringify(body)).toString("base64url")}.${s}`, SECRET, plus(1));
+      },
+    ],
     ["truncated signature", async (t: string) => verifyActionToken(t.slice(0, -4), SECRET, plus(1))],
     ["garbage", async () => verifyActionToken("not.a.jwt", SECRET, plus(1))],
     ["oversized", async () => verifyActionToken("x".repeat(5000), SECRET, plus(1))],

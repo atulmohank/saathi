@@ -36,7 +36,11 @@ beforeEach(() => {
 });
 
 const post = (url: string, body: unknown, headers: Record<string, string> = {}) =>
-  new Request(`http://localhost${url}`, { method: "POST", headers: { "content-type": "application/json", "x-forwarded-for": `10.0.0.${Math.floor(Math.random() * 250)}`, ...headers }, body: JSON.stringify(body) });
+  new Request(`http://localhost${url}`, {
+    method: "POST",
+    headers: { "content-type": "application/json", "x-forwarded-for": `10.0.0.${Math.floor(Math.random() * 250)}`, ...headers },
+    body: JSON.stringify(body),
+  });
 
 describe("POST /api/auth/login", async () => {
   const { POST } = await import("../auth/login/route");
@@ -82,7 +86,16 @@ describe("POST /api/auth/login", async () => {
 describe("POST /api/doses/mark", async () => {
   const { POST } = await import("../doses/mark/route");
   const scheduled = new Date(Date.now() - 10 * 60_000).toISOString();
-  const dose = { id: U(10), medicine_id: U(11), scheduled_at: scheduled, status: "pending", reason: null, marked_by: null, marked_at: null, medicines: { id: U(11), elder_id: U(12), name: "Metformin", is_critical: false, stock_count: 10 } };
+  const dose = {
+    id: U(10),
+    medicine_id: U(11),
+    scheduled_at: scheduled,
+    status: "pending",
+    reason: null,
+    marked_by: null,
+    marked_at: null,
+    medicines: { id: U(11), elder_id: U(12), name: "Metformin", is_critical: false, stock_count: 10 },
+  };
   const actor = { memberId: U(13), circleId: U(14), role: "elder", elderId: U(12), name: "Kamala", demo: true };
 
   it("happy path: taken → 200, dose updated by the actor, stock decremented", async () => {
@@ -131,13 +144,24 @@ describe("POST /api/cron/tick", async () => {
 
 describe("POST /api/proposals/[id]", async () => {
   const { POST } = await import("../proposals/[id]/route");
-  const proposal = { id: U(20), elder_id: U(21), medicine_id: U(22), proposed_by: U(23), source: "family", diff: { times: ["09:00"] }, status: "pending", decided_by: null, created_at: "2026-11-15T03:00:00Z" };
+  const proposal = {
+    id: U(20),
+    elder_id: U(21),
+    medicine_id: U(22),
+    proposed_by: U(23),
+    source: "family",
+    diff: { times: ["09:00"] },
+    status: "pending",
+    decided_by: null,
+    created_at: "2026-11-15T03:00:00Z",
+  };
   const actor = { memberId: U(24), circleId: U(25), role: "elder", elderId: U(21), name: "Kamala", demo: true };
   const ctx = (id: string) => ({ params: Promise.resolve({ id }) });
 
   it("happy path: elder approves → 200, claimed atomically, change applied", async () => {
     vi.mocked(requirePermission).mockResolvedValue({ actor, elder: { id: U(21), circleId: U(25), mode: "independent" } } as never);
-    handler = (c) => (c.table === "change_proposals" && c.op === "select" ? { data: proposal } : c.op === "update" ? { data: [{ id: U(20) }] } : { data: null });
+    handler = (c) =>
+      c.table === "change_proposals" && c.op === "select" ? { data: proposal } : c.op === "update" ? { data: [{ id: U(20) }] } : { data: null };
     const res = await POST(post(`/api/proposals/${U(20)}`, { decision: "approve" }), ctx(U(20)));
     expect(res.status).toBe(200);
     expect(requirePermission).toHaveBeenCalledWith(U(21), "approve_change");

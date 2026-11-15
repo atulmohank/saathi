@@ -12,7 +12,11 @@ const perIp: HitStore = new Map();
 export async function POST(req: Request) {
   try {
     const r = hit(perIp, clientKey(req), 30, 15 * 60_000, Date.now());
-    if (!r.allowed) return NextResponse.json({ error: "Too many tries from here. Please wait and try again." }, { status: 429, headers: { "retry-after": String(r.retryAfterSec) } });
+    if (!r.allowed)
+      return NextResponse.json(
+        { error: "Too many tries from here. Please wait and try again." },
+        { status: 429, headers: { "retry-after": String(r.retryAfterSec) } },
+      );
     const { code } = z.object({ code: circleCodeSchema }).parse(await readJson(req));
     const { data: circle } = await db().from("care_circles").select("id, name").eq("code", code).maybeSingle();
     if (!circle) return NextResponse.json({ error: "We couldn't find a circle with that code." }, { status: 404 });

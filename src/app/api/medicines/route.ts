@@ -42,7 +42,13 @@ export async function POST(req: Request) {
     const flow = resolveChangeFlow({ mode: elder.mode, source, actorRole: actor.role });
 
     if (flow === "apply_now") {
-      const id = await applyMedicineChange({ circleId: actor.circleId, actorId: actor.memberId, elderId: elder.id, medicineId: input.medicineId, diff: input.medicine });
+      const id = await applyMedicineChange({
+        circleId: actor.circleId,
+        actorId: actor.memberId,
+        elderId: elder.id,
+        medicineId: input.medicineId,
+        diff: input.medicine,
+      });
       if (source === "doctor_instruction" || actor.role !== "elder") {
         await db().from("change_proposals").insert({
           elder_id: elder.id,
@@ -63,11 +69,20 @@ export async function POST(req: Request) {
       .insert({ elder_id: elder.id, medicine_id: input.medicineId, proposed_by: actor.memberId, source, diff: input.medicine })
       .select("id")
       .single();
-    await audit({ circleId: actor.circleId, actor: actor.memberId, action: "proposal_created", entity: "change_proposal", entityId: p?.id, after: input.medicine });
+    await audit({
+      circleId: actor.circleId,
+      actor: actor.memberId,
+      action: "proposal_created",
+      entity: "change_proposal",
+      entityId: p?.id,
+      after: input.medicine,
+    });
     if (p?.id) {
       const proposalId = p.id as string;
       // Email the approver after the response is sent (SMTP can take a second or two).
-      after(() => notifyProposal(proposalId, elder.id, flow === "needs_elder_approval" ? "elder" : "decision_partner", actor.name, input.medicineId, input.medicine));
+      after(() =>
+        notifyProposal(proposalId, elder.id, flow === "needs_elder_approval" ? "elder" : "decision_partner", actor.name, input.medicineId, input.medicine),
+      );
     }
     return NextResponse.json({ ok: true, flow });
   } catch (e) {
@@ -87,24 +102,28 @@ async function notifyProposal(
   if (!elder) return;
   const { data: members } = await db().from("members").select("id, display_name, email, role, elder_id").eq("circle_id", elder.circle_id);
   const approvers = (members ?? []).filter((m) => (approverRole === "elder" ? m.role === "elder" && m.elder_id === elderId : m.role === "decision_partner"));
-  const medName = medicineId ? ((await db().from("medicines").select("name").eq("id", medicineId).single()).data?.name ?? "a medicine") : String(diff.name ?? "a new medicine");
-  await Promise.all(approvers.map(async (m) => {
-    const email = proposalEmail({
-      toName: m.display_name,
-      elderName: elder.display_name,
-      forElder: m.role === "elder",
-      proposer,
-      medName,
-      summary: describeDiff(diff, "en", !medicineId),
-      approveUrl: await createActionLink("approve_change", proposalId, m.id),
-      reviewUrl: `${appBaseUrl()}/`,
-    });
-    await sendEmail({
-      circleId: elder.circle_id,
-      isDemo: (elder.care_circles as unknown as { is_demo: boolean }).is_demo,
-      to: { memberId: m.id, name: m.display_name, email: m.email },
-      kind: "change_proposal",
-      email,
-    });
-  }));
+  const medName = medicineId
+    ? ((await db().from("medicines").select("name").eq("id", medicineId).single()).data?.name ?? "a medicine")
+    : String(diff.name ?? "a new medicine");
+  await Promise.all(
+    approvers.map(async (m) => {
+      const email = proposalEmail({
+        toName: m.display_name,
+        elderName: elder.display_name,
+        forElder: m.role === "elder",
+        proposer,
+        medName,
+        summary: describeDiff(diff, "en", !medicineId),
+        approveUrl: await createActionLink("approve_change", proposalId, m.id),
+        reviewUrl: `${appBaseUrl()}/`,
+      });
+      await sendEmail({
+        circleId: elder.circle_id,
+        isDemo: (elder.care_circles as unknown as { is_demo: boolean }).is_demo,
+        to: { memberId: m.id, name: m.display_name, email: m.email },
+        kind: "change_proposal",
+        email,
+      });
+    }),
+  );
 }

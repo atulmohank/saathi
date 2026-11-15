@@ -14,7 +14,11 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   try {
     const id = uuid.parse((await ctx.params).id);
     const { decision } = body.parse(await readJson(req));
-    const { data: p } = await db().from("change_proposals").select("id, elder_id, medicine_id, proposed_by, source, diff, status, decided_by, created_at").eq("id", id).maybeSingle();
+    const { data: p } = await db()
+      .from("change_proposals")
+      .select("id, elder_id, medicine_id, proposed_by, source, diff, status, decided_by, created_at")
+      .eq("id", id)
+      .maybeSingle();
     if (!p) return NextResponse.json({ error: "Not found." }, { status: 404 });
 
     const { actor, elder } = await requirePermission(p.elder_id, "approve_change");

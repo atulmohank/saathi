@@ -24,7 +24,9 @@ describe("googleCalendarUrl", () => {
   });
 
   it("honours duration, location and details", () => {
-    const u = new URL(googleCalendarUrl({ title: "Visit", start, durationMinutes: 30, location: "Sunrise Clinic, Indiranagar", details: "Bring the medicine list" }));
+    const u = new URL(
+      googleCalendarUrl({ title: "Visit", start, durationMinutes: 30, location: "Sunrise Clinic, Indiranagar", details: "Bring the medicine list" }),
+    );
     expect(u.searchParams.get("dates")).toBe("20261117T074700Z/20261117T081700Z");
     expect(u.searchParams.get("location")).toBe("Sunrise Clinic, Indiranagar");
     expect(u.searchParams.get("details")).toBe("Bring the medicine list");

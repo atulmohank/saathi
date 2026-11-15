@@ -24,18 +24,32 @@ describe("buildBrief (deterministic template)", () => {
   });
 
   it.each([
-    ["side effect", [d("Metformin", "skipped", "side_effect"), d("Metformin", "skipped", "side_effect")], "Kamala reported side effects with Metformin 2 times. Should the dose or the medicine change?"],
+    [
+      "side effect",
+      [d("Metformin", "skipped", "side_effect"), d("Metformin", "skipped", "side_effect")],
+      "Kamala reported side effects with Metformin 2 times. Should the dose or the medicine change?",
+    ],
     ["critical missed", [d("Amlodipine", "missed")], "Amlodipine is critical and was missed once. What should we do when a dose is missed?"],
-    ["low adherence (non-critical, ≥3 doses)", [d("Metformin", "taken"), d("Metformin", "missed"), d("Metformin", "missed")], "Metformin was taken 1 of 3 times. Is there a simpler schedule?"],
+    [
+      "low adherence (non-critical, ≥3 doses)",
+      [d("Metformin", "taken"), d("Metformin", "missed"), d("Metformin", "missed")],
+      "Metformin was taken 1 of 3 times. Is there a simpler schedule?",
+    ],
     ["chose to skip", [d("Metformin", "skipped", "chose_to_skip")], "Kamala chose to skip Metformin once. Is it still needed?"],
     ["ran out", [d("Amlodipine", "skipped", "ran_out")], "Amlodipine ran out once. Can the prescription cover a longer period?"],
-    ["not feeling well", [d("Metformin", "skipped", "not_feeling_well"), d("Amlodipine", "skipped", "not_feeling_well")], "Kamala felt unwell 2 times when a dose was due. Could a medicine be the cause?"],
+    [
+      "not feeling well",
+      [d("Metformin", "skipped", "not_feeling_well"), d("Amlodipine", "skipped", "not_feeling_well")],
+      "Kamala felt unwell 2 times when a dose was due. Could a medicine be the cause?",
+    ],
   ] as [string, BriefInput["doses"], string][])("%s → suggested question", (_n, doses, q) => {
     expect(buildBrief(input(doses)).questions).toContain(q);
   });
 
   it("pending doses are ignored; her own choices reported separately", () => {
-    const b = buildBrief(input([d("Metformin", "taken"), d("Metformin", "taken"), d("Metformin", "taken"), d("Metformin", "skipped", "chose_to_skip"), d("Metformin", "pending")]));
+    const b = buildBrief(
+      input([d("Metformin", "taken"), d("Metformin", "taken"), d("Metformin", "taken"), d("Metformin", "skipped", "chose_to_skip"), d("Metformin", "pending")]),
+    );
     expect(b.adherence).toEqual({ overall: 75, excludingChoices: 100, taken: 3, total: 4 });
     expect(b.summary[0]).toContain("Not counting 1 dose Kamala chose to skip: 100%.");
     expect(b.summary[2]).toBe("Reasons given for skipped doses: chose to skip (1).");
@@ -56,7 +70,12 @@ describe("buildBrief (deterministic template)", () => {
   });
 });
 
-const good = JSON.stringify({ summary_en: "Kamala took most of her medicines this month.", questions_en: ["Should Metformin change?"], summary_local: "कमला ने...", questions_local: ["क्या..."] });
+const good = JSON.stringify({
+  summary_en: "Kamala took most of her medicines this month.",
+  questions_en: ["Should Metformin change?"],
+  summary_local: "कमला ने...",
+  questions_local: ["क्या..."],
+});
 
 describe("Gemini output is untrusted", () => {
   it.each([

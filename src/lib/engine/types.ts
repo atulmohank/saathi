@@ -4,23 +4,10 @@ export type Role = (typeof ROLES)[number];
 export const MODES = ["independent", "assisted", "supported"] as const;
 export type Mode = (typeof MODES)[number];
 
-export const ACTIONS = [
-  "view",
-  "mark_dose",
-  "edit_medicine",
-  "approve_change",
-  "manage_members",
-  "edit_profile",
-] as const;
+export const ACTIONS = ["view", "mark_dose", "edit_medicine", "approve_change", "manage_members", "edit_profile"] as const;
 export type Action = (typeof ACTIONS)[number];
 
-export const MISS_REASONS = [
-  "ran_out",
-  "side_effect",
-  "forgot",
-  "chose_to_skip",
-  "not_feeling_well",
-] as const;
+export const MISS_REASONS = ["ran_out", "side_effect", "forgot", "chose_to_skip", "not_feeling_well"] as const;
 export type MissReason = (typeof MISS_REASONS)[number];
 
 export const CHANGE_SOURCES = ["family", "caretaker", "elder", "decision_partner", "doctor_instruction"] as const;

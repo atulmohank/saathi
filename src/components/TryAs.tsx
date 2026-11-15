@@ -46,8 +46,17 @@ export function TryAs({ personas }: { personas: PersonaCard[] }) {
               className="card-link group flex h-full w-full flex-col overflow-hidden text-left"
             >
               <span className="relative block aspect-[4/3] w-full overflow-hidden sm:aspect-[4/5]">
-                <Image src={p.photo} alt={p.alt} width={800} height={1000} sizes="(min-width: 1024px) 240px, (min-width: 640px) 50vw, 100vw" className="h-full w-full object-cover object-[50%_25%] transition-transform duration-500 group-hover:scale-[1.03]" />
-                <span className="absolute left-3 top-3 rounded-full bg-paper/90 px-2.5 py-1 text-[11px] font-semibold text-ink-soft backdrop-blur">Demo persona</span>
+                <Image
+                  src={p.photo}
+                  alt={p.alt}
+                  width={800}
+                  height={1000}
+                  sizes="(min-width: 1024px) 240px, (min-width: 640px) 50vw, 100vw"
+                  className="h-full w-full object-cover object-[50%_25%] transition-transform duration-500 group-hover:scale-[1.03]"
+                />
+                <span className="absolute left-3 top-3 rounded-full bg-paper/90 px-2.5 py-1 text-[11px] font-semibold text-ink-soft backdrop-blur">
+                  Demo persona
+                </span>
                 <span aria-hidden="true" className={`absolute inset-x-0 bottom-0 h-1.5 ${p.band}`} />
               </span>
               <span className="flex flex-1 flex-col gap-1.5 p-5">

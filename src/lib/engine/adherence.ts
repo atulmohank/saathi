@@ -24,9 +24,7 @@ export interface AdherenceResult {
  * deliberate "I chose to skip" as a failure. Pending doses are ignored.
  */
 export function adherenceRate(logs: AdherenceLog[], window: { from: Date; to: Date }): AdherenceResult {
-  const inWindow = logs.filter(
-    (l) => l.scheduledAt >= window.from && l.scheduledAt < window.to && l.status !== "pending",
-  );
+  const inWindow = logs.filter((l) => l.scheduledAt >= window.from && l.scheduledAt < window.to && l.status !== "pending");
   const taken = inWindow.filter((l) => l.status === "taken").length;
   const missed = inWindow.filter((l) => l.status === "missed").length;
   const choseToSkip = inWindow.filter((l) => l.status === "skipped" && l.reason === "chose_to_skip").length;

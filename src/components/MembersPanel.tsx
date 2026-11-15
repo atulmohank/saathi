@@ -23,7 +23,11 @@ export function MembersPanel({ elderId, members, meId, canManage }: { elderId: s
   async function toggle(m: PanelMember) {
     setBusy(m.id);
     setErr(null);
-    const res = await fetch("/api/members", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ elderId, memberId: m.id, onDuty: !m.onDuty }) });
+    const res = await fetch("/api/members", {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ elderId, memberId: m.id, onDuty: !m.onDuty }),
+    });
     const data = await res.json().catch(() => ({}));
     setBusy(null);
     if (!res.ok) return setErr(data.error ?? "Could not change duty.");
@@ -65,11 +69,11 @@ export function MembersPanel({ elderId, members, meId, canManage }: { elderId: s
                   </span>
                 )}
                 <div className="min-w-0">
-                <p className="font-semibold">
-                  {m.name}
-                  {m.id === meId && <span className="font-normal text-muted"> (you)</span>}
-                </p>
-                <p className="text-sm text-muted">{m.roleLabel}</p>
+                  <p className="font-semibold">
+                    {m.name}
+                    {m.id === meId && <span className="font-normal text-muted"> (you)</span>}
+                  </p>
+                  <p className="text-sm text-muted">{m.roleLabel}</p>
                 </div>
               </div>
               {m.role === "caretaker" &&
@@ -86,7 +90,9 @@ export function MembersPanel({ elderId, members, meId, canManage }: { elderId: s
                     {m.onDuty ? "On duty" : "Off duty"}
                   </button>
                 ) : (
-                  <span className={`badge text-xs ${m.onDuty ? "bg-[#E4F1E8] text-success" : "bg-[#F1ECE4] text-muted"}`}>{m.onDuty ? "On duty" : "Off duty"}</span>
+                  <span className={`badge text-xs ${m.onDuty ? "bg-[#E4F1E8] text-success" : "bg-[#F1ECE4] text-muted"}`}>
+                    {m.onDuty ? "On duty" : "Off duty"}
+                  </span>
                 ))}
             </li>
           );

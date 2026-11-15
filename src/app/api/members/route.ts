@@ -32,7 +32,14 @@ export async function POST(req: Request) {
       .select("id")
       .single();
     if (error || !data) throw new Error(error?.message ?? "insert failed");
-    await audit({ circleId: actor.circleId, actor: actor.memberId, action: "member_added", entity: "member", entityId: data.id, after: { name: member.displayName, role: member.role } });
+    await audit({
+      circleId: actor.circleId,
+      actor: actor.memberId,
+      action: "member_added",
+      entity: "member",
+      entityId: data.id,
+      after: { name: member.displayName, role: member.role },
+    });
     return NextResponse.json({ ok: true });
   } catch (e) {
     return handleError(e);
@@ -50,7 +57,15 @@ export async function PATCH(req: Request) {
     if (target.role !== "caretaker") return NextResponse.json({ error: "Only caretakers go on or off duty." }, { status: 400 });
     if (me.memberId !== memberId) await requirePermission(elderId, "manage_members");
     await db().from("members").update({ is_on_duty: onDuty }).eq("id", memberId);
-    await audit({ circleId: me.circleId, actor: me.memberId, action: onDuty ? "on_duty" : "off_duty", entity: "member", entityId: memberId, before: { is_on_duty: target.is_on_duty }, after: { is_on_duty: onDuty } });
+    await audit({
+      circleId: me.circleId,
+      actor: me.memberId,
+      action: onDuty ? "on_duty" : "off_duty",
+      entity: "member",
+      entityId: memberId,
+      before: { is_on_duty: target.is_on_duty },
+      after: { is_on_duty: onDuty },
+    });
     return NextResponse.json({ ok: true });
   } catch (e) {
     return handleError(e);

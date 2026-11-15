@@ -4,42 +4,42 @@ Source of truth for colour, type, spacing and components. Built from the referen
 
 ## Idea: the thread
 
-*Saathi* means companion. The signature is a **saffron thread** — like the kalava/mauli thread tied on the wrist at home — drawn by hand, looping between sections and through the care circle. It is the one memorable gesture; everything around it is quiet: cream paper, deep green, real photographs of Indian families, big soft serif type.
+_Saathi_ means companion. The signature is a **saffron thread** — like the kalava/mauli thread tied on the wrist at home — drawn by hand, looping between sections and through the care circle. It is the one memorable gesture; everything around it is quiet: cream paper, deep green, real photographs of Indian families, big soft serif type.
 
 What we deliberately avoid: identical card grids with one radius and a grey shadow; ALL-CAPS eyebrows above every heading; `→` on every link; numbered 01/02/03 markers on non-sequences; fade-up on every section.
 
 ## Colour
 
-| Token | Hex | Use |
-|---|---|---|
-| `cream` | `#FBF7F0` | page ground |
-| `paper` | `#FFFDF9` | raised cards |
-| `ink` | `#1F2A24` | text (15.6:1 on cream) |
-| `ink-soft` | `#3D4A43` | secondary text (9.4:1) |
-| `muted` | `#5E675F` | captions, meta (5.9:1, AA) |
-| `green` | `#1F5C4A` | brand, dark blocks, primary links (7.6:1) |
-| `green-deep` | `#163F33` | footer, night sky base |
-| `saffron` | `#E8A33D` | thread, CTA pill fill (ink text on it 8.2:1), sun |
-| `saffron-ink` | `#8A5A12` | saffron-coloured text on cream (5.4:1) |
-| `sage` | `#E7EFE9` | gradient, soft panels |
-| `peach` | `#F6E3D3` | gradient, warm panels |
-| `danger` | `#B3261E` · `success` `#2E7D4F` | status only, always with a glyph |
+| Token         | Hex                             | Use                                               |
+| ------------- | ------------------------------- | ------------------------------------------------- |
+| `cream`       | `#FBF7F0`                       | page ground                                       |
+| `paper`       | `#FFFDF9`                       | raised cards                                      |
+| `ink`         | `#1F2A24`                       | text (15.6:1 on cream)                            |
+| `ink-soft`    | `#3D4A43`                       | secondary text (9.4:1)                            |
+| `muted`       | `#5E675F`                       | captions, meta (5.9:1, AA)                        |
+| `green`       | `#1F5C4A`                       | brand, dark blocks, primary links (7.6:1)         |
+| `green-deep`  | `#163F33`                       | footer, night sky base                            |
+| `saffron`     | `#E8A33D`                       | thread, CTA pill fill (ink text on it 8.2:1), sun |
+| `saffron-ink` | `#8A5A12`                       | saffron-coloured text on cream (5.4:1)            |
+| `sage`        | `#E7EFE9`                       | gradient, soft panels                             |
+| `peach`       | `#F6E3D3`                       | gradient, warm panels                             |
+| `danger`      | `#B3261E` · `success` `#2E7D4F` | status only, always with a glyph                  |
 
 Gradients: `peach → cream` (story), `sage → cream` (trust, dashboard ground), a saffron radial "sun" (hero), one green block. No violet, no neon, no blue except the night sky's indigo `#2B3A67`.
 
 ## Type
 
-| Role | Face | Size (desktop / phone) | Notes |
-|---|---|---|---|
-| Wordmark | Fraunces 600, opsz 144, SOFT 100 | `clamp(6rem, 22vw, 22rem)` | hero only, tracking −0.04em |
-| Display | Fraunces 500, opsz 144 | 72 / 44 | line-height 1.02, `text-wrap: balance` |
-| H2 | Fraunces 500 | 52 / 34 | |
-| H3 | Fraunces 600 | 26 / 22 | |
-| Outline title | Fraunces 700, `-webkit-text-stroke` 1.5px | `clamp(7rem, 18vw, 16rem)` | behind content, `aria-hidden`, 20% opacity |
-| Body | Inter 400 | 18 / 17 | line-height 1.6, max 64ch |
-| UI | Inter 500–600 | 15–16 | |
-| Script | Caveat 600, saffron-ink | 32–44 | **max 3 uses on the landing page**, rotated −3° to −5°; never body text |
-| Elder view | Inter / Noto per script | ≥ 22 | AAA contrast |
+| Role          | Face                                      | Size (desktop / phone)     | Notes                                                                   |
+| ------------- | ----------------------------------------- | -------------------------- | ----------------------------------------------------------------------- |
+| Wordmark      | Fraunces 600, opsz 144, SOFT 100          | `clamp(6rem, 22vw, 22rem)` | hero only, tracking −0.04em                                             |
+| Display       | Fraunces 500, opsz 144                    | 72 / 44                    | line-height 1.02, `text-wrap: balance`                                  |
+| H2            | Fraunces 500                              | 52 / 34                    |                                                                         |
+| H3            | Fraunces 600                              | 26 / 22                    |                                                                         |
+| Outline title | Fraunces 700, `-webkit-text-stroke` 1.5px | `clamp(7rem, 18vw, 16rem)` | behind content, `aria-hidden`, 20% opacity                              |
+| Body          | Inter 400                                 | 18 / 17                    | line-height 1.6, max 64ch                                               |
+| UI            | Inter 500–600                             | 15–16                      |                                                                         |
+| Script        | Caveat 600, saffron-ink                   | 32–44                      | **max 3 uses on the landing page**, rotated −3° to −5°; never body text |
+| Elder view    | Inter / Noto per script                   | ≥ 22                       | AAA contrast                                                            |
 
 ## Space, shape, depth
 

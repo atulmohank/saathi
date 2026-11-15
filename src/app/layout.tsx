@@ -30,8 +30,7 @@ export const viewport: Viewport = { themeColor: "#FBF7F0" };
 
 export const metadata: Metadata = {
   title: "Saathi — care that adapts",
-  description:
-    "A shared medication & appointment platform for elders, caretakers and family that adapts to how independent the elder is.",
+  description: "A shared medication & appointment platform for elders, caretakers and family that adapts to how independent the elder is.",
 };
 
 const fontVars = [fraunces, inter, caveat, kalam, deva, tamil, telugu, kannada, malayalam].map((f) => f.variable).join(" ");

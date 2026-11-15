@@ -54,7 +54,15 @@ export async function geminiBrief(t: TemplateBrief, elderName: string, lang: str
     `Write: summary_en (3-5 short sentences, English), questions_en (3-6 short questions for the doctor, English), summary_local and questions_local (the same content in ${local}${lang === "en" ? "; leave them empty" : ""}).`,
     'Return JSON only: {"summary_en": string, "questions_en": string[], "summary_local": string, "questions_local": string[]}.',
     "DATA:",
-    JSON.stringify({ person: elderName, window_days: WINDOW_DAYS, adherence: t.adherence, per_medicine: t.perMedicine, side_effects: t.sideEffects, skip_reasons: t.skipReasons, suggested_questions: t.questions }),
+    JSON.stringify({
+      person: elderName,
+      window_days: WINDOW_DAYS,
+      adherence: t.adherence,
+      per_medicine: t.perMedicine,
+      side_effects: t.sideEffects,
+      skip_reasons: t.skipReasons,
+      suggested_questions: t.questions,
+    }),
   ].join("\n");
   const call = async (model: string, ms: number) => {
     const r = await Promise.race([

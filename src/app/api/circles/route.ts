@@ -18,9 +18,18 @@ export async function POST(req: Request) {
   try {
     // Rate limits: 5 circles/hour per IP (per instance) + a global cap across all instances (DB).
     const r = hit(perIp, clientKey(req), CIRCLES_PER_IP_PER_HOUR, 3600_000, Date.now());
-    if (!r.allowed) return NextResponse.json({ error: "Too many new circles from here. Please try again later." }, { status: 429, headers: { "retry-after": String(r.retryAfterSec) } });
-    const { count } = await db().from("care_circles").select("id", { count: "exact", head: true }).eq("is_demo", false).gte("created_at", new Date(Date.now() - 3600_000).toISOString());
-    if ((count ?? 0) >= CIRCLES_GLOBAL_PER_HOUR) return NextResponse.json({ error: "Saathi is busy creating circles. Please try again later." }, { status: 429 });
+    if (!r.allowed)
+      return NextResponse.json(
+        { error: "Too many new circles from here. Please try again later." },
+        { status: 429, headers: { "retry-after": String(r.retryAfterSec) } },
+      );
+    const { count } = await db()
+      .from("care_circles")
+      .select("id", { count: "exact", head: true })
+      .eq("is_demo", false)
+      .gte("created_at", new Date(Date.now() - 3600_000).toISOString());
+    if ((count ?? 0) >= CIRCLES_GLOBAL_PER_HOUR)
+      return NextResponse.json({ error: "Saathi is busy creating circles. Please try again later." }, { status: 429 });
 
     const input = createCircleSchema.parse(await readJson(req, 32_000));
 
@@ -68,7 +77,14 @@ export async function POST(req: Request) {
     if (mErr || !members?.length) throw new Error(mErr?.message ?? "member insert failed");
 
     const me = members.find((m) => m.display_name === input.members[0].displayName)!;
-    await audit({ circleId: circle.id, actor: me.id, action: "circle_created", entity: "care_circle", entityId: circle.id, after: { name: input.circleName, members: members.length } });
+    await audit({
+      circleId: circle.id,
+      actor: me.id,
+      action: "circle_created",
+      entity: "care_circle",
+      entityId: circle.id,
+      after: { name: input.circleName, members: members.length },
+    });
     await createSession({ sub: me.id, cid: circle.id, role: me.role as Role, name: me.display_name, demo: false });
     return NextResponse.json({ ok: true, circleId: circle.id, code: circle.code, role: me.role });
   } catch (e) {

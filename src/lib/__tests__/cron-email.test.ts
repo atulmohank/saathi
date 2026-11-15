@@ -65,7 +65,16 @@ describe("email templates", () => {
   });
 
   it("is accessible: lang, title, real links, plain-text alternative", () => {
-    const e = upcomingDoseEmail({ toName: "Kamala", elderName: "Kamala", forElder: true, medName: "Metformin", dose: "500 mg", time: "8:00 AM", instructions: "After food", takenUrl: link });
+    const e = upcomingDoseEmail({
+      toName: "Kamala",
+      elderName: "Kamala",
+      forElder: true,
+      medName: "Metformin",
+      dose: "500 mg",
+      time: "8:00 AM",
+      instructions: "After food",
+      takenUrl: link,
+    });
     expect(e.html).toContain('<html lang="en">');
     expect(e.html).toContain("<title>");
     expect(e.html).toContain(`href="${link}"`);
@@ -74,7 +83,18 @@ describe("email templates", () => {
   });
 
   it("missed dose to elder: one button, gentle wording; to family: took it + handled", () => {
-    const base = { elderName: "Kamala", medName: "Amlodipine", dose: "5 mg", time: "8:00 AM", minutesLate: 120, severity: "urgent" as const, isCritical: true, alreadyTold: [], takenUrl: link, handledUrl: link };
+    const base = {
+      elderName: "Kamala",
+      medName: "Amlodipine",
+      dose: "5 mg",
+      time: "8:00 AM",
+      minutesLate: 120,
+      severity: "urgent" as const,
+      isCritical: true,
+      alreadyTold: [],
+      takenUrl: link,
+      handledUrl: link,
+    };
     const toElder = missedDoseEmail({ ...base, toName: "Kamala", forElder: true, handledUrl: "" });
     expect(toElder.subject).toBe("Did you take your Amlodipine?");
     expect(toElder.text).not.toContain("handled");
@@ -86,19 +106,49 @@ describe("email templates", () => {
   });
 
   it("a role that may not mark doses gets no 'took it' button", () => {
-    const e = missedDoseEmail({ toName: "Ravi", elderName: "Joseph", forElder: false, medName: "Apixaban", dose: "2.5 mg", time: "1:00 PM", minutesLate: 30, severity: "urgent", isCritical: true, alreadyTold: ["Nurse Lakshmi"], takenUrl: "", handledUrl: link });
+    const e = missedDoseEmail({
+      toName: "Ravi",
+      elderName: "Joseph",
+      forElder: false,
+      medName: "Apixaban",
+      dose: "2.5 mg",
+      time: "1:00 PM",
+      minutesLate: 30,
+      severity: "urgent",
+      isCritical: true,
+      alreadyTold: ["Nurse Lakshmi"],
+      takenUrl: "",
+      handledUrl: link,
+    });
     expect(e.text).not.toContain("Joseph took it");
     expect(e.text).toContain("Already told: Nurse Lakshmi.");
   });
 
   it("appointment 24h and 2h wording", () => {
-    const p = { toName: "Priya", elderName: "Kamala", forElder: false, doctor: "Dr. Meera Nair", specialty: "Diabetologist", when: "Tue 17 Nov, 1:17 PM", location: "Sunrise Clinic" };
+    const p = {
+      toName: "Priya",
+      elderName: "Kamala",
+      forElder: false,
+      doctor: "Dr. Meera Nair",
+      specialty: "Diabetologist",
+      when: "Tue 17 Nov, 1:17 PM",
+      location: "Sunrise Clinic",
+    };
     expect(appointmentEmail({ ...p, window: "24h" }).subject).toBe("Kamala's visit to Dr. Meera Nair is tomorrow");
     expect(appointmentEmail({ ...p, window: "2h" }).subject).toBe("Kamala's visit to Dr. Meera Nair is in about 2 hours");
   });
 
   it("proposal email carries approve link and says nothing changes until approved", () => {
-    const e = proposalEmail({ toName: "Kamala", elderName: "Kamala", forElder: true, proposer: "Priya", medName: "Vitamin D3", summary: "time → 9:00 AM", approveUrl: link, reviewUrl: "https://saathi.example/" });
+    const e = proposalEmail({
+      toName: "Kamala",
+      elderName: "Kamala",
+      forElder: true,
+      proposer: "Priya",
+      medName: "Vitamin D3",
+      summary: "time → 9:00 AM",
+      approveUrl: link,
+      reviewUrl: "https://saathi.example/",
+    });
     expect(e.subject).toBe("Priya wants to change your Vitamin D3");
     expect(e.text).toContain(`Approve change: ${link}`);
     expect(e.text).toContain("Nothing changes until you approve");

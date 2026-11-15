@@ -32,36 +32,39 @@ export async function seedDemo(sb: SupabaseClient, now = new Date()): Promise<{ 
   const elders = must<{ id: string; display_name: string }[]>(
     await sb
       .from("elders")
-      .insert([
-        {
-          circle_id: cid,
-          display_name: "Kamala",
-          age: 68,
-          autonomy_mode: "independent",
-          preferred_language: "hi",
-          emergency_info: {
-            blood_group: "B+",
-            allergies: ["Penicillin"],
-            conditions: ["Type 2 diabetes", "Hypertension"],
-            doctor_name: "Dr. Meera Nair",
-            doctor_phone: "+91 90000 00001",
+      .insert(
+        [
+          {
+            circle_id: cid,
+            display_name: "Kamala",
+            age: 68,
+            autonomy_mode: "independent",
+            preferred_language: "hi",
+            emergency_info: {
+              blood_group: "B+",
+              allergies: ["Penicillin"],
+              conditions: ["Type 2 diabetes", "Hypertension"],
+              doctor_name: "Dr. Meera Nair",
+              doctor_phone: "+91 90000 00001",
+            },
           },
-        },
-        {
-          circle_id: cid,
-          display_name: "Joseph",
-          age: 84,
-          autonomy_mode: "supported",
-          preferred_language: "ml",
-          emergency_info: {
-            blood_group: "O+",
-            allergies: [],
-            conditions: ["Alzheimer's (moderate)", "Atrial fibrillation"],
-            doctor_name: "Dr. Thomas Kurian",
-            doctor_phone: "+91 90000 00002",
+          {
+            circle_id: cid,
+            display_name: "Joseph",
+            age: 84,
+            autonomy_mode: "supported",
+            preferred_language: "ml",
+            emergency_info: {
+              blood_group: "O+",
+              allergies: [],
+              conditions: ["Alzheimer's (moderate)", "Atrial fibrillation"],
+              doctor_name: "Dr. Thomas Kurian",
+              doctor_phone: "+91 90000 00002",
+            },
           },
-        },
-      ], { defaultToNull: false })
+        ],
+        { defaultToNull: false },
+      )
       .select("id, display_name"),
     "elders",
   );
@@ -72,13 +75,16 @@ export async function seedDemo(sb: SupabaseClient, now = new Date()): Promise<{ 
   const members = must<{ id: string; display_name: string }[]>(
     await sb
       .from("members")
-      .insert([
-        { circle_id: cid, elder_id: kamala, display_name: "Kamala", role: "elder", email: "kamala@example.invalid", passcode_hash: hash },
-        { circle_id: cid, display_name: "Priya", role: "family", email: "priya@example.invalid", passcode_hash: hash },
-        { circle_id: cid, display_name: "Nurse Lakshmi", role: "caretaker", email: "lakshmi@example.invalid", passcode_hash: hash, is_on_duty: true },
-        { circle_id: cid, elder_id: joseph, display_name: "Joseph", role: "elder", email: "joseph@example.invalid", passcode_hash: hash },
-        { circle_id: cid, display_name: "Ravi", role: "decision_partner", email: "ravi@example.invalid", passcode_hash: hash },
-      ], { defaultToNull: false })
+      .insert(
+        [
+          { circle_id: cid, elder_id: kamala, display_name: "Kamala", role: "elder", email: "kamala@example.invalid", passcode_hash: hash },
+          { circle_id: cid, display_name: "Priya", role: "family", email: "priya@example.invalid", passcode_hash: hash },
+          { circle_id: cid, display_name: "Nurse Lakshmi", role: "caretaker", email: "lakshmi@example.invalid", passcode_hash: hash, is_on_duty: true },
+          { circle_id: cid, elder_id: joseph, display_name: "Joseph", role: "elder", email: "joseph@example.invalid", passcode_hash: hash },
+          { circle_id: cid, display_name: "Ravi", role: "decision_partner", email: "ravi@example.invalid", passcode_hash: hash },
+        ],
+        { defaultToNull: false },
+      )
       .select("id, display_name"),
     "members",
   );
@@ -87,14 +93,71 @@ export async function seedDemo(sb: SupabaseClient, now = new Date()): Promise<{ 
   const meds = must<{ id: string; elder_id: string; name: string; times: string[] }[]>(
     await sb
       .from("medicines")
-      .insert([
-        { elder_id: kamala, name: "Metformin", dose_text: "500 mg, 1 tablet", times: ["08:00", "20:00"], pill_look: "white oval", instructions: "After food", stock_count: 24, is_critical: false },
-        { elder_id: kamala, name: "Amlodipine", dose_text: "5 mg, 1 tablet", times: ["08:00"], pill_look: "pink round", instructions: "Morning, with water", stock_count: 3, is_critical: true },
-        { elder_id: kamala, name: "Vitamin D3", dose_text: "1 capsule", times: ["13:00"], pill_look: "yellow capsule", instructions: "With lunch", stock_count: 40, is_critical: false },
-        { elder_id: joseph, name: "Donepezil", dose_text: "10 mg, 1 tablet", times: ["21:00"], pill_look: "yellow round", instructions: "At bedtime", stock_count: 20, is_critical: false },
-        { elder_id: joseph, name: "Apixaban", dose_text: "2.5 mg, 1 tablet", times: ["08:00", "20:00"], pill_look: "orange oval", instructions: "Do not skip — blood thinner", stock_count: 30, is_critical: true },
-        { elder_id: joseph, name: "Paracetamol", dose_text: "500 mg", times: ["13:00"], pill_look: "white round", instructions: "After lunch", stock_count: 15, is_critical: false },
-      ], { defaultToNull: false })
+      .insert(
+        [
+          {
+            elder_id: kamala,
+            name: "Metformin",
+            dose_text: "500 mg, 1 tablet",
+            times: ["08:00", "20:00"],
+            pill_look: "white oval",
+            instructions: "After food",
+            stock_count: 24,
+            is_critical: false,
+          },
+          {
+            elder_id: kamala,
+            name: "Amlodipine",
+            dose_text: "5 mg, 1 tablet",
+            times: ["08:00"],
+            pill_look: "pink round",
+            instructions: "Morning, with water",
+            stock_count: 3,
+            is_critical: true,
+          },
+          {
+            elder_id: kamala,
+            name: "Vitamin D3",
+            dose_text: "1 capsule",
+            times: ["13:00"],
+            pill_look: "yellow capsule",
+            instructions: "With lunch",
+            stock_count: 40,
+            is_critical: false,
+          },
+          {
+            elder_id: joseph,
+            name: "Donepezil",
+            dose_text: "10 mg, 1 tablet",
+            times: ["21:00"],
+            pill_look: "yellow round",
+            instructions: "At bedtime",
+            stock_count: 20,
+            is_critical: false,
+          },
+          {
+            elder_id: joseph,
+            name: "Apixaban",
+            dose_text: "2.5 mg, 1 tablet",
+            times: ["08:00", "20:00"],
+            pill_look: "orange oval",
+            instructions: "Do not skip — blood thinner",
+            stock_count: 30,
+            is_critical: true,
+          },
+          {
+            elder_id: joseph,
+            name: "Paracetamol",
+            dose_text: "500 mg",
+            times: ["13:00"],
+            pill_look: "white round",
+            instructions: "After lunch",
+            stock_count: 15,
+            is_critical: false,
+          },
+        ],
+        { defaultToNull: false },
+      )
       .select("id, elder_id, name, times"),
     "medicines",
   );
@@ -102,7 +165,11 @@ export async function seedDemo(sb: SupabaseClient, now = new Date()): Promise<{ 
   // 7 days of history up to today (IST). Past doses get a realistic mix.
   const today = istDate(now);
   const from = istDate(addDays(now, -6));
-  const doses = expandSchedule(meds.map((m) => ({ id: m.id, times: m.times, active: true })), from, today);
+  const doses = expandSchedule(
+    meds.map((m) => ({ id: m.id, times: m.times, active: true })),
+    from,
+    today,
+  );
   const rows = doses.map((d, i) => {
     const med = meds.find((m) => m.id === d.medicineId)!;
     const isKamala = med.elder_id === kamala;
@@ -113,9 +180,23 @@ export async function seedDemo(sb: SupabaseClient, now = new Date()): Promise<{ 
     const takenAt = new Date(d.scheduledAt.getTime() + ((i * 7) % 25) * 60000).toISOString();
     if (roll === 3) return { medicine_id: d.medicineId, scheduled_at: d.scheduledAt.toISOString(), status: "missed", escalation_level: 2 };
     if (roll === 7 && isKamala)
-      return { medicine_id: d.medicineId, scheduled_at: d.scheduledAt.toISOString(), status: "skipped", reason: "chose_to_skip", marked_by: marker, marked_at: takenAt };
+      return {
+        medicine_id: d.medicineId,
+        scheduled_at: d.scheduledAt.toISOString(),
+        status: "skipped",
+        reason: "chose_to_skip",
+        marked_by: marker,
+        marked_at: takenAt,
+      };
     if (roll === 11)
-      return { medicine_id: d.medicineId, scheduled_at: d.scheduledAt.toISOString(), status: "skipped", reason: "side_effect", marked_by: marker, marked_at: takenAt };
+      return {
+        medicine_id: d.medicineId,
+        scheduled_at: d.scheduledAt.toISOString(),
+        status: "skipped",
+        reason: "side_effect",
+        marked_by: marker,
+        marked_at: takenAt,
+      };
     return { medicine_id: d.medicineId, scheduled_at: d.scheduledAt.toISOString(), status: "taken", marked_by: marker, marked_at: takenAt };
   });
   must(await sb.from("dose_events").insert(rows, { defaultToNull: false }).select("id"), "dose_events");
@@ -123,10 +204,27 @@ export async function seedDemo(sb: SupabaseClient, now = new Date()): Promise<{ 
   must(
     await sb
       .from("appointments")
-      .insert([
-        { elder_id: kamala, doctor_name: "Dr. Meera Nair", specialty: "Diabetologist", location: "Sunrise Clinic, Indiranagar", starts_at: addDays(now, 2).toISOString(), notes: "Quarterly HbA1c review" },
-        { elder_id: joseph, doctor_name: "Dr. Thomas Kurian", specialty: "Neurologist", location: "City Neuro Centre", starts_at: addDays(now, 5).toISOString(), notes: "Memory follow-up" },
-      ], { defaultToNull: false })
+      .insert(
+        [
+          {
+            elder_id: kamala,
+            doctor_name: "Dr. Meera Nair",
+            specialty: "Diabetologist",
+            location: "Sunrise Clinic, Indiranagar",
+            starts_at: addDays(now, 2).toISOString(),
+            notes: "Quarterly HbA1c review",
+          },
+          {
+            elder_id: joseph,
+            doctor_name: "Dr. Thomas Kurian",
+            specialty: "Neurologist",
+            location: "City Neuro Centre",
+            starts_at: addDays(now, 5).toISOString(),
+            notes: "Memory follow-up",
+          },
+        ],
+        { defaultToNull: false },
+      )
       .select("id"),
     "appointments",
   );

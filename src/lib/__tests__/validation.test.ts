@@ -1,7 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { appointmentSchema, loginSchema, medicineSchema, memberSchema, markDoseSchema } from "../validation";
 
-const goodMed = { name: "Metformin", doseText: "500 mg", times: ["08:00", "20:00"], pillLook: "white oval", instructions: "After food", stockCount: 20, isCritical: false };
+const goodMed = {
+  name: "Metformin",
+  doseText: "500 mg",
+  times: ["08:00", "20:00"],
+  pillLook: "white oval",
+  instructions: "After food",
+  stockCount: 20,
+  isCritical: false,
+};
 
 describe("medicineSchema", () => {
   it("accepts a valid medicine", () => {
@@ -85,7 +93,10 @@ describe("createCircleSchema", () => {
     ["phone with letters", patch((g) => (g.elder.emergency.doctorPhone = "call me"))],
     ["too many allergies", patch((g) => (g.elder.emergency.allergies = Array(11).fill("x")))],
     ["oversized circle name", patch((g) => (g.circleName = "x".repeat(81)))],
-    ["eleven members", patch((g) => (g.members = Array.from({ length: 11 }, (_, i) => ({ displayName: `P${i}`, email: "", role: "family", passcode: "1234" }))))],
+    [
+      "eleven members",
+      patch((g) => (g.members = Array.from({ length: 11 }, (_, i) => ({ displayName: `P${i}`, email: "", role: "family", passcode: "1234" })))),
+    ],
   ])("rejects %s", (_n, value) => {
     expect(createCircleSchema.safeParse(value).success).toBe(false);
   });

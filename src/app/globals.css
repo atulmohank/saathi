@@ -38,7 +38,8 @@
   --color-success: var(--success);
   --color-muted: var(--muted);
   --color-indigo: var(--indigo);
-  --font-sans: var(--font-inter), var(--font-deva), var(--font-tamil), var(--font-telugu), var(--font-kannada), var(--font-malayalam), "Noto Sans", system-ui, sans-serif;
+  --font-sans:
+    var(--font-inter), var(--font-deva), var(--font-tamil), var(--font-telugu), var(--font-kannada), var(--font-malayalam), "Noto Sans", system-ui, sans-serif;
   --font-serif: var(--font-fraunces), var(--font-deva), var(--font-tamil), var(--font-telugu), var(--font-kannada), var(--font-malayalam), Georgia, serif;
   --font-script: var(--font-caveat), var(--font-kalam), cursive;
   --font-hand-deva: var(--font-kalam), var(--font-deva), cursive;
@@ -227,7 +228,9 @@ body {
   .outline-title {
     font-family: var(--font-serif);
     font-weight: 700;
-    font-variation-settings: "opsz" 144, "SOFT" 100;
+    font-variation-settings:
+      "opsz" 144,
+      "SOFT" 100;
     color: transparent;
     -webkit-text-stroke: 1.5px currentColor;
     line-height: 0.85;

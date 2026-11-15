@@ -19,7 +19,6 @@ export interface NextDose {
   display: "due" | "upcoming" | "missed";
 }
 
-
 export function ElderDoseCard({ dose, lang, readOnly, helperLine }: { dose: NextDose | null; lang: UiLang; readOnly: boolean; helperLine: string | null }) {
   const router = useRouter();
   const [stage, setStage] = useState<"main" | "reasons">("main");
@@ -66,16 +65,26 @@ export function ElderDoseCard({ dose, lang, readOnly, helperLine }: { dose: Next
           {t(lang, "nextDose")}
         </h2>
         {dose.display !== "upcoming" && (
-          <span className={`badge text-[20px] ${dose.display === "missed" ? "bg-[#FBEDEC] text-danger" : "bg-[#FDF0D8] text-saffron-ink"}`}>{t(lang, dose.display)}</span>
+          <span className={`badge text-[20px] ${dose.display === "missed" ? "bg-[#FBEDEC] text-danger" : "bg-[#FDF0D8] text-saffron-ink"}`}>
+            {t(lang, dose.display)}
+          </span>
         )}
       </div>
 
       <div className="mt-6 flex items-center gap-4 sm:gap-7">
-        <span aria-hidden="true" className="grid size-[72px] shrink-0 place-items-center rounded-full bg-[radial-gradient(circle_at_35%_30%,#FFFFFF_0%,#F6E3D3_70%)] shadow-[inset_0_-6px_14px_rgb(138_90_18/.12),var(--lift-1)] sm:size-28">
-          <span className="block w-12 sm:w-16 [&_svg]:!h-auto [&_svg]:!w-full"><Pill look={dose.pillLook} size={64} /></span>
+        <span
+          aria-hidden="true"
+          className="grid size-[72px] shrink-0 place-items-center rounded-full bg-[radial-gradient(circle_at_35%_30%,#FFFFFF_0%,#F6E3D3_70%)] shadow-[inset_0_-6px_14px_rgb(138_90_18/.12),var(--lift-1)] sm:size-28"
+        >
+          <span className="block w-12 sm:w-16 [&_svg]:!h-auto [&_svg]:!w-full">
+            <Pill look={dose.pillLook} size={64} />
+          </span>
         </span>
         <div className="min-w-0">
-          <p className="font-serif text-[36px] font-semibold leading-[1.05] [overflow-wrap:anywhere] sm:text-[56px]" style={{ fontVariationSettings: '"opsz" 36' }}>
+          <p
+            className="font-serif text-[36px] font-semibold leading-[1.05] [overflow-wrap:anywhere] sm:text-[56px]"
+            style={{ fontVariationSettings: '"opsz" 36' }}
+          >
             {dose.name}
           </p>
           <p className="mt-1 text-[24px] text-ink-soft">{dose.dose}</p>
@@ -97,17 +106,33 @@ export function ElderDoseCard({ dose, lang, readOnly, helperLine }: { dose: Next
       )}
 
       <div className="mt-6">
-        <ReadAloud text={speech} lang={SPEECH_LANG[lang]} label={t(lang, "readAloud")} stopLabel={t(lang, "stopReading")} missingLabel={t(lang, "voiceMissing")} />
+        <ReadAloud
+          text={speech}
+          lang={SPEECH_LANG[lang]}
+          label={t(lang, "readAloud")}
+          stopLabel={t(lang, "stopReading")}
+          missingLabel={t(lang, "voiceMissing")}
+        />
       </div>
 
       {readOnly ? (
         helperLine && <p className="mt-6 rounded-[24px] bg-sage p-6 text-[26px] font-semibold leading-snug text-primary">{helperLine}</p>
       ) : stage === "main" ? (
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          <button type="button" className="btn-primary min-h-20 min-w-0 whitespace-normal py-3 text-center text-[24px] leading-tight [overflow-wrap:anywhere] sm:text-[28px]" disabled={busy} onClick={() => mark("taken")}>
+          <button
+            type="button"
+            className="btn-primary min-h-20 min-w-0 whitespace-normal py-3 text-center text-[24px] leading-tight [overflow-wrap:anywhere] sm:text-[28px]"
+            disabled={busy}
+            onClick={() => mark("taken")}
+          >
             ✓ {t(lang, "tookIt")}
           </button>
-          <button type="button" className="btn-secondary min-h-20 min-w-0 whitespace-normal py-3 text-center text-[24px] leading-tight [overflow-wrap:anywhere] sm:text-[28px]" disabled={busy} onClick={() => setStage("reasons")}>
+          <button
+            type="button"
+            className="btn-secondary min-h-20 min-w-0 whitespace-normal py-3 text-center text-[24px] leading-tight [overflow-wrap:anywhere] sm:text-[28px]"
+            disabled={busy}
+            onClick={() => setStage("reasons")}
+          >
             {t(lang, "notNow")}
           </button>
         </div>
@@ -116,7 +141,13 @@ export function ElderDoseCard({ dose, lang, readOnly, helperLine }: { dose: Next
           <legend className="text-[26px] font-semibold">{t(lang, "whyNot")}</legend>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {MISS_REASONS.map((r) => (
-              <button key={r} type="button" className="btn-secondary min-h-16 min-w-0 whitespace-normal py-3 text-center text-[22px] leading-tight [overflow-wrap:anywhere]" disabled={busy} onClick={() => mark("skipped", r)}>
+              <button
+                key={r}
+                type="button"
+                className="btn-secondary min-h-16 min-w-0 whitespace-normal py-3 text-center text-[22px] leading-tight [overflow-wrap:anywhere]"
+                disabled={busy}
+                onClick={() => mark("skipped", r)}
+              >
                 {t(lang, r)}
               </button>
             ))}
@@ -153,10 +184,20 @@ export function ElderProposal({ id, line, detail, lang }: { id: string; line: st
       <p className="text-[24px] font-semibold leading-snug">{line}</p>
       <p className="mt-2 text-[22px] text-ink-soft">{detail}</p>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        <button type="button" className="btn-primary min-h-16 min-w-0 whitespace-normal py-3 text-center text-[22px] leading-tight [overflow-wrap:anywhere] sm:text-[24px]" disabled={busy} onClick={() => decide("approve")}>
+        <button
+          type="button"
+          className="btn-primary min-h-16 min-w-0 whitespace-normal py-3 text-center text-[22px] leading-tight [overflow-wrap:anywhere] sm:text-[24px]"
+          disabled={busy}
+          onClick={() => decide("approve")}
+        >
           {t(lang, "approve")}
         </button>
-        <button type="button" className="btn-secondary min-h-16 min-w-0 whitespace-normal py-3 text-center text-[22px] leading-tight [overflow-wrap:anywhere] sm:text-[24px]" disabled={busy} onClick={() => decide("decline")}>
+        <button
+          type="button"
+          className="btn-secondary min-h-16 min-w-0 whitespace-normal py-3 text-center text-[22px] leading-tight [overflow-wrap:anywhere] sm:text-[24px]"
+          disabled={busy}
+          onClick={() => decide("decline")}
+        >
           {t(lang, "askDoctor")}
         </button>
       </div>
@@ -166,4 +207,3 @@ export function ElderProposal({ id, line, detail, lang }: { id: string; line: st
     </li>
   );
 }
-

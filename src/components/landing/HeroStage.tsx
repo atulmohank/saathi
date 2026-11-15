@@ -26,11 +26,17 @@ export function HeroStage() {
   return (
     <div className="relative mx-auto mt-6 aspect-[4/5] w-full max-w-[520px] sm:mt-0 sm:aspect-[5/6]">
       {/* saffron sun */}
-      <div aria-hidden="true" className="absolute right-[6%] top-[2%] size-[46%] rounded-full bg-[radial-gradient(circle_at_40%_40%,#F6C979_0%,#E8A33D_60%,#E8A33D_100%)] opacity-90" />
+      <div
+        aria-hidden="true"
+        className="absolute right-[6%] top-[2%] size-[46%] rounded-full bg-[radial-gradient(circle_at_40%_40%,#F6C979_0%,#E8A33D_60%,#E8A33D_100%)] opacity-90"
+      />
       <div aria-hidden="true" className="blob -left-10 bottom-10 size-64 bg-sage opacity-80" />
 
       {/* grandmother in an arch */}
-      <m.div {...enter(0.1, 16)} className="absolute right-0 top-[8%] h-[80%] w-[70%] overflow-hidden rounded-t-full rounded-b-[40px] shadow-[var(--lift-2)] ring-[6px] ring-paper">
+      <m.div
+        {...enter(0.1, 16)}
+        className="absolute right-0 top-[8%] h-[80%] w-[70%] overflow-hidden rounded-t-full rounded-b-[40px] shadow-[var(--lift-2)] ring-[6px] ring-paper"
+      >
         <Image
           src="/images/kamala-arch.webp"
           alt="A smiling grandmother in a pink floral sari and glasses, standing in a sunny garden"
@@ -43,14 +49,22 @@ export function HeroStage() {
       </m.div>
 
       {/* the product, overlapping the photo and the wordmark below */}
-      <m.div {...enter(0.35, 40)} className="absolute bottom-[-6%] left-0 z-10 w-[250px] origin-bottom-left rotate-[-4deg] scale-[0.72] sm:bottom-[-14%] sm:left-[2%] sm:scale-100">
+      <m.div
+        {...enter(0.35, 40)}
+        className="absolute bottom-[-6%] left-0 z-10 w-[250px] origin-bottom-left rotate-[-4deg] scale-[0.72] sm:bottom-[-14%] sm:left-[2%] sm:scale-100"
+      >
         <PhoneMock />
       </m.div>
 
       {/* glass chips: what the circle sees */}
       <div role="list" aria-label="What the care circle sees" className="absolute inset-0 z-20">
         {chips.map((c, i) => (
-          <m.div key={c.text} role="listitem" {...enter(0.7 + i * 0.18, 12)} className={`glass absolute flex items-center gap-2 py-2 pl-2 pr-3.5 text-[13px] font-semibold text-ink sm:text-sm ${c.pos}`}>
+          <m.div
+            key={c.text}
+            role="listitem"
+            {...enter(0.7 + i * 0.18, 12)}
+            className={`glass absolute flex items-center gap-2 py-2 pl-2 pr-3.5 text-[13px] font-semibold text-ink sm:text-sm ${c.pos}`}
+          >
             <span aria-hidden="true" className={`grid size-7 place-items-center rounded-full text-sm ${c.tone}`}>
               {c.icon}
             </span>

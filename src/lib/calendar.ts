@@ -13,7 +13,10 @@ export interface CalendarEvent {
 
 /** `20261117T074700Z` — the compact UTC format Google Calendar's template URL expects. */
 export function toCalendarStamp(d: Date): string {
-  return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  return d
+    .toISOString()
+    .replace(/[-:]/g, "")
+    .replace(/\.\d{3}/, "");
 }
 
 /** Returns a fully URL-encoded https://calendar.google.com/calendar/render?action=TEMPLATE… link. */

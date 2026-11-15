@@ -28,7 +28,15 @@ export function Thread({
 }) {
   return (
     <svg aria-hidden="true" focusable="false" viewBox={`0 0 ${width} ${height}`} className={`pointer-events-none ${className}`} preserveAspectRatio="none">
-      <path d={PATHS[variant]} fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+      <path
+        d={PATHS[variant]}
+        fill="none"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        vectorEffect="non-scaling-stroke"
+      />
     </svg>
   );
 }

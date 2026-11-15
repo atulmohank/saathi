@@ -6,10 +6,7 @@ import { Thread } from "./landing/Thread";
  * peach-to-cream ground, one soft blob, the saffron thread, and the lockup. Children bring their own <main>.
  */
 export function PageShell({ children, tone = "peach" }: { children: React.ReactNode; tone?: "peach" | "sage" }) {
-  const ground =
-    tone === "sage"
-      ? "bg-[linear-gradient(180deg,#FBF7F0_0%,#E7EFE9_100%)]"
-      : "bg-[linear-gradient(180deg,#FBF7F0_0%,#F9EDE2_45%,#F6E3D3_100%)]";
+  const ground = tone === "sage" ? "bg-[linear-gradient(180deg,#FBF7F0_0%,#E7EFE9_100%)]" : "bg-[linear-gradient(180deg,#FBF7F0_0%,#F9EDE2_45%,#F6E3D3_100%)]";
   return (
     <div className={`relative isolate flex flex-1 flex-col overflow-hidden ${ground} print:bg-white`}>
       <div aria-hidden="true" className="no-print pointer-events-none absolute inset-0 -z-10">

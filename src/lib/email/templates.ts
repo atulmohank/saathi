@@ -10,8 +10,7 @@ export interface Email {
   html: string;
 }
 
-export const esc = (s: string) =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+export const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
 interface Action {
   label: string;
@@ -59,15 +58,21 @@ function build(subject: string, heading: string, paragraphs: string[], allAction
 }
 
 /** T-10 reminder with a one-tap “I took it” link. */
-export function upcomingDoseEmail(p: { toName: string; elderName: string; forElder: boolean; medName: string; dose: string; time: string; instructions: string; takenUrl: string }): Email {
+export function upcomingDoseEmail(p: {
+  toName: string;
+  elderName: string;
+  forElder: boolean;
+  medName: string;
+  dose: string;
+  time: string;
+  instructions: string;
+  takenUrl: string;
+}): Email {
   const who = p.forElder ? "your" : `${p.elderName}'s`;
   return build(
     `Reminder: ${p.medName} at ${p.time}`,
     `Time for ${who} ${p.medName} at ${p.time}`,
-    [
-      `Hello ${p.toName}, this is a gentle reminder.`,
-      `${p.medName}, ${p.dose}.${p.instructions ? ` ${p.instructions}.` : ""}`,
-    ],
+    [`Hello ${p.toName}, this is a gentle reminder.`, `${p.medName}, ${p.dose}.${p.instructions ? ` ${p.instructions}.` : ""}`],
     [{ label: p.forElder ? "I took it" : `${p.elderName} took it`, url: p.takenUrl }],
   );
 }
@@ -92,7 +97,10 @@ export function missedDoseEmail(p: {
     ? `Did you take your ${p.medName}?`
     : `${p.severity === "urgent" ? "Please check: " : ""}${p.elderName} hasn't marked ${p.medName} (${p.time})`;
   const paras = p.forElder
-    ? [`Hello ${p.toName}, your ${p.time} ${p.medName} (${p.dose}) isn't marked yet.`, "If you've taken it, tap the button. If not, that's all right — open Saathi and tell us why."]
+    ? [
+        `Hello ${p.toName}, your ${p.time} ${p.medName} (${p.dose}) isn't marked yet.`,
+        "If you've taken it, tap the button. If not, that's all right — open Saathi and tell us why.",
+      ]
     : [
         `Hello ${p.toName}, ${p.elderName}'s ${p.time} dose of ${p.medName} (${p.dose}) is ${late} late and not marked.`,
         p.isCritical ? `${p.medName} is marked as critical.` : "",
@@ -109,19 +117,41 @@ export function missedDoseEmail(p: {
 }
 
 /** Appointment reminder, 24 h or 2 h before. */
-export function appointmentEmail(p: { toName: string; elderName: string; forElder: boolean; doctor: string; specialty: string; when: string; location: string; window: "24h" | "2h" }): Email {
+export function appointmentEmail(p: {
+  toName: string;
+  elderName: string;
+  forElder: boolean;
+  doctor: string;
+  specialty: string;
+  when: string;
+  location: string;
+  window: "24h" | "2h";
+}): Email {
   const whose = p.forElder ? "Your" : `${p.elderName}'s`;
   const soon = p.window === "2h" ? "in about 2 hours" : "tomorrow";
   return build(
     `${whose} visit to ${p.doctor} is ${soon}`,
     `${whose} visit to ${p.doctor} is ${soon}`,
-    [`Hello ${p.toName}.`, `${p.doctor}${p.specialty ? ` (${p.specialty})` : ""} · ${p.when}${p.location ? ` · ${p.location}` : ""}.`, "Bring the medicine list and any questions about side effects."],
+    [
+      `Hello ${p.toName}.`,
+      `${p.doctor}${p.specialty ? ` (${p.specialty})` : ""} · ${p.when}${p.location ? ` · ${p.location}` : ""}.`,
+      "Bring the medicine list and any questions about side effects.",
+    ],
     [],
   );
 }
 
 /** Asks the approver to approve a medicine change (approve link + review link). */
-export function proposalEmail(p: { toName: string; elderName: string; forElder: boolean; proposer: string; medName: string; summary: string; approveUrl: string; reviewUrl: string }): Email {
+export function proposalEmail(p: {
+  toName: string;
+  elderName: string;
+  forElder: boolean;
+  proposer: string;
+  medName: string;
+  summary: string;
+  approveUrl: string;
+  reviewUrl: string;
+}): Email {
   const whose = p.forElder ? "your" : `${p.elderName}'s`;
   return build(
     `${p.proposer} wants to change ${whose} ${p.medName}`,

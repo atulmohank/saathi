@@ -2,7 +2,19 @@
 
 import { useEffect, useState } from "react";
 
-export function ReadAloud({ text, lang, label, stopLabel, missingLabel }: { text: string; lang: string; label: string; stopLabel: string; missingLabel: string }) {
+export function ReadAloud({
+  text,
+  lang,
+  label,
+  stopLabel,
+  missingLabel,
+}: {
+  text: string;
+  lang: string;
+  label: string;
+  stopLabel: string;
+  missingLabel: string;
+}) {
   const [speaking, setSpeaking] = useState(false);
   const [missing, setMissing] = useState(false);
 
@@ -42,8 +54,22 @@ export function ReadAloud({ text, lang, label, stopLabel, missingLabel }: { text
 
   return (
     <div className="flex flex-col items-start gap-2">
-      <button type="button" onClick={speak} className="btn-secondary min-h-14 gap-3 whitespace-normal px-6 text-center text-[22px] leading-tight" aria-pressed={speaking}>
-        <svg aria-hidden="true" viewBox="0 0 24 24" className="size-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <button
+        type="button"
+        onClick={speak}
+        className="btn-secondary min-h-14 gap-3 whitespace-normal px-6 text-center text-[22px] leading-tight"
+        aria-pressed={speaking}
+      >
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+          className="size-7"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M4 10v4h4l5 4V6L8 10z" fill="currentColor" stroke="none" />
           {speaking ? <path d="M17 9l4 6M21 9l-4 6" /> : <path d="M16 9.5a4 4 0 0 1 0 5M18.5 7a7.5 7.5 0 0 1 0 10" />}
         </svg>

@@ -50,7 +50,11 @@ export function ElderSky({ phase }: { phase: SkyPhase }) {
       {phase === "evening" && (
         <>
           {STARS.map(([x, y, r], i) => (
-            <span key={i} className="absolute rounded-full bg-[#FFF4D6]" style={{ left: `${x}%`, top: `${y}%`, width: r * 3, height: r * 3, opacity: 0.55 + (i % 3) * 0.15 }} />
+            <span
+              key={i}
+              className="absolute rounded-full bg-[#FFF4D6]"
+              style={{ left: `${x}%`, top: `${y}%`, width: r * 3, height: r * 3, opacity: 0.55 + (i % 3) * 0.15 }}
+            />
           ))}
           <svg viewBox="0 0 120 120" className="absolute right-[7%] top-10 hidden w-36 sm:block">
             <defs>

@@ -54,7 +54,11 @@ export const SHOW_MISSED_AFTER_MIN = 60;
 export async function getCircle(circleId: string) {
   const [{ data: circle }, { data: elders }, { data: members }] = await Promise.all([
     db().from("care_circles").select("id, name, is_demo, code").eq("id", circleId).maybeSingle(),
-    db().from("elders").select("id, circle_id, display_name, age, autonomy_mode, preferred_language, emergency_info").eq("circle_id", circleId).order("created_at"),
+    db()
+      .from("elders")
+      .select("id, circle_id, display_name, age, autonomy_mode, preferred_language, emergency_info")
+      .eq("circle_id", circleId)
+      .order("created_at"),
     db().from("members").select("id, display_name, role, elder_id, is_on_duty").eq("circle_id", circleId).order("created_at"),
   ]);
   return {
@@ -88,7 +92,11 @@ export function displayStatus(d: DoseRow, now: Date): DisplayStatus {
 
 /** Everything one elder's screens need, loaded in parallel: medicines (materialising doses), today, 7-day pillbox, adherence, refills, appointments, proposals, tasks, recent changes. */
 export async function getElderCare(elder: ElderRow, members: MemberRow[], now = new Date()) {
-  const { data: medsData } = await db().from("medicines").select("id, elder_id, name, dose_text, times, pill_look, instructions, stock_count, is_critical, active").eq("elder_id", elder.id).order("created_at");
+  const { data: medsData } = await db()
+    .from("medicines")
+    .select("id, elder_id, name, dose_text, times, pill_look, instructions, stock_count, is_critical, active")
+    .eq("elder_id", elder.id)
+    .order("created_at");
   const meds = (medsData ?? []) as MedicineRow[];
   await ensureDoses(meds, now);
 
@@ -104,9 +112,24 @@ export async function getElderCare(elder: ElderRow, members: MemberRow[], now = 
           .lt("scheduled_at", addDays(now, 2).toISOString())
           .order("scheduled_at")
       : Promise.resolve({ data: [] }),
-    db().from("appointments").select("id, doctor_name, specialty, location, starts_at, notes").eq("elder_id", elder.id).gte("starts_at", addDays(now, -1).toISOString()).order("starts_at"),
-    db().from("change_proposals").select("id, elder_id, medicine_id, proposed_by, source, diff, status, decided_by, created_at").eq("elder_id", elder.id).order("created_at", { ascending: false }).limit(20),
-    db().from("tasks").select("id, kind, title, assigned_to, done").eq("circle_id", elder.circle_id).eq("done", false).order("created_at", { ascending: false }),
+    db()
+      .from("appointments")
+      .select("id, doctor_name, specialty, location, starts_at, notes")
+      .eq("elder_id", elder.id)
+      .gte("starts_at", addDays(now, -1).toISOString())
+      .order("starts_at"),
+    db()
+      .from("change_proposals")
+      .select("id, elder_id, medicine_id, proposed_by, source, diff, status, decided_by, created_at")
+      .eq("elder_id", elder.id)
+      .order("created_at", { ascending: false })
+      .limit(20),
+    db()
+      .from("tasks")
+      .select("id, kind, title, assigned_to, done")
+      .eq("circle_id", elder.circle_id)
+      .eq("done", false)
+      .order("created_at", { ascending: false }),
     db()
       .from("audit_log")
       .select("id, action, entity, entity_id, before, after, actor, created_at")
@@ -151,9 +174,7 @@ export async function getElderCare(elder: ElderRow, members: MemberRow[], now = 
     { from: weekStart, to: now },
   );
 
-  const refills = meds
-    .filter((m) => m.active)
-    .map((m) => ({ med: m, ...forecastRefill(m.stock_count, m.times.length) }));
+  const refills = meds.filter((m) => m.active).map((m) => ({ med: m, ...forecastRefill(m.stock_count, m.times.length) }));
 
   type Proposal = {
     id: string;
@@ -169,13 +190,21 @@ export async function getElderCare(elder: ElderRow, members: MemberRow[], now = 
     ...p,
     proposerName: name(p.proposed_by),
     medName: p.medicine_id ? (medById.get(p.medicine_id)?.name ?? "a medicine") : "a new medicine",
-    medicine: p.medicine_id ? medById.get(p.medicine_id) ?? null : null,
+    medicine: p.medicine_id ? (medById.get(p.medicine_id) ?? null) : null,
   }));
 
-  type Change = { id: string; action: string; entity_id: string | null; before: Record<string, unknown> | null; after: Record<string, unknown> | null; actor: string | null; created_at: string };
+  type Change = {
+    id: string;
+    action: string;
+    entity_id: string | null;
+    before: Record<string, unknown> | null;
+    after: Record<string, unknown> | null;
+    actor: string | null;
+    created_at: string;
+  };
   const recentChanges = ((auditRes.data ?? []) as Change[])
     .filter((c) => !c.entity_id || medById.has(c.entity_id))
-    .map((c) => ({ ...c, actorName: name(c.actor), medName: c.entity_id ? medById.get(c.entity_id)?.name ?? "" : "" }));
+    .map((c) => ({ ...c, actorName: name(c.actor), medName: c.entity_id ? (medById.get(c.entity_id)?.name ?? "") : "" }));
 
   return {
     meds,

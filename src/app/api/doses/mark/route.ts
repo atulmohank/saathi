@@ -54,7 +54,10 @@ export async function POST(req: Request) {
     };
     await db().from("dose_events").update(update).eq("id", dose.id);
     if (input.status === "taken" && med.stock_count > 0) {
-      await db().from("medicines").update({ stock_count: med.stock_count - 1 }).eq("id", med.id);
+      await db()
+        .from("medicines")
+        .update({ stock_count: med.stock_count - 1 })
+        .eq("id", med.id);
     }
 
     // Reason-aware follow-ups from the engine.
@@ -69,14 +72,10 @@ export async function POST(req: Request) {
         resolved: false,
       });
       if (step.followUps.includes("create_refill_task")) {
-        const { data: onDuty } = await db()
-          .from("members")
-          .select("id")
-          .eq("circle_id", actor.circleId)
-          .eq("is_on_duty", true)
-          .limit(1)
-          .maybeSingle();
-        await db().from("tasks").insert({ circle_id: actor.circleId, kind: "refill", title: `Refill ${med.name}`, assigned_to: onDuty?.id ?? null });
+        const { data: onDuty } = await db().from("members").select("id").eq("circle_id", actor.circleId).eq("is_on_duty", true).limit(1).maybeSingle();
+        await db()
+          .from("tasks")
+          .insert({ circle_id: actor.circleId, kind: "refill", title: `Refill ${med.name}`, assigned_to: onDuty?.id ?? null });
         note = "A refill task was created.";
       }
       if (step.notify.length) note = `${note ? note + " " : ""}The caretaker will get a gentle note.`;

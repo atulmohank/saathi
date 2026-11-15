@@ -8,15 +8,7 @@
  * Needs: framer-motion, Tailwind, and the avatars at {assetBase}/avatars/*.svg.
  */
 import { useRef, useState } from "react";
-import {
-  m,
-  useMotionValueEvent,
-
-  useScroll,
-  useSpring,
-  useTransform,
-  type MotionValue,
-} from "framer-motion";
+import { m, useMotionValueEvent, useScroll, useSpring, useTransform, type MotionValue } from "framer-motion";
 import { useStill } from "./useStill";
 
 export type StoryStep = { time: string; title: string; body: string };
@@ -98,7 +90,9 @@ function Stage({
           transition={{ duration: 2.8, ease: "easeOut", repeat: Infinity, repeatDelay: 0.6 }}
         />
       )}
-      <clipPath id="ss-kamala"><circle cx="100" cy="202" r="50" /></clipPath>
+      <clipPath id="ss-kamala">
+        <circle cx="100" cy="202" r="50" />
+      </clipPath>
       <circle cx="100" cy="202" r="54" fill="#FFFDF9" />
       <image href="/images/kamala-avatar.webp" x="50" y="152" width="100" height="100" preserveAspectRatio="xMidYMid slice" clipPath="url(#ss-kamala)" />
       <text x="100" y="278" style={label}>
@@ -125,7 +119,9 @@ function Stage({
 
       {/* Caretaker on duty + refill task */}
       <m.g initial={false} animate={{ opacity: step >= 2 ? 1 : 0.35 }} transition={{ duration: 0.8 }}>
-        <clipPath id="ss-lakshmi"><circle cx="378" cy="88" r="46" /></clipPath>
+        <clipPath id="ss-lakshmi">
+          <circle cx="378" cy="88" r="46" />
+        </clipPath>
         <circle cx="378" cy="88" r="50" fill="#FFFDF9" />
         <image href="/images/lakshmi-avatar.webp" x="332" y="42" width="92" height="92" preserveAspectRatio="xMidYMid slice" clipPath="url(#ss-lakshmi)" />
         <text x="378" y="158" style={label}>
@@ -175,11 +171,7 @@ export type ScrollStoryProps = {
   className?: string;
 };
 
-export function ScrollStory({
-  steps = DEFAULT_STORY,
-  heading = "One missed dose. Zero panic.",
-  className = "",
-}: ScrollStoryProps) {
+export function ScrollStory({ steps = DEFAULT_STORY, heading = "One missed dose. Zero panic.", className = "" }: ScrollStoryProps) {
   const four = steps.length >= 4 ? steps.slice(0, 4) : DEFAULT_STORY;
   const still = useStill();
   const ref = useRef<HTMLElement>(null);

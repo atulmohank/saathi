@@ -19,7 +19,11 @@ const DUMMY_HASH = bcrypt.hashSync("not-a-real-passcode", 10);
 export async function POST(req: Request) {
   try {
     const r = hit(perIp, clientKey(req), 20, 15 * 60_000, Date.now());
-    if (!r.allowed) return NextResponse.json({ error: "Too many attempts from here. Please wait and try again." }, { status: 429, headers: { "retry-after": String(r.retryAfterSec) } });
+    if (!r.allowed)
+      return NextResponse.json(
+        { error: "Too many attempts from here. Please wait and try again." },
+        { status: 429, headers: { "retry-after": String(r.retryAfterSec) } },
+      );
     const { memberId, passcode } = loginSchema.parse(await readJson(req));
     const { data: m } = await db()
       .from("members")

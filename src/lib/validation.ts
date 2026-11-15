@@ -19,7 +19,11 @@ export const demoLoginSchema = z.object({
 const medicineFields = {
   name: trimmed(80),
   doseText: trimmed(60),
-  times: z.array(timeHHmm).min(1).max(8).refine((t) => new Set(t).size === t.length, "Times must be unique"),
+  times: z
+    .array(timeHHmm)
+    .min(1)
+    .max(8)
+    .refine((t) => new Set(t).size === t.length, "Times must be unique"),
   pillLook: trimmed(40),
   instructions: trimmed(300, 0),
   stockCount: z.number().int().min(0).max(10000),
@@ -27,7 +31,11 @@ const medicineFields = {
 };
 
 /** A whole new medicine (instructions and critical flag default when omitted). */
-export const medicineSchema = z.object({ ...medicineFields, instructions: medicineFields.instructions.default(""), isCritical: medicineFields.isCritical.default(false) });
+export const medicineSchema = z.object({
+  ...medicineFields,
+  instructions: medicineFields.instructions.default(""),
+  isCritical: medicineFields.isCritical.default(false),
+});
 
 /**
  * A change to an existing medicine: only the fields sent. No defaults on purpose — `.partial()` keeps
@@ -78,7 +86,11 @@ export const emergencySchema = z.object({
   allergies: shortList,
   conditions: shortList,
   doctorName: trimmed(80, 0).default(""),
-  doctorPhone: z.string().trim().regex(/^[+\d][\d\s-]{0,19}$|^$/, "Phone: digits, spaces, + and - only").default(""),
+  doctorPhone: z
+    .string()
+    .trim()
+    .regex(/^[+\d][\d\s-]{0,19}$|^$/, "Phone: digits, spaces, + and - only")
+    .default(""),
 });
 
 export const circleCodeSchema = z

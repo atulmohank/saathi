@@ -65,7 +65,16 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
 
   return (
     <div className="flex-1">
-      <DashboardHeader id={id} circleName={circle.name} actorName={actor.name} roleLabel={ROLE_LABEL[actor.role]} elder={elder} elders={elders} photo={photo} mode={mode} />
+      <DashboardHeader
+        id={id}
+        circleName={circle.name}
+        actorName={actor.name}
+        roleLabel={ROLE_LABEL[actor.role]}
+        elder={elder}
+        elders={elders}
+        photo={photo}
+        mode={mode}
+      />
 
       <main id="main" className="wrap relative -mt-20 flex flex-col gap-8 pb-16">
         <StatTiles
@@ -83,7 +92,8 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
             This week&apos;s pillbox
           </h2>
           <p className="mt-1 text-sm text-muted">
-            {care.adherence.taken} taken · {care.adherence.missed} missed · {care.adherence.choseToSkip} skipped by choice · {care.adherence.skippedOther} skipped for another reason
+            {care.adherence.taken} taken · {care.adherence.missed} missed · {care.adherence.choseToSkip} skipped by choice · {care.adherence.skippedOther}{" "}
+            skipped for another reason
           </p>
           <div className="mt-4">
             <Pillbox days={care.pillbox} today={istDate(now)} />
@@ -92,97 +102,108 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
 
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
           <div className="flex flex-col gap-10">
-          <section aria-labelledby="today-h">
-            <h2 id="today-h" className="h-section">
-              Today
-            </h2>
-            {!can("mark_dose") && <p className="mt-1 text-sm text-muted">In supported mode only the caretaker marks doses.</p>}
-            <ol className="mt-4 flex flex-col gap-3" role="list">
-              {care.todayDoses.map((d) => (
-                <li key={d.id} className="card flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex items-center gap-3">
-                    <Pill look={d.medicine.pill_look} />
-                    <div>
-                      <p className="font-semibold">
-                        {fmtTime(d.scheduled_at)} · {d.medicine.name}
-                        {d.medicine.is_critical && <span className="ml-2 badge bg-[#FBEDEC] text-xs text-danger">Critical</span>}
-                      </p>
-                      <p className="text-sm text-muted">{d.medicine.dose_text}</p>
-                      <p className="mt-1 text-sm">
-                        <span className={`badge text-xs ${STATUS_STYLE[d.display]}`}>{d.display === "due" ? "Due now" : d.display[0].toUpperCase() + d.display.slice(1)}</span>
-                        {d.markedByName && d.marked_at && (
-                          <span className="ml-2 text-muted">
-                            by {d.markedByName} at {fmtTime(d.marked_at)}
+            <section aria-labelledby="today-h">
+              <h2 id="today-h" className="h-section">
+                Today
+              </h2>
+              {!can("mark_dose") && <p className="mt-1 text-sm text-muted">In supported mode only the caretaker marks doses.</p>}
+              <ol className="mt-4 flex flex-col gap-3" role="list">
+                {care.todayDoses.map((d) => (
+                  <li key={d.id} className="card flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-3">
+                      <Pill look={d.medicine.pill_look} />
+                      <div>
+                        <p className="font-semibold">
+                          {fmtTime(d.scheduled_at)} · {d.medicine.name}
+                          {d.medicine.is_critical && <span className="ml-2 badge bg-[#FBEDEC] text-xs text-danger">Critical</span>}
+                        </p>
+                        <p className="text-sm text-muted">{d.medicine.dose_text}</p>
+                        <p className="mt-1 text-sm">
+                          <span className={`badge text-xs ${STATUS_STYLE[d.display]}`}>
+                            {d.display === "due" ? "Due now" : d.display[0].toUpperCase() + d.display.slice(1)}
                           </span>
-                        )}
-                        {d.reason && <span className="ml-2 text-muted">· {d.reason.replace(/_/g, " ")}</span>}
-                      </p>
-                    </div>
-                  </div>
-                  {isOpen(d) && can("mark_dose") && <MarkDose doseId={d.id} label={`${d.medicine.name} at ${fmtTime(d.scheduled_at)}`} />}
-                </li>
-              ))}
-              {!care.todayDoses.length && (
-                <li className="card flex flex-col items-center gap-3 p-6 text-center text-muted">
-                  <img src="/brand/illustrations/nothing-scheduled.svg" alt="" width={240} height={200} className="h-28 w-auto" />
-                  No medicines scheduled today.
-                </li>
-              )}
-            </ol>
-          </section>
-
-          <section aria-labelledby="med-h">
-            <h2 id="med-h" className="h-section">
-              Medicines
-            </h2>
-            <p className="mt-1 text-sm text-muted">{flowHint}</p>
-            <ul className="mt-4 flex flex-col gap-3" role="list">
-              {care.meds
-                .filter((m) => m.active)
-                .map((m) => {
-                  const r = care.refills.find((x) => x.med.id === m.id);
-                  return (
-                    <li key={m.id} className="card p-4">
-                      <div className="flex flex-wrap items-center gap-3">
-                        <Pill look={m.pill_look} />
-                        <div className="flex-1">
-                          <p className="font-semibold">
-                            {m.name} <span className="font-normal text-muted">· {m.dose_text}</span>
-                            {m.is_critical && <span className="ml-2 badge bg-[#FBEDEC] text-xs text-danger">Critical</span>}
-                          </p>
-                          <p className="text-sm text-muted">
-                            {m.times.join(", ")} · {m.instructions || "No instructions"} · {m.stock_count} in stock
-                            {r && Number.isFinite(r.daysLeft) && <> · {r.daysLeft} days left</>}
-                          </p>
-                        </div>
+                          {d.markedByName && d.marked_at && (
+                            <span className="ml-2 text-muted">
+                              by {d.markedByName} at {fmtTime(d.marked_at)}
+                            </span>
+                          )}
+                          {d.reason && <span className="ml-2 text-muted">· {d.reason.replace(/_/g, " ")}</span>}
+                        </p>
                       </div>
-                      {can("edit_medicine") && (
-                        <details className="mt-3">
-                          <summary className="min-h-11 cursor-pointer content-center text-sm font-semibold text-primary">Change {m.name}</summary>
-                          <div className="mt-3">
-                            <MedicineForm
-                              elderId={elder.id}
-                              approver={approver}
-                              flowHint={flowHint}
-                              canRemove
-                              initial={{ id: m.id, name: m.name, doseText: m.dose_text, times: m.times, pillLook: m.pill_look, instructions: m.instructions, stockCount: m.stock_count, isCritical: m.is_critical }}
-                            />
+                    </div>
+                    {isOpen(d) && can("mark_dose") && <MarkDose doseId={d.id} label={`${d.medicine.name} at ${fmtTime(d.scheduled_at)}`} />}
+                  </li>
+                ))}
+                {!care.todayDoses.length && (
+                  <li className="card flex flex-col items-center gap-3 p-6 text-center text-muted">
+                    <img src="/brand/illustrations/nothing-scheduled.svg" alt="" width={240} height={200} className="h-28 w-auto" />
+                    No medicines scheduled today.
+                  </li>
+                )}
+              </ol>
+            </section>
+
+            <section aria-labelledby="med-h">
+              <h2 id="med-h" className="h-section">
+                Medicines
+              </h2>
+              <p className="mt-1 text-sm text-muted">{flowHint}</p>
+              <ul className="mt-4 flex flex-col gap-3" role="list">
+                {care.meds
+                  .filter((m) => m.active)
+                  .map((m) => {
+                    const r = care.refills.find((x) => x.med.id === m.id);
+                    return (
+                      <li key={m.id} className="card p-4">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <Pill look={m.pill_look} />
+                          <div className="flex-1">
+                            <p className="font-semibold">
+                              {m.name} <span className="font-normal text-muted">· {m.dose_text}</span>
+                              {m.is_critical && <span className="ml-2 badge bg-[#FBEDEC] text-xs text-danger">Critical</span>}
+                            </p>
+                            <p className="text-sm text-muted">
+                              {m.times.join(", ")} · {m.instructions || "No instructions"} · {m.stock_count} in stock
+                              {r && Number.isFinite(r.daysLeft) && <> · {r.daysLeft} days left</>}
+                            </p>
                           </div>
-                        </details>
-                      )}
-                    </li>
-                  );
-                })}
-            </ul>
-            {can("edit_medicine") && (
-              <details className="card mt-4 p-4">
-                <summary className="min-h-11 cursor-pointer content-center font-semibold text-primary">Add a medicine</summary>
-                <div className="mt-4">
-                  <MedicineForm elderId={elder.id} initial={null} approver={approver} flowHint={flowHint} canRemove={false} />
-                </div>
-              </details>
-            )}
-          </section>
+                        </div>
+                        {can("edit_medicine") && (
+                          <details className="mt-3">
+                            <summary className="min-h-11 cursor-pointer content-center text-sm font-semibold text-primary">Change {m.name}</summary>
+                            <div className="mt-3">
+                              <MedicineForm
+                                elderId={elder.id}
+                                approver={approver}
+                                flowHint={flowHint}
+                                canRemove
+                                initial={{
+                                  id: m.id,
+                                  name: m.name,
+                                  doseText: m.dose_text,
+                                  times: m.times,
+                                  pillLook: m.pill_look,
+                                  instructions: m.instructions,
+                                  stockCount: m.stock_count,
+                                  isCritical: m.is_critical,
+                                }}
+                              />
+                            </div>
+                          </details>
+                        )}
+                      </li>
+                    );
+                  })}
+              </ul>
+              {can("edit_medicine") && (
+                <details className="card mt-4 p-4">
+                  <summary className="min-h-11 cursor-pointer content-center font-semibold text-primary">Add a medicine</summary>
+                  <div className="mt-4">
+                    <MedicineForm elderId={elder.id} initial={null} approver={approver} flowHint={flowHint} canRemove={false} />
+                  </div>
+                </details>
+              )}
+            </section>
           </div>
 
           <div className="flex flex-col gap-6">
@@ -204,7 +225,10 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
                         {can("approve_change") ? (
                           <ProposalDecision id={p.id} />
                         ) : (
-                          <p className="text-sm text-muted">Waiting for {elder.autonomy_mode === "independent" ? elder.display_name : (partner?.display_name ?? "the decision partner")} to decide.</p>
+                          <p className="text-sm text-muted">
+                            Waiting for {elder.autonomy_mode === "independent" ? elder.display_name : (partner?.display_name ?? "the decision partner")} to
+                            decide.
+                          </p>
                         )}
                       </div>
                     </li>
@@ -237,40 +261,46 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
               </ul>
             </section>
 
-          <section aria-labelledby="appt-h" className="rounded-[32px] bg-[linear-gradient(160deg,#EEF4F0_0%,#E7EFE9_100%)] p-5 sm:p-6">
-            <h2 id="appt-h" className="h-section">
-              Appointments
-            </h2>
-            <ul className="mt-4 flex flex-col gap-3" role="list">
-              {care.appointments.map((a) => (
-                <li key={a.id} className="card flex items-start justify-between gap-3 p-4">
-                  <div>
-                    <p className="font-semibold">
-                      {a.doctor_name}
-                      {a.specialty && <span className="font-normal text-muted"> · {a.specialty}</span>}
-                    </p>
-                    <p className="text-sm">{fmtDateTime(a.starts_at)}</p>
-                    {a.location && <p className="text-sm text-muted">{a.location}</p>}
-                    {a.notes && <p className="mt-1 text-sm">{a.notes}</p>}
-                    <Link href={`/circle/${id}/brief/${a.id}`} className="btn-ghost mt-1 px-0 text-sm font-semibold">
-                      Doctor Visit Brief →
-                    </Link>
-                      <CalendarLink title={`${elder.display_name}: ${a.doctor_name}`} startsAt={a.starts_at} location={a.location} details={a.notes} className="text-sm" />
+            <section aria-labelledby="appt-h" className="rounded-[32px] bg-[linear-gradient(160deg,#EEF4F0_0%,#E7EFE9_100%)] p-5 sm:p-6">
+              <h2 id="appt-h" className="h-section">
+                Appointments
+              </h2>
+              <ul className="mt-4 flex flex-col gap-3" role="list">
+                {care.appointments.map((a) => (
+                  <li key={a.id} className="card flex items-start justify-between gap-3 p-4">
+                    <div>
+                      <p className="font-semibold">
+                        {a.doctor_name}
+                        {a.specialty && <span className="font-normal text-muted"> · {a.specialty}</span>}
+                      </p>
+                      <p className="text-sm">{fmtDateTime(a.starts_at)}</p>
+                      {a.location && <p className="text-sm text-muted">{a.location}</p>}
+                      {a.notes && <p className="mt-1 text-sm">{a.notes}</p>}
+                      <Link href={`/circle/${id}/brief/${a.id}`} className="btn-ghost mt-1 px-0 text-sm font-semibold">
+                        Doctor Visit Brief →
+                      </Link>
+                      <CalendarLink
+                        title={`${elder.display_name}: ${a.doctor_name}`}
+                        startsAt={a.starts_at}
+                        location={a.location}
+                        details={a.notes}
+                        className="text-sm"
+                      />
+                    </div>
+                    {can("edit_medicine") && <RemoveAppointment elderId={elder.id} id={a.id} label={a.doctor_name} />}
+                  </li>
+                ))}
+                {!care.appointments.length && <li className="text-muted">No upcoming appointments.</li>}
+              </ul>
+              {can("edit_medicine") && (
+                <details className="card mt-4 p-4">
+                  <summary className="min-h-11 cursor-pointer content-center font-semibold text-primary">Add an appointment</summary>
+                  <div className="mt-4">
+                    <AppointmentForm elderId={elder.id} />
                   </div>
-                  {can("edit_medicine") && <RemoveAppointment elderId={elder.id} id={a.id} label={a.doctor_name} />}
-                </li>
-              ))}
-              {!care.appointments.length && <li className="text-muted">No upcoming appointments.</li>}
-            </ul>
-            {can("edit_medicine") && (
-              <details className="card mt-4 p-4">
-                <summary className="min-h-11 cursor-pointer content-center font-semibold text-primary">Add an appointment</summary>
-                <div className="mt-4">
-                  <AppointmentForm elderId={elder.id} />
-                </div>
-              </details>
-            )}
-          </section>
+                </details>
+              )}
+            </section>
           </div>
         </div>
 
@@ -287,7 +317,15 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
             elderId={elder.id}
             meId={actor.memberId}
             canManage={can("manage_members")}
-            members={members.map((m) => ({ id: m.id, name: m.display_name, role: m.role, roleLabel: ROLE_LABEL[m.role], email: null, onDuty: m.is_on_duty, photo: circle.is_demo ? demoPhoto(m.display_name) : null }))}
+            members={members.map((m) => ({
+              id: m.id,
+              name: m.display_name,
+              role: m.role,
+              roleLabel: ROLE_LABEL[m.role],
+              email: null,
+              onDuty: m.is_on_duty,
+              photo: circle.is_demo ? demoPhoto(m.display_name) : null,
+            }))}
           />
         </section>
       </main>

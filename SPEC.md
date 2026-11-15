@@ -3,22 +3,22 @@
 > Single source of truth for the build. Claude Code: read this fully before writing code. Follow the phases in order. Do not add features not listed here without asking.
 
 **Hackathon:** Catalyst x PromptWars (solo). Vertical: **Elderly Care & Medication Management Platform**.
-**One-line pitch (show on homepage):** *Saathi is a shared medication & appointment platform for elders, caretakers and family — it adapts to how independent the elder is, and never stops treating her as the decision-maker.*
+**One-line pitch (show on homepage):** _Saathi is a shared medication & appointment platform for elders, caretakers and family — it adapts to how independent the elder is, and never stops treating her as the decision-maker._
 
 ---
 
 ## 1. Problem statement → feature mapping (put this table in README too)
 
-| PS requirement | Saathi feature |
-|---|---|
-| Shared ecosystem: elder, caretakers, family | Care Circle per elder with roles (Elder, Caretaker, Family, Decision Partner) |
-| Secure, passcode-based access | Per-member passcode (bcrypt-hashed), lockout after 5 tries, signed httpOnly session |
-| View/add/edit/manage medication schedules | Medicine CRUD with times, dose, pill look (colour/shape), stock count, critical flag |
-| Track adherence | Dose log, adherence %, 7-day pillbox visual |
-| Monitor upcoming doctor appointments | Appointments list + auto-generated Doctor Visit Brief |
-| Proactive email reminders: missed meds, upcoming doses, appointments | Scheduler tick every 5 min → upcoming-dose, missed-dose escalation, appointment (24h & 2h) emails with one-click signed action links |
+| PS requirement                                                          | Saathi feature                                                                                                                       |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Shared ecosystem: elder, caretakers, family                             | Care Circle per elder with roles (Elder, Caretaker, Family, Decision Partner)                                                        |
+| Secure, passcode-based access                                           | Per-member passcode (bcrypt-hashed), lockout after 5 tries, signed httpOnly session                                                  |
+| View/add/edit/manage medication schedules                               | Medicine CRUD with times, dose, pill look (colour/shape), stock count, critical flag                                                 |
+| Track adherence                                                         | Dose log, adherence %, 7-day pillbox visual                                                                                          |
+| Monitor upcoming doctor appointments                                    | Appointments list + auto-generated Doctor Visit Brief                                                                                |
+| Proactive email reminders: missed meds, upcoming doses, appointments    | Scheduler tick every 5 min → upcoming-dose, missed-dose escalation, appointment (24h & 2h) emails with one-click signed action links |
 | Beyond a basic reminder app; smart, accessible, reliable, collaborative | Autonomy modes, reason-aware escalation, change proposals, double-dose guard, refill forecasting, multilingual read-aloud elder view |
-| Elder remains at the centre of decisions | Elder approves changes (Independent mode), "I chose to skip" respected, every change visible to her + audit trail |
+| Elder remains at the centre of decisions                                | Elder approves changes (Independent mode), "I chose to skip" respected, every change visible to her + audit trail                    |
 
 ---
 
@@ -34,6 +34,7 @@
 - Deploy: **Vercel**. Scheduler: **external pinger (cron-job.org) every 5 min** → `POST /api/cron/tick` with header `x-cron-secret`. (Vercel Hobby cron is not frequent enough.) Also run the missed-dose check lazily when a care-circle page loads.
 
 `.env.example` (commit this; never commit `.env.local`):
+
 ```
 SUPABASE_URL=
 SUPABASE_SERVICE_ROLE_KEY=
@@ -47,6 +48,7 @@ GEMINI_MODEL=gemini-2.5-flash
 APP_BASE_URL=http://localhost:3000
 DEMO_EMAIL_SINK=          # all demo-circle emails go here, never to real people
 ```
+
 No `NEXT_PUBLIC_` prefix on any secret.
 
 ---
@@ -55,26 +57,28 @@ No `NEXT_PUBLIC_` prefix on any secret.
 
 Each elder profile has `autonomy_mode`, chosen with the family:
 
-| Mode | Who | Who can mark doses | Medicine changes | Missed-dose escalation |
-|---|---|---|---|---|
-| `independent` | Sharp, uses phone | Elder (others can too, logged) | **Proposal → elder approves/declines** | Elder at T+30m → caretaker on duty at T+60m → family at T+120m |
-| `assisted` | Some forgetfulness | Elder or caretaker | Applied immediately; elder gets plain-language "What changed" card (read-aloud) | Elder + caretaker at T+20m → family at T+60m |
-| `supported` | Dementia / frail | Caretaker only (elder view is a read-only display) | **Decision Partner** approves | Caretaker at T+10m → decision partner + family at T+30m |
+| Mode          | Who                | Who can mark doses                                 | Medicine changes                                                                | Missed-dose escalation                                         |
+| ------------- | ------------------ | -------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `independent` | Sharp, uses phone  | Elder (others can too, logged)                     | **Proposal → elder approves/declines**                                          | Elder at T+30m → caretaker on duty at T+60m → family at T+120m |
+| `assisted`    | Some forgetfulness | Elder or caretaker                                 | Applied immediately; elder gets plain-language "What changed" card (read-aloud) | Elder + caretaker at T+20m → family at T+60m                   |
+| `supported`   | Dementia / frail   | Caretaker only (elder view is a read-only display) | **Decision Partner** approves                                                   | Caretaker at T+10m → decision partner + family at T+30m        |
 
 Global rules (all modes):
+
 - Change tagged `source = doctor_instruction` is **applied immediately** (never blocked), elder notified, logged.
 - Elder's "I chose to skip" is respected: logged, **no escalation**, unless medicine `is_critical` → notify caretaker gently (not an alarm).
 - Any escalation stops for everyone once someone resolves it (dose marked, or "I've handled it" clicked). No duplicate panic.
 
 ### Missed-dose reasons (one-tap, big buttons)
-| Reason | Action |
-|---|---|
-| `ran_out` | Create refill task assigned to on-duty member; no alarm |
-| `side_effect` | Flag on next appointment's Doctor Brief; gentle note to caretaker |
-| `forgot` | Continue normal escalation ladder |
-| `chose_to_skip` | Respect (see global rule) |
-| `not_feeling_well` | Notify caretaker; flag for doctor brief |
-| no reason / no response | Escalation ladder per mode |
+
+| Reason                  | Action                                                            |
+| ----------------------- | ----------------------------------------------------------------- |
+| `ran_out`               | Create refill task assigned to on-duty member; no alarm           |
+| `side_effect`           | Flag on next appointment's Doctor Brief; gentle note to caretaker |
+| `forgot`                | Continue normal escalation ladder                                 |
+| `chose_to_skip`         | Respect (see global rule)                                         |
+| `not_feeling_well`      | Notify caretaker; flag for doctor brief                           |
+| no reason / no response | Escalation ladder per mode                                        |
 
 ---
 
@@ -107,6 +111,7 @@ tasks(id, circle_id, kind ('refill'|'followup'), title, assigned_to member_id, d
 audit_log(id, circle_id, actor member_id, action text, entity text, entity_id uuid, before jsonb, after jsonb, created_at)  -- append-only: no update/delete in app code
 action_tokens(jti text pk, purpose text, dose_event_id, member_id, expires_at, used_at null)  -- single-use email links
 ```
+
 RLS enabled on all tables, no policies. Index `dose_events(scheduled_at, status)`.
 
 ---
@@ -114,9 +119,11 @@ RLS enabled on all tables, no policies. Index `dose_events(scheduled_at, status)
 ## 6. Pages / UX
 
 ### Landing `/`
+
 - Pitch line, 3-line "how it works", then **"Try the demo as…"** cards: **Kamala (Grandma, 68, Independent)**, **Priya (Daughter)**, **Nurse Lakshmi (Caretaker)**, plus a second elder **Joseph (84, Supported)** with son **Ravi (Decision Partner)**. One click → demo session (no passcode typing). Also "Create your own care circle" (real flow with passcodes).
 
 ### Elder view `/circle/[id]/today` (role = elder)
+
 - **No nav, no sidebar.** One huge card for the next dose: time, medicine, dose, pill look (coloured pill icon), instructions. Big **"I took it"** button + **"Not now"** → reason buttons.
 - 🔊 Read-aloud button (Web Speech API, language = elder's preferred_language; graceful fallback text if no voice installed).
 - Pending change proposals shown as "Priya wants to change X → Y. [Approve] [Ask my doctor]" (independent mode). In assisted mode: "What changed today" card.
@@ -124,6 +131,7 @@ RLS enabled on all tables, no policies. Index `dose_events(scheduled_at, status)
 - Text ≥ 22px, AAA contrast, language switcher (top right, big).
 
 ### Family / caretaker view `/circle/[id]`
+
 - Elder switcher (Kamala / Joseph), mode badge with one-line explanation.
 - **Signature visual: 7-day pillbox** (Mon–Sun × Morning/Noon/Night compartments; filled = taken, empty-outlined = upcoming, amber = skipped w/ reason, red = missed). Each cell keyboard-focusable with aria-label.
 - Today timeline, alerts feed (escalation history: "8:30 email to Kamala → 9:00 email to Lakshmi → resolved by Lakshmi 9:07"), tasks (refills), appointments, adherence %.
@@ -134,6 +142,7 @@ RLS enabled on all tables, no policies. Index `dose_events(scheduled_at, status)
 - **Doctor Visit Brief** per appointment: Gemini summary of adherence, reported side effects, skip reasons, suggested questions — in English + elder's language. Zod-validate Gemini JSON; fallback to deterministic template if Gemini fails.
 
 ### Demo controls (jury can't wait an hour) — visible only in demo circle
+
 - **"⏩ Time machine" panel:** "Simulate: Kamala missed 8 AM dose" / "Joseph missed 1 PM dose" / "Run scheduler now". Shows the escalation playing out differently per mode, plus **email previews** rendered in-app (actual emails go only to DEMO_EMAIL_SINK).
 - "Reset demo" button.
 
@@ -192,6 +201,7 @@ Semantic HTML, labels on all inputs, visible focus rings, skip link, full keyboa
 ## 12. Design direction
 
 Warm, calm, humane — **not** hospital blue, not neon, not a generic purple-gradient dashboard.
+
 - Palette tokens: background cream `#FBF7F0`, surface `#FFFFFF`, ink `#1F2A24`, primary deep green `#1F5C4A`, accent saffron `#E8A33D` (sparingly), danger `#B3261E`, success `#2E7D4F`, muted `#6B7468`. Verify contrast.
 - Type: a humanist serif for headings (e.g. Fraunces) + clean sans for UI (e.g. Inter / Noto Sans for Indic scripts — ensure Noto Sans Devanagari/Tamil/Telugu/Kannada/Malayalam load via next/font).
 - Signature elements: the 7-day pillbox, the giant elder "Today" card, the escalation timeline.

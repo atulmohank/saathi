@@ -36,7 +36,11 @@ export function MarkDose({ doseId, label }: { doseId: string; label: string }) {
   async function mark(status: "taken" | "skipped") {
     setBusy(true);
     setErr(null);
-    const { ok, data } = await post<{ note?: string }>("/api/doses/mark", { doseEventId: doseId, status, reason: status === "skipped" ? reason || null : null });
+    const { ok, data } = await post<{ note?: string }>("/api/doses/mark", {
+      doseEventId: doseId,
+      status,
+      reason: status === "skipped" ? reason || null : null,
+    });
     setBusy(false);
     if (!ok) return setErr(data.error ?? "Could not save.");
     setMsg(data.note ?? "Saved.");
@@ -52,7 +56,12 @@ export function MarkDose({ doseId, label }: { doseId: string; label: string }) {
         <label className="sr-only" htmlFor={`r-${doseId}`}>
           Reason for skipping {label}
         </label>
-        <select id={`r-${doseId}`} value={reason} onChange={(e) => setReason(e.target.value)} className="min-h-11 rounded-lg border border-[#C9C2B8] bg-surface px-2 text-sm">
+        <select
+          id={`r-${doseId}`}
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          className="min-h-11 rounded-lg border border-[#C9C2B8] bg-surface px-2 text-sm"
+        >
           <option value="">Skip reason…</option>
           {MISS_REASONS.map((r) => (
             <option key={r} value={r}>
@@ -60,7 +69,13 @@ export function MarkDose({ doseId, label }: { doseId: string; label: string }) {
             </option>
           ))}
         </select>
-        <button type="button" className="btn-secondary min-h-11 px-4 text-sm" disabled={busy || !reason} onClick={() => mark("skipped")} aria-label={`Mark ${label} as skipped`}>
+        <button
+          type="button"
+          className="btn-secondary min-h-11 px-4 text-sm"
+          disabled={busy || !reason}
+          onClick={() => mark("skipped")}
+          aria-label={`Mark ${label} as skipped`}
+        >
           Skip
         </button>
       </div>
@@ -110,7 +125,19 @@ const FLOW_MSG: Record<string, (approver: string) => string> = {
   needs_decision_partner: (a) => `Sent to ${a} to approve.`,
 };
 
-export function MedicineForm({ elderId, initial, approver, flowHint, canRemove }: { elderId: string; initial: MedValues | null; approver: string; flowHint: string; canRemove: boolean }) {
+export function MedicineForm({
+  elderId,
+  initial,
+  approver,
+  flowHint,
+  canRemove,
+}: {
+  elderId: string;
+  initial: MedValues | null;
+  approver: string;
+  flowHint: string;
+  canRemove: boolean;
+}) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -150,9 +177,7 @@ export function MedicineForm({ elderId, initial, approver, flowHint, canRemove }
     let medicine: Record<string, unknown> = full;
     if (initial) {
       // Send only what changed so the elder sees a clear, small request.
-      medicine = Object.fromEntries(
-        Object.entries(full).filter(([k, v]) => JSON.stringify(v) !== JSON.stringify(initial[k as keyof MedValues])),
-      );
+      medicine = Object.fromEntries(Object.entries(full).filter(([k, v]) => JSON.stringify(v) !== JSON.stringify(initial[k as keyof MedValues])));
       if (!Object.keys(medicine).length) return setMsg("Nothing changed.");
     }
     send(medicine, f.get("doctor") === "on");
@@ -170,7 +195,15 @@ export function MedicineForm({ elderId, initial, approver, flowHint, canRemove }
       </label>
       <label className="field">
         Times (24-hour, comma separated)
-        <input name="times" required defaultValue={initial?.times.join(", ")} placeholder="08:00, 20:00" inputMode="numeric" autoComplete="off" aria-describedby={`times-h-${idp}`} />
+        <input
+          name="times"
+          required
+          defaultValue={initial?.times.join(", ")}
+          placeholder="08:00, 20:00"
+          inputMode="numeric"
+          autoComplete="off"
+          aria-describedby={`times-h-${idp}`}
+        />
         <span id={`times-h-${idp}`} className="text-xs font-normal text-muted">
           Example: 08:00, 20:00
         </span>
@@ -201,9 +234,14 @@ export function MedicineForm({ elderId, initial, approver, flowHint, canRemove }
           {initial ? "Save medicine" : "Add medicine"}
         </button>
         {initial && canRemove && (
-          <button type="button" className="btn-danger" disabled={busy} onClick={() => {
+          <button
+            type="button"
+            className="btn-danger"
+            disabled={busy}
+            onClick={() => {
               if (confirm(`Stop ${initial.name}? ${flowHint}`)) send({ active: false }, false);
-            }}>
+            }}
+          >
             Stop medicine
           </button>
         )}

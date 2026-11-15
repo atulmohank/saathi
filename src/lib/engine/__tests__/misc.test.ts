@@ -64,9 +64,21 @@ describe("adherenceRate", () => {
       [d(10, "taken"), d(11, "missed"), d(12, "skipped", "ran_out"), d(13, "skipped", "chose_to_skip")],
       { taken: 1, missed: 1, choseToSkip: 1, skippedOther: 1, overallRate: 25, rateExcludingChoices: 33.3 },
     ],
-    ["pending ignored", [d(10, "taken"), d(15, "pending")], { taken: 1, missed: 0, choseToSkip: 0, skippedOther: 0, overallRate: 100, rateExcludingChoices: 100 }],
-    ["outside window ignored", [d(1, "missed"), d(10, "taken")], { taken: 1, missed: 0, choseToSkip: 0, skippedOther: 0, overallRate: 100, rateExcludingChoices: 100 }],
-    ["only own choices", [d(10, "skipped", "chose_to_skip")], { taken: 0, missed: 0, choseToSkip: 1, skippedOther: 0, overallRate: 0, rateExcludingChoices: null }],
+    [
+      "pending ignored",
+      [d(10, "taken"), d(15, "pending")],
+      { taken: 1, missed: 0, choseToSkip: 0, skippedOther: 0, overallRate: 100, rateExcludingChoices: 100 },
+    ],
+    [
+      "outside window ignored",
+      [d(1, "missed"), d(10, "taken")],
+      { taken: 1, missed: 0, choseToSkip: 0, skippedOther: 0, overallRate: 100, rateExcludingChoices: 100 },
+    ],
+    [
+      "only own choices",
+      [d(10, "skipped", "chose_to_skip")],
+      { taken: 0, missed: 0, choseToSkip: 1, skippedOther: 0, overallRate: 0, rateExcludingChoices: null },
+    ],
   ] as [string, AdherenceLog[], object][])("%s", (_n, logs, expected) => {
     expect(adherenceRate(logs, win)).toEqual(expected);
   });
@@ -97,7 +109,14 @@ describe("expandSchedule (IST)", () => {
     ["inactive medicine skipped", [{ id: "m1", times: ["08:00"], active: false }], 0],
     ["invalid time skipped", [{ id: "m1", times: ["8am", "25:00", "08:00"], active: true }], 1],
     ["duplicate times collapse", [{ id: "m1", times: ["08:00", "08:00"], active: true }], 1],
-    ["two meds same time", [{ id: "a", times: ["08:00"], active: true }, { id: "b", times: ["08:00"], active: true }], 2],
+    [
+      "two meds same time",
+      [
+        { id: "a", times: ["08:00"], active: true },
+        { id: "b", times: ["08:00"], active: true },
+      ],
+      2,
+    ],
   ] as [string, { id: string; times: string[]; active: boolean }[], number][])("%s", (_n, meds, n) => {
     expect(expandSchedule(meds, "2026-11-15", "2026-11-15")).toHaveLength(n);
   });

@@ -22,7 +22,14 @@ export async function escalationFeed(circleId: string, names: (id: string | null
     .in("action", ["demo_simulated_miss", "escalation_email", "dose_taken", "dose_handled"])
     .order("created_at", { ascending: false })
     .limit(80);
-  const rows = (data ?? []) as { id: string; action: string; entity_id: string; actor: string | null; after: Record<string, string> | null; created_at: string }[];
+  const rows = (data ?? []) as {
+    id: string;
+    action: string;
+    entity_id: string;
+    actor: string | null;
+    after: Record<string, string> | null;
+    created_at: string;
+  }[];
   const escalated = [...new Set(rows.filter((r) => r.action === "escalation_email" || r.action === "demo_simulated_miss").map((r) => r.entity_id))].slice(0, 3);
 
   return escalated.map((doseId) => {
@@ -33,8 +40,7 @@ export async function escalationFeed(circleId: string, names: (id: string | null
     const title = first.med ? `${first.elder}'s ${first.med}` : "Dose";
     const items = rs.slice(Math.max(0, lastStart)).map((r): FeedItem => {
       const a = r.after ?? {};
-      if (r.action === "demo_simulated_miss")
-        return { id: r.id, at: a.at, time: fmtTime(a.at), kind: "start", text: `${a.elder}'s ${a.med} not marked` };
+      if (r.action === "demo_simulated_miss") return { id: r.id, at: a.at, time: fmtTime(a.at), kind: "start", text: `${a.elder}'s ${a.med} not marked` };
       if (r.action === "escalation_email")
         return {
           id: r.id,
@@ -64,5 +70,14 @@ export async function recentEmails(circleId: string) {
     .eq("circle_id", circleId)
     .order("created_at", { ascending: false })
     .limit(6);
-  return (data ?? []) as { id: string; subject: string; body_text: string; body_html: string; sent: boolean; error: string | null; created_at: string; kind: string }[];
+  return (data ?? []) as {
+    id: string;
+    subject: string;
+    body_text: string;
+    body_html: string;
+    sent: boolean;
+    error: string | null;
+    created_at: string;
+    kind: string;
+  }[];
 }

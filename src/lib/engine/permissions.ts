@@ -22,26 +22,20 @@ export function canPerform(role: Role, mode: Mode, action: Action): PermissionRe
 
     case "mark_dose":
       if (mode === "supported") {
-        return role === "caretaker"
-          ? allow("In supported mode the caretaker marks doses.")
-          : deny("In supported mode only the caretaker marks doses.");
+        return role === "caretaker" ? allow("In supported mode the caretaker marks doses.") : deny("In supported mode only the caretaker marks doses.");
       }
       if (role === "elder") return allow("She marks her own doses.");
       return allow("Others may mark a dose; it is logged with their name.");
 
     case "edit_medicine":
       if (role === "elder") {
-        return mode === "supported"
-          ? deny("In supported mode medicine changes go through the decision partner.")
-          : allow("She can change her own medicines.");
+        return mode === "supported" ? deny("In supported mode medicine changes go through the decision partner.") : allow("She can change her own medicines.");
       }
       return allow("Can suggest or make changes; the change flow decides if approval is needed.");
 
     case "approve_change":
       if (mode === "independent") {
-        return role === "elder"
-          ? allow("In independent mode she decides on every change.")
-          : deny("In independent mode only she can approve changes.");
+        return role === "elder" ? allow("In independent mode she decides on every change.") : deny("In independent mode only she can approve changes.");
       }
       if (mode === "supported") {
         return role === "decision_partner"
@@ -58,9 +52,7 @@ export function canPerform(role: Role, mode: Mode, action: Action): PermissionRe
           : deny("Only she or her family can change this.");
       }
       if (mode === "assisted") {
-        return role === "caretaker"
-          ? deny("Caretakers cannot change the circle or profile.")
-          : allow("She, her family or decision partner can change this.");
+        return role === "caretaker" ? deny("Caretakers cannot change the circle or profile.") : allow("She, her family or decision partner can change this.");
       }
       return role === "family" || role === "decision_partner"
         ? allow("In supported mode family and the decision partner manage this.")

@@ -45,13 +45,17 @@ export default function Home() {
         <section aria-labelledby="hero-h" className="relative">
           <div className="wrap relative grid items-center gap-10 pb-0 pt-4 lg:grid-cols-[1.05fr_1fr] lg:gap-6 lg:pt-2">
             <div className="relative z-10">
-              <h1 id="hero-h" className="text-[2.75rem] font-medium leading-[1.02] text-ink sm:text-[4.25rem]" style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}>
+              <h1
+                id="hero-h"
+                className="text-[2.75rem] font-medium leading-[1.02] text-ink sm:text-[4.25rem]"
+                style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+              >
                 Medicines and doctor visits, shared by the whole family
               </h1>
               <p className="script mt-3 -rotate-3 text-[2.6rem] sm:text-[3.25rem]">care, gently</p>
               <p className="mt-6 max-w-[34rem] text-lg text-ink-soft">
-                Medication reminders, adherence tracking and doctor appointments — shared securely between elders, caretakers and family, with email
-                alerts when a dose is missed.
+                Medication reminders, adherence tracking and doctor appointments — shared securely between elders, caretakers and family, with email alerts when
+                a dose is missed.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <a href="#try" className="btn-saffron min-h-14 px-8 text-lg">
@@ -73,10 +77,15 @@ export default function Home() {
             >
               Saathi
             </p>
-            <p className="absolute left-[6%] top-[-6%] -rotate-6 font-[family-name:var(--font-hand-deva)] text-[clamp(2.25rem,6vw,4.5rem)] font-bold text-saffron-ink">साथी</p>
+            <p className="absolute left-[6%] top-[-6%] -rotate-6 font-[family-name:var(--font-hand-deva)] text-[clamp(2.25rem,6vw,4.5rem)] font-bold text-saffron-ink">
+              साथी
+            </p>
           </div>
           <p className="wrap pb-16 pt-6 text-center text-sm text-muted">
-            <span lang="hi" className="system-indic">साथी</span> (Saathi) means “companion” in Hindi.
+            <span lang="hi" className="system-indic">
+              साथी
+            </span>{" "}
+            (Saathi) means “companion” in Hindi.
           </p>
         </section>
 
@@ -101,8 +110,17 @@ export default function Home() {
 
         {/* PHOTO BAND */}
         <section aria-labelledby="band-h" className="relative isolate overflow-hidden">
-          <Image src="/images/care-hands-band.webp" alt="An older person’s hands resting together on a blue sari" fill sizes="100vw" className="-z-10 object-cover" />
-          <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgb(22_63_51/.92)_0%,rgb(22_63_51/.72)_45%,rgb(22_63_51/.15)_100%)]" />
+          <Image
+            src="/images/care-hands-band.webp"
+            alt="An older person’s hands resting together on a blue sari"
+            fill
+            sizes="100vw"
+            className="-z-10 object-cover"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgb(22_63_51/.92)_0%,rgb(22_63_51/.72)_45%,rgb(22_63_51/.15)_100%)]"
+          />
           <div className="wrap on-dark flex min-h-[30rem] items-center py-24 sm:min-h-[36rem]">
             <h2 id="band-h" className="max-w-[16ch] text-[2.5rem] font-medium leading-[1.08] text-white sm:text-[4rem]">
               Missed a dose? The right person knows — and she stays in charge.
@@ -114,7 +132,11 @@ export default function Home() {
         <section id="modes" aria-labelledby="modes-h" className="py-24 sm:py-32">
           <div className="wrap">
             <div className="on-dark relative overflow-hidden rounded-[48px] bg-primary px-6 py-16 text-white sm:px-14 sm:py-20">
-              <span aria-hidden="true" data-text="Modes" className="outline-title absolute -bottom-6 -right-4 text-[clamp(6rem,18vw,16rem)] text-white/15 before:content-[attr(data-text)] md:bottom-auto md:-right-6 md:-top-8" />
+              <span
+                aria-hidden="true"
+                data-text="Modes"
+                className="outline-title absolute -bottom-6 -right-4 text-[clamp(6rem,18vw,16rem)] text-white/15 before:content-[attr(data-text)] md:bottom-auto md:-right-6 md:-top-8"
+              />
               <div aria-hidden="true" className="blob -bottom-24 -left-24 size-80 bg-accent opacity-25" />
               <h2 id="modes-h" className="relative max-w-xl text-[2.25rem] font-medium leading-tight text-white sm:text-[3.25rem]">
                 Three care modes, chosen with the elder
@@ -135,7 +157,9 @@ export default function Home() {
                       {m.ladder.map(([t, who], i) => (
                         <li key={t} className="relative flex items-baseline gap-3 pb-3 pl-6 last:pb-0">
                           <span aria-hidden="true" className={`absolute left-0 top-1.5 size-3 rounded-full ${i === 0 ? "bg-accent" : "bg-danger"}`} />
-                          {i < m.ladder.length - 1 && <span aria-hidden="true" className="absolute left-[5px] top-5 h-[calc(100%-0.75rem)] w-0.5 bg-[#E6DFD8]" />}
+                          {i < m.ladder.length - 1 && (
+                            <span aria-hidden="true" className="absolute left-[5px] top-5 h-[calc(100%-0.75rem)] w-0.5 bg-[#E6DFD8]" />
+                          )}
                           <span className="w-20 shrink-0 text-sm font-semibold text-muted">{t}</span>
                           <span className="text-sm font-medium text-ink">{who}</span>
                         </li>
@@ -145,8 +169,8 @@ export default function Home() {
                 ))}
               </ul>
               <p className="relative mt-10 max-w-3xl text-[#D7E4DC]">
-                In every mode a doctor’s instruction applies at once, “I chose to skip” is respected without alarms, and escalation stops for
-                everyone the moment someone marks the dose.
+                In every mode a doctor’s instruction applies at once, “I chose to skip” is respected without alarms, and escalation stops for everyone the
+                moment someone marks the dose.
               </p>
             </div>
           </div>
@@ -171,7 +195,11 @@ export default function Home() {
         </section>
 
         {/* TRY IT — the DEMO / 1234 credentials shown here are intentionally public, for the fictional demo circle only (bcrypt-hashed at seed time). */}
-        <section id="try" aria-labelledby="try-h" className="relative overflow-hidden bg-[linear-gradient(180deg,var(--cream)_0%,var(--sage)_100%)] py-24 sm:py-32">
+        <section
+          id="try"
+          aria-labelledby="try-h"
+          className="relative overflow-hidden bg-[linear-gradient(180deg,var(--cream)_0%,var(--sage)_100%)] py-24 sm:py-32"
+        >
           <div aria-hidden="true" className="blob -right-32 top-20 size-96 bg-peach opacity-70" />
           <div className="wrap relative">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -180,7 +208,9 @@ export default function Home() {
                   Try it as someone in the family
                 </h2>
                 <p className="script mt-2 -rotate-2 text-[2.25rem]">no passcode needed</p>
-                <p className="mt-4 max-w-xl text-lg text-ink-soft">One fictional family, two elders in different care modes. Demo emails go to a test inbox, never to real people.</p>
+                <p className="mt-4 max-w-xl text-lg text-ink-soft">
+                  One fictional family, two elders in different care modes. Demo emails go to a test inbox, never to real people.
+                </p>
               </div>
               <div className="card max-w-sm p-6">
                 <p className="font-semibold text-ink">Prefer the real passcode sign-in?</p>
@@ -221,7 +251,11 @@ export default function Home() {
               From Unsplash (Unsplash Licence), shown as demo personas — not real users:{" "}
               {credits.map(([n, u], i) => (
                 <span key={u}>
-                  <a href={`https://unsplash.com/@${u}`} className="underline decoration-white/30 underline-offset-2 hover:decoration-white" rel="noopener noreferrer">
+                  <a
+                    href={`https://unsplash.com/@${u}`}
+                    className="underline decoration-white/30 underline-offset-2 hover:decoration-white"
+                    rel="noopener noreferrer"
+                  >
                     {n}
                   </a>
                   {i < credits.length - 1 ? ", " : "."}
