@@ -19,7 +19,7 @@ export async function seedDemo(sb: SupabaseClient, now = new Date()): Promise<{ 
   await sb.from("care_circles").delete().eq("is_demo", true);
 
   const circle = must(
-    await sb.from("care_circles").insert({ name: "Demo: Kamala & Joseph's circle", is_demo: true }).select("id").single(),
+    await sb.from("care_circles").insert({ name: "Demo: Kamala & Joseph's circle", is_demo: true, code: "DEMO" }).select("id").single(),
     "circle",
   );
   const cid = circle.id as string;

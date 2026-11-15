@@ -43,3 +43,71 @@ describe("other schemas", () => {
     expect(schema.safeParse(value).success).toBe(ok);
   });
 });
+
+import { circleCodeSchema, createCircleSchema } from "../validation";
+import { CODE_ALPHABET, newCircleCode } from "../circle-code";
+
+describe("createCircleSchema", () => {
+  const good = {
+    circleName: "Amma's circle",
+    elder: {
+      displayName: "Amma",
+      age: 78,
+      autonomyMode: "assisted",
+      preferredLanguage: "ta",
+      emergency: { bloodGroup: "B+", allergies: ["Penicillin"], conditions: [], doctorName: "Dr. Rao", doctorPhone: "+91 98765 43210" },
+    },
+    members: [
+      { displayName: "Meena", email: "meena@example.com", role: "family", passcode: "4821" },
+      { displayName: "Amma", email: "", role: "elder", passcode: "1111" },
+    ],
+  };
+  const patch = (fn: (g: typeof good) => void) => {
+    const g = structuredClone(good);
+    fn(g);
+    return g;
+  };
+  it("accepts a valid circle", () => {
+    expect(createCircleSchema.safeParse(good).success).toBe(true);
+  });
+  it.each([
+    ["no members", patch((g) => (g.members = []))],
+    ["two elders", patch((g) => (g.members[0].role = "elder"))],
+    ["duplicate names (case-insensitive)", patch((g) => (g.members[1].displayName = "MEENA"))],
+    ["short passcode", patch((g) => (g.members[0].passcode = "12"))],
+    ["letters in passcode", patch((g) => (g.members[0].passcode = "abcd"))],
+    ["bad email", patch((g) => (g.members[0].email = "meena@"))],
+    ["admin role", patch((g) => (g.members[0].role = "admin"))],
+    ["unknown language", patch((g) => (g.elder.preferredLanguage = "fr"))],
+    ["unknown mode", patch((g) => (g.elder.autonomyMode = "free"))],
+    ["age too low", patch((g) => (g.elder.age = 12))],
+    ["bad blood group", patch((g) => (g.elder.emergency.bloodGroup = "C+"))],
+    ["phone with letters", patch((g) => (g.elder.emergency.doctorPhone = "call me"))],
+    ["too many allergies", patch((g) => (g.elder.emergency.allergies = Array(11).fill("x")))],
+    ["oversized circle name", patch((g) => (g.circleName = "x".repeat(81)))],
+    ["eleven members", patch((g) => (g.members = Array.from({ length: 11 }, (_, i) => ({ displayName: `P${i}`, email: "", role: "family", passcode: "1234" }))))],
+  ])("rejects %s", (_n, value) => {
+    expect(createCircleSchema.safeParse(value).success).toBe(false);
+  });
+});
+
+describe("circle codes", () => {
+  it.each([
+    ["demo", "DEMO"],
+    [" k7m2qx ", "K7M2QX"],
+  ])("normalises %s", (raw, out) => {
+    expect(circleCodeSchema.parse(raw)).toBe(out);
+  });
+  it.each(["AB", "TOOLONGCODE", "AB-12", "ab cd"])("rejects %s", (raw) => {
+    expect(circleCodeSchema.safeParse(raw).success).toBe(false);
+  });
+  it("generates 6 unambiguous characters that pass the schema", () => {
+    for (let i = 0; i < 200; i++) {
+      const c = newCircleCode();
+      expect(c).toHaveLength(6);
+      expect([...c].every((ch) => CODE_ALPHABET.includes(ch))).toBe(true);
+      expect(circleCodeSchema.parse(c)).toBe(c);
+    }
+    expect(CODE_ALPHABET).not.toMatch(/[01OIL]/);
+  });
+});

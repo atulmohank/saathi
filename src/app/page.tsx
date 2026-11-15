@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Pill } from "@/components/Pill";
 import { TryAs, type PersonaCard } from "@/components/TryAs";
 
@@ -86,6 +87,14 @@ export default function Home() {
               See the three care modes
             </a>
           </div>
+          <p className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
+            <Link href="/create" className="btn-ghost px-0 font-semibold">
+              Create your own care circle →
+            </Link>
+            <Link href="/signin" className="btn-ghost px-0 font-semibold">
+              Sign in with passcode →
+            </Link>
+          </p>
           </div>
           <HeroPreview />
         </div>
@@ -121,6 +130,14 @@ export default function Home() {
           <p className="mt-3 max-w-2xl text-[#3D4A43]">
             One fictional family, two elders in different modes. No passcode needed; demo emails go to a test inbox,
             never to real people.
+          </p>
+          <p className="mt-3 max-w-2xl rounded-xl bg-surface p-4 text-[#3D4A43]">
+            Want to try the real passcode sign-in?{" "}
+            <Link href="/signin" className="font-semibold text-primary underline underline-offset-4">
+              Sign in with passcode
+            </Link>{" "}
+            using circle code <strong className="font-mono">DEMO</strong> and passcode <strong className="font-mono">1234</strong> (same for every
+            demo person).
           </p>
           <div className="mt-10">
             <TryAs personas={personas} />

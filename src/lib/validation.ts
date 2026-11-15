@@ -62,8 +62,31 @@ export const elderSchema = z.object({
   preferredLanguage: z.enum(LANGS).default("en"),
 });
 
+const shortList = z.array(trimmed(60)).max(10).default([]);
+
+export const emergencySchema = z.object({
+  bloodGroup: z.enum(["", "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]).default(""),
+  allergies: shortList,
+  conditions: shortList,
+  doctorName: trimmed(80, 0).default(""),
+  doctorPhone: z.string().trim().regex(/^[+\d][\d\s-]{0,19}$|^$/, "Phone: digits, spaces, + and - only").default(""),
+});
+
+export const circleCodeSchema = z
+  .string()
+  .trim()
+  .toUpperCase()
+  .regex(/^[A-Z0-9]{4,8}$/, "Circle code is 4–8 letters or digits");
+
 export const createCircleSchema = z.object({
   circleName: trimmed(80),
-  elder: elderSchema,
-  you: memberSchema,
+  elder: elderSchema.extend({ emergency: emergencySchema }),
+  /** First member is the person creating the circle (signed in afterwards). */
+  members: z
+    .array(memberSchema)
+    .min(1)
+    .max(10)
+    .refine((ms) => new Set(ms.map((m) => m.displayName.toLowerCase())).size === ms.length, "Each member needs a different name")
+    .refine((ms) => ms.filter((m) => m.role === "elder").length <= 1, "Only one member can be the elder"),
 });
+export type CreateCircleInput = z.infer<typeof createCircleSchema>;
