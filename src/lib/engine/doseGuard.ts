@@ -20,6 +20,7 @@ export const EARLY_WINDOW_MINUTES = 120;
 
 const hm = (d: Date) => formatInTimeZone(d, IST, "h:mm a");
 
+/** Blocks marking a dose taken twice, far too early, or when the same medicine was taken in the last 2 hours. */
 export function checkDoubleDose(doseLogs: DoseLog[], scheduledDoseId: string, now: Date): GuardResult {
   const dose = doseLogs.find((d) => d.id === scheduledDoseId);
   if (!dose) return { blocked: true, message: "This dose could not be found." };

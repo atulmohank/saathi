@@ -17,6 +17,7 @@ const schema = z.object({
 
 let cached: z.infer<typeof schema> | null = null;
 
+/** Validated server environment (throws listing missing keys). Cached after the first call. */
 export function env() {
   if (!cached) {
     const parsed = schema.safeParse(process.env);

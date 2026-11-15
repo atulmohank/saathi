@@ -56,6 +56,7 @@ export async function escalationFeed(circleId: string, names: (id: string | null
   });
 }
 
+/** Latest six emails for the in-app previews (demo circle). */
 export async function recentEmails(circleId: string) {
   const { data } = await db()
     .from("email_outbox")

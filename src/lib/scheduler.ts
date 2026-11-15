@@ -263,6 +263,7 @@ export async function runScheduler(opts: { now?: Date; circleId?: string } = {})
   return res;
 }
 
+/** One dose with its medicine, elder and circle flags (the shape escalateDose needs). */
 export async function loadDose(id: string): Promise<DoseCtx | null> {
   const { data } = await db().from("dose_events").select(DOSE_SELECT).eq("id", id).maybeSingle();
   return (data as unknown as DoseCtx) ?? null;

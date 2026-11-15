@@ -14,6 +14,7 @@ export interface LoginDecision {
   error: string | null;
 }
 
+/** True while a member is inside a lockout window. */
 export function isLocked(state: LockState, now: Date): boolean {
   return state.lockedUntil !== null && state.lockedUntil > now;
 }

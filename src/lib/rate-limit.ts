@@ -4,6 +4,7 @@
  */
 export type HitStore = Map<string, number[]>;
 
+/** Records one hit for a key and says whether it is within the limit for the sliding window. */
 export function hit(store: HitStore, key: string, limit: number, windowMs: number, now: number): { allowed: boolean; retryAfterSec: number } {
   const recent = (store.get(key) ?? []).filter((t) => now - t < windowMs);
   if (recent.length >= limit) {

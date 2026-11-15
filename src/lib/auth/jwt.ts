@@ -21,6 +21,7 @@ export const sessionClaims = z.object({
 });
 export type SessionClaims = z.infer<typeof sessionClaims>;
 
+/** Signs a 12 h HS256 session JWT (audience saathi:session). */
 export async function signSession(claims: SessionClaims, secret: string, now = new Date()): Promise<string> {
   const iat = Math.floor(now.getTime() / 1000);
   return new SignJWT({ cid: claims.cid, role: claims.role, name: claims.name, demo: claims.demo })
@@ -32,6 +33,7 @@ export async function signSession(claims: SessionClaims, secret: string, now = n
     .sign(key(secret));
 }
 
+/** Verifies a session JWT (signature, audience, expiry, claim shape); null when invalid. */
 export async function verifySession(token: string, secret: string, now = new Date()): Promise<SessionClaims | null> {
   try {
     const { payload } = await jwtVerify(token, key(secret), {
@@ -55,6 +57,7 @@ export const actionClaims = z.object({
 });
 export type ActionClaims = z.infer<typeof actionClaims>;
 
+/** Signs an email action-link JWT (audience saathi:action), capped at 12 h. */
 export async function signActionToken(
   c: ActionClaims,
   secret: string,
@@ -71,6 +74,7 @@ export async function signActionToken(
     .sign(key(secret));
 }
 
+/** Verifies an action-link JWT without consuming it; null when invalid, expired or oversized. */
 export async function verifyActionToken(token: string, secret: string, now = new Date()): Promise<ActionClaims | null> {
   if (token.length > 2048) return null;
   try {
@@ -92,6 +96,7 @@ export interface TokenStore {
   consume(jti: string, now: Date): Promise<boolean>;
 }
 
+/** Verifies then consumes an action token through a single-use store; null if invalid or already used. */
 export async function redeemActionToken(
   token: string,
   secret: string,

@@ -33,6 +33,7 @@ export async function requireActor(): Promise<Actor & { name: string; demo: bool
   };
 }
 
+/** Loads the elder an action targets (id, circle, autonomy mode); 404 if missing. */
 export async function loadElder(elderId: string): Promise<TargetElder> {
   const { data } = await db().from("elders").select("id, circle_id, autonomy_mode").eq("id", elderId).maybeSingle();
   if (!data) throw new AuthError(404, "Not found.");
@@ -51,6 +52,7 @@ export async function requirePermission(elderId: string, action: Action) {
   return { actor, elder };
 }
 
+/** Signed-in member of this circle, else 404 (no existence oracle). */
 export async function requireCircleMember(circleId: string) {
   const actor = await requireActor();
   if (actor.circleId !== circleId) throw new AuthError(404, "Not found.");

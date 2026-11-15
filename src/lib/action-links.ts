@@ -34,6 +34,7 @@ export const dbTokenStore: TokenStore = {
   },
 };
 
+/** Verifies an emailed action token and consumes it once (DB-backed single use). Returns the claims or null. */
 export async function redeem(token: string, now = new Date()) {
   return redeemActionToken(token, env().ACTION_LINK_SECRET, dbTokenStore, now);
 }

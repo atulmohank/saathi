@@ -41,6 +41,7 @@ export const reasonLabel = (r: string) => REASON_LABEL[r] ?? r.replace(/_/g, " "
 const pct = (n: number, d: number) => (d ? Math.round((n / d) * 1000) / 10 : null);
 const times = (n: number) => (n === 1 ? "once" : `${n} times`);
 
+/** Deterministic Doctor Visit Brief: adherence, per-medicine stats, side effects, skip reasons and suggested questions. */
 export function buildBrief(input: BriefInput): TemplateBrief {
   const closed = input.doses.filter((d) => d.status !== "pending");
   const taken = closed.filter((d) => d.status === "taken").length;
@@ -137,6 +138,7 @@ export function parseGeminiBrief(raw: unknown): GeminiBrief | null {
   }
 }
 
+/** The template brief in the same shape as a Gemini brief (used as the fallback). */
 export function templateAsPlain(t: TemplateBrief): PlainBrief {
   return { source: "template", summary_en: t.summary.join(" "), questions_en: t.questions, summary_local: "", questions_local: [] };
 }

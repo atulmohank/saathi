@@ -7,6 +7,7 @@ const DEMO_PHOTOS: Record<string, string> = {
   Ravi: "/images/ravi-avatar.webp",
 };
 
+/** Stand-in photo for a fictional demo person, or null. */
 export function demoPhoto(displayName: string): string | null {
   return DEMO_PHOTOS[displayName] ?? null;
 }

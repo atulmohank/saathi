@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireActor } from "@/lib/auth/guard";
 import { handleError } from "@/lib/http";
 
+/** GET /api/auth/me — the signed-in member (re-read from the database). */
 export async function GET() {
   try {
     const a = await requireActor();

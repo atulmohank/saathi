@@ -23,6 +23,7 @@ export async function POST(req: Request) {
   }
 }
 
+/** DELETE /api/appointments — remove an appointment (edit_medicine permission, audited). */
 export async function DELETE(req: Request) {
   try {
     const { elderId, appointmentId } = deleteBody.parse(await readJson(req));

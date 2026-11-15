@@ -58,6 +58,7 @@ function build(subject: string, heading: string, paragraphs: string[], allAction
   };
 }
 
+/** T-10 reminder with a one-tap “I took it” link. */
 export function upcomingDoseEmail(p: { toName: string; elderName: string; forElder: boolean; medName: string; dose: string; time: string; instructions: string; takenUrl: string }): Email {
   const who = p.forElder ? "your" : `${p.elderName}'s`;
   return build(
@@ -71,6 +72,7 @@ export function upcomingDoseEmail(p: { toName: string; elderName: string; forEld
   );
 }
 
+/** Missed-dose escalation email; buttons depend on what the recipient may do. */
 export function missedDoseEmail(p: {
   toName: string;
   elderName: string;
@@ -106,6 +108,7 @@ export function missedDoseEmail(p: {
   return build(subject, subject, paras, actions);
 }
 
+/** Appointment reminder, 24 h or 2 h before. */
 export function appointmentEmail(p: { toName: string; elderName: string; forElder: boolean; doctor: string; specialty: string; when: string; location: string; window: "24h" | "2h" }): Email {
   const whose = p.forElder ? "Your" : `${p.elderName}'s`;
   const soon = p.window === "2h" ? "in about 2 hours" : "tomorrow";
@@ -117,6 +120,7 @@ export function appointmentEmail(p: { toName: string; elderName: string; forElde
   );
 }
 
+/** Asks the approver to approve a medicine change (approve link + review link). */
 export function proposalEmail(p: { toName: string; elderName: string; forElder: boolean; proposer: string; medName: string; summary: string; approveUrl: string; reviewUrl: string }): Email {
   const whose = p.forElder ? "your" : `${p.elderName}'s`;
   return build(

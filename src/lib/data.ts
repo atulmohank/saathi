@@ -50,6 +50,7 @@ export interface DoseRow {
 /** A pending dose this many minutes past due is shown as missed. */
 export const SHOW_MISSED_AFTER_MIN = 60;
 
+/** Circle, its elders and members (server-only, explicit columns). */
 export async function getCircle(circleId: string) {
   const [{ data: circle }, { data: elders }, { data: members }] = await Promise.all([
     db().from("care_circles").select("id, name, is_demo, code").eq("id", circleId).maybeSingle(),
@@ -76,6 +77,7 @@ export async function ensureDoses(meds: MedicineRow[], now = new Date()) {
 
 export type DisplayStatus = "taken" | "skipped" | "missed" | "upcoming" | "due";
 
+/** How a dose is shown: taken/skipped/missed, or due/upcoming; a pending dose over 60 min late shows as missed. */
 export function displayStatus(d: DoseRow, now: Date): DisplayStatus {
   if (d.status === "taken" || d.status === "skipped" || d.status === "missed") return d.status;
   const late = (now.getTime() - new Date(d.scheduled_at).getTime()) / 60000;
@@ -84,6 +86,7 @@ export function displayStatus(d: DoseRow, now: Date): DisplayStatus {
   return "upcoming";
 }
 
+/** Everything one elder's screens need, loaded in parallel: medicines (materialising doses), today, 7-day pillbox, adherence, refills, appointments, proposals, tasks, recent changes. */
 export async function getElderCare(elder: ElderRow, members: MemberRow[], now = new Date()) {
   const { data: medsData } = await db().from("medicines").select("id, elder_id, name, dose_text, times, pill_look, instructions, stock_count, is_critical, active").eq("elder_id", elder.id).order("created_at");
   const meds = (medsData ?? []) as MedicineRow[];

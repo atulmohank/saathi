@@ -13,6 +13,7 @@ export function handleError(e: unknown): NextResponse {
   return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
 }
 
+/** Reads a JSON body with a size cap; returns null on oversize or invalid JSON so Zod rejects it with 400. */
 export async function readJson(req: Request, maxBytes = 16_000): Promise<unknown> {
   const text = await req.text();
   if (text.length > maxBytes) return null; // fails schema validation → 400

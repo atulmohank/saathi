@@ -47,6 +47,7 @@ export interface EscalationStep {
 
 const without = (roles: Role[], already: Role[]) => roles.filter((r) => !already.includes(r));
 
+/** Who to notify about a missed dose now, how urgently, and whether escalation is finished — by mode, minutes late, reason and criticality. */
 export function nextEscalationStep(input: EscalationInput): EscalationStep {
   const { mode, minutesLate, reason, isCritical, alreadyNotified, resolved } = input;
   const done = (notify: Role[], severity: Severity, followUps: FollowUp[] = []): EscalationStep => ({

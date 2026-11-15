@@ -48,6 +48,7 @@ export function slotOf(time: string): Slot {
   return "night";
 }
 
+/** The IST calendar date (yyyy-MM-dd) of an instant. */
 export function istDate(d: Date): string {
   return formatInTimeZone(d, IST, "yyyy-MM-dd");
 }

@@ -5,6 +5,7 @@ import type { MedicineInput } from "./validation";
 
 export type MedicineDiff = Partial<MedicineInput> & { active?: boolean };
 
+/** Maps a camelCase medicine diff to database column names, keeping only the fields present. */
 export function toColumns(d: MedicineDiff) {
   const c: Record<string, unknown> = {};
   if (d.name !== undefined) c.name = d.name;

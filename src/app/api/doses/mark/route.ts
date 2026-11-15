@@ -8,6 +8,7 @@ import type { MissReason } from "@/lib/engine/types";
 import { handleError, readJson } from "@/lib/http";
 import { markDoseSchema } from "@/lib/validation";
 
+/** POST /api/doses/mark — mark a dose taken or skipped with a reason. mark_dose permission, double-dose guard, reason follow-ups, audited. */
 export async function POST(req: Request) {
   try {
     const input = markDoseSchema.parse(await readJson(req));

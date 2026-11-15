@@ -9,6 +9,7 @@ import { medicinePatchSchema, uuid } from "@/lib/validation";
 
 const body = z.object({ decision: z.enum(["approve", "decline"]) });
 
+/** POST /api/proposals/[id] — approve or decline a change request. approve_change permission; claimed atomically; audited. */
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
   try {
     const id = uuid.parse((await ctx.params).id);

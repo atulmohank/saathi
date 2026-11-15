@@ -6,6 +6,7 @@ import { uuid } from "@/lib/validation";
 
 export const maxDuration = 60;
 
+/** POST /api/brief — Doctor Visit Brief in plain language (Gemini with template fallback); view permission required. */
 export async function POST(req: Request) {
   try {
     const { appointmentId } = z.object({ appointmentId: uuid }).parse(await readJson(req));
