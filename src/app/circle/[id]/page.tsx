@@ -7,7 +7,7 @@ import { after } from "next/server";
 import { TimeMachineControls } from "@/components/TimeMachine";
 import { escalationFeed, recentEmails } from "@/lib/demo-feed";
 import { lazyTick } from "@/lib/scheduler";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { AppointmentForm, MarkDose, MedicineForm, ProposalDecision, RemoveAppointment } from "@/components/DashboardActions";
 import { MembersPanel } from "@/components/MembersPanel";
 import { TimelineReveal } from "@/components/motion";
@@ -21,6 +21,7 @@ import { describeDiff } from "@/lib/describe";
 import { resolveChangeFlow } from "@/lib/engine/changes";
 import { istDate } from "@/lib/engine/schedule";
 import type { Mode, Role } from "@/lib/engine/types";
+import { uuid } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
 
@@ -42,6 +43,7 @@ const STATUS_STYLE: Record<string, string> = {
 
 export default async function CirclePage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ elder?: string }> }) {
   const { id } = await params;
+  if (!uuid.safeParse(id).success) notFound();
   const { elder: elderParam } = await searchParams;
   const actor = await requireActor().catch((e) => {
     if (e instanceof AuthError) redirect("/");

@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { AuthError, requireActor } from "@/lib/auth/guard";
 import { fmtDateTime, getCircle } from "@/lib/data";
 import { db } from "@/lib/db";
+import { uuid } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Audit trail — Saathi" };
@@ -46,6 +47,7 @@ function summary(v: unknown): string {
 /** Read-only. The audit log is append-only: the app never updates or deletes rows. */
 export default async function AuditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  if (!uuid.safeParse(id).success) notFound();
   const actor = await requireActor().catch((e) => {
     if (e instanceof AuthError) redirect("/");
     throw e;

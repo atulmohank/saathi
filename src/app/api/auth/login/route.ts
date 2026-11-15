@@ -7,12 +7,19 @@ import { db } from "@/lib/db";
 import type { Role } from "@/lib/engine/types";
 import { handleError, readJson } from "@/lib/http";
 import { loginSchema } from "@/lib/validation";
+import { clientKey, hit, type HitStore } from "@/lib/rate-limit";
+
+/** Per-IP cap on passcode attempts (on top of the per-member 5-try lockout): 20 per 15 minutes. */
+const perIp: HitStore = new Map();
 
 // Constant-ish work for unknown members so timing doesn't reveal which ids exist.
 const DUMMY_HASH = bcrypt.hashSync("not-a-real-passcode", 10);
 
+/** POST /api/auth/login — passcode sign-in for one member. Rate-limited per IP; per-member lockout after 5 failures. */
 export async function POST(req: Request) {
   try {
+    const r = hit(perIp, clientKey(req), 20, 15 * 60_000, Date.now());
+    if (!r.allowed) return NextResponse.json({ error: "Too many attempts from here. Please wait and try again." }, { status: 429, headers: { "retry-after": String(r.retryAfterSec) } });
     const { memberId, passcode } = loginSchema.parse(await readJson(req));
     const { data: m } = await db()
       .from("members")

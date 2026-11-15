@@ -7,12 +7,14 @@ import { AuthError, requireActor } from "@/lib/auth/guard";
 import { getCircle } from "@/lib/data";
 import { db } from "@/lib/db";
 import { to12h } from "@/lib/describe";
+import { uuid } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Emergency card — Saathi" };
 
 export default async function EmergencyCard({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ elder?: string }> }) {
   const { id } = await params;
+  if (!uuid.safeParse(id).success) notFound();
   const { elder: elderParam } = await searchParams;
   const actor = await requireActor().catch((e) => {
     if (e instanceof AuthError) redirect("/");

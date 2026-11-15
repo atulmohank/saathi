@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- small fixed-crop avatar */
 import Link from "next/link";
 import { after } from "next/server";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { lazyTick } from "@/lib/scheduler";
 import { ElderDoseCard, ElderProposal, type NextDose } from "@/components/ElderToday";
 import { ElderSky, SKY_BG, skyPhase } from "@/components/ElderSky";
@@ -14,11 +14,13 @@ import { describeDiff } from "@/lib/describe";
 import { demoPhoto } from "@/lib/demo/photos";
 import { pickNextDose } from "@/lib/next-dose";
 import { CalendarLink } from "@/components/CalendarLink";
+import { uuid } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
 
 export default async function ElderTodayPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ lang?: string; sky?: string }> }) {
   const { id } = await params;
+  if (!uuid.safeParse(id).success) notFound();
   const { lang: langParam, sky: skyParam } = await searchParams;
   const actor = await requireActor().catch((e) => {
     if (e instanceof AuthError) redirect("/");
