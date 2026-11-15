@@ -1,11 +1,16 @@
 /* eslint-disable @next/next/no-img-element -- art-directed, fixed-crop photographs */
 import Link from "next/link";
 import { TryAs, type PersonaCard } from "@/components/TryAs";
-import { ScrollStory, type StoryStep } from "@/components/motion";
+import Image from "next/image";
+import dynamic from "next/dynamic";
+import type { StoryStep } from "@/components/motion";
 import { Bento } from "@/components/landing/Bento";
 import { HeroStage } from "@/components/landing/HeroStage";
 import { IconBell, IconHandHeart, IconLanguages, IconLock } from "@/components/landing/Icons";
 import { Thread } from "@/components/landing/Thread";
+
+/** Below the fold: split into its own chunk (still server-rendered). */
+const ScrollStory = dynamic(() => import("@/components/motion/ScrollStory").then((mod) => mod.ScrollStory));
 
 const personas: PersonaCard[] = [
   { id: "kamala", name: "Kamala", role: "Elder", band: "bg-accent", blurb: "68 · Independent", detail: "Sees one big card for her next medicine and approves every change herself.", photo: "/images/kamala-arch.webp", alt: "Kamala, a smiling grandmother in a pink sari" },
@@ -170,7 +175,7 @@ export default function Home() {
 
         {/* PHOTO BAND */}
         <section aria-labelledby="band-h" className="relative isolate overflow-hidden">
-          <img src="/images/care-hands-band.webp" alt="An older person’s hands resting together on a blue sari" width={1800} height={788} loading="lazy" className="absolute inset-0 -z-10 h-full w-full object-cover" />
+          <Image src="/images/care-hands-band.webp" alt="An older person’s hands resting together on a blue sari" fill sizes="100vw" className="-z-10 object-cover" />
           <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgb(22_63_51/.92)_0%,rgb(22_63_51/.72)_45%,rgb(22_63_51/.15)_100%)]" />
           <div className="wrap on-dark flex min-h-[30rem] items-center py-24 sm:min-h-[36rem]">
             <h2 id="band-h" className="max-w-[16ch] text-[2.5rem] font-medium leading-[1.08] text-white sm:text-[4rem]">
@@ -195,7 +200,7 @@ export default function Home() {
                 {modes.map((m) => (
                   <li key={m.name} className="flex flex-col rounded-[32px] bg-paper p-6 text-ink shadow-[var(--lift-2)]">
                     <div className="flex items-center gap-4">
-                      <img src={m.photo} alt={m.alt} width={400} height={400} loading="lazy" className="size-16 rounded-full object-cover ring-4 ring-sage" />
+                      <Image src={m.photo} alt={m.alt} width={64} height={64} className="size-16 rounded-full object-cover ring-4 ring-sage" />
                       <h3 className="text-[1.75rem] font-semibold leading-none text-primary">{m.name}</h3>
                     </div>
                     <p className="mt-5 font-semibold text-ink">{m.who}</p>

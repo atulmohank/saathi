@@ -1,9 +1,17 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { MotionConfig } from "framer-motion";
+import { domAnimation, LazyMotion, MotionConfig } from "framer-motion";
 
-/** Framer Motion follows the OS "reduce motion" setting everywhere (transforms jump to their end state). */
+/**
+ * Framer Motion, loaded lean: LazyMotion + domAnimation (no drag/layout features), and every
+ * animation follows the OS "reduce motion" setting (transforms jump to their end state).
+ * Components use the `m.*` elements, which need this provider.
+ */
 export function MotionProvider({ children }: { children: ReactNode }) {
-  return <MotionConfig reducedMotion="user">{children}</MotionConfig>;
+  return (
+    <LazyMotion features={domAnimation} strict>
+      <MotionConfig reducedMotion="user">{children}</MotionConfig>
+    </LazyMotion>
+  );
 }

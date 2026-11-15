@@ -1,6 +1,7 @@
 "use client";
 import { PageShell } from "@/components/PageShell";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
@@ -97,8 +98,7 @@ export default function SignInPage() {
       </div>
       <figure className="relative mx-auto hidden w-full max-w-xl lg:block">
         <div aria-hidden="true" className="absolute -right-6 -top-6 size-40 rounded-full bg-accent opacity-80" />
-        {/* eslint-disable-next-line @next/next/no-img-element -- art-directed photo */}
-        <img src="/images/family-home.webp" alt="A family talking together on a sofa at home" width={1200} height={800} className="relative aspect-[4/5] w-full rounded-[40px] object-cover object-[60%_50%] shadow-[var(--lift-2)]" />
+        <Image src="/images/family-home.webp" sizes="(min-width: 1024px) 576px, 0px" alt="A family talking together on a sofa at home" width={1200} height={800} className="relative aspect-[4/5] w-full rounded-[40px] object-cover object-[60%_50%] shadow-[var(--lift-2)]" />
         <figcaption className="glass absolute -bottom-6 left-6 right-16 p-5 text-ink">
           <span className="block font-semibold">One circle, everyone in it.</span>
           <span className="mt-1 block text-sm text-ink-soft">Each person has their own passcode and sees what their role allows.</span>

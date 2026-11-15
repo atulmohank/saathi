@@ -9,7 +9,7 @@
  */
 import { useRef, useState } from "react";
 import {
-  motion,
+  m,
   useMotionValueEvent,
 
   useScroll,
@@ -80,13 +80,13 @@ function Stage({
       {/* faint tracks, then the escalation line that draws over them */}
       <g fill="none" strokeLinecap="round">
         <path d="M160 196C232 190 262 96 322 90M378 172v88" stroke={C.green} strokeOpacity=".18" strokeWidth="2.5" strokeDasharray="1 9" />
-        <motion.path d="M160 196C232 190 262 96 322 90" stroke={C.saffron} strokeWidth="4" style={{ pathLength: line1 }} />
-        <motion.path d="M378 172v88" stroke={C.saffron} strokeWidth="4" style={{ pathLength: line2 }} />
+        <m.path d="M160 196C232 190 262 96 322 90" stroke={C.saffron} strokeWidth="4" style={{ pathLength: line1 }} />
+        <m.path d="M378 172v88" stroke={C.saffron} strokeWidth="4" style={{ pathLength: line2 }} />
       </g>
 
       {/* Kamala */}
       {!still && step === 0 && (
-        <motion.circle
+        <m.circle
           cx="100"
           cy="202"
           r="54"
@@ -107,7 +107,7 @@ function Stage({
 
       {/* time chip */}
       <g>
-        <motion.rect x="50" y="96" width="100" height="38" rx="19" animate={{ fill: step === 0 ? "#FFFFFF" : C.pale }} transition={{ duration: 0.6 }} />
+        <m.rect x="50" y="96" width="100" height="38" rx="19" animate={{ fill: step === 0 ? "#FFFFFF" : C.pale }} transition={{ duration: 0.6 }} />
         <path d="M74 106a6.5 6.5 0 0 1 6.5 6.5v4l2.5 4h-18l2.5-4v-4A6.5 6.5 0 0 1 74 106z" fill={C.saffron} />
         <circle cx="74" cy="124" r="2.2" fill={C.saffron} />
         <text x="110" y="121" style={{ ...label, fontSize: 16 }}>
@@ -116,38 +116,38 @@ function Stage({
       </g>
 
       {/* "Ran out" — one big button */}
-      <motion.g initial={false} animate={show(1)} transition={soft}>
+      <m.g initial={false} animate={show(1)} transition={soft}>
         <rect x="36" y="296" width="128" height="46" rx="23" fill={C.green} />
         <text x="100" y="325" style={{ ...label, fill: C.cream, fontSize: 16 }}>
           Ran out
         </text>
-      </motion.g>
+      </m.g>
 
       {/* Caretaker on duty + refill task */}
-      <motion.g initial={false} animate={{ opacity: step >= 2 ? 1 : 0.35 }} transition={{ duration: 0.8 }}>
+      <m.g initial={false} animate={{ opacity: step >= 2 ? 1 : 0.35 }} transition={{ duration: 0.8 }}>
         <clipPath id="ss-lakshmi"><circle cx="378" cy="88" r="46" /></clipPath>
         <circle cx="378" cy="88" r="50" fill="#FFFDF9" />
         <image href="/images/lakshmi-avatar.webp" x="332" y="42" width="92" height="92" preserveAspectRatio="xMidYMid slice" clipPath="url(#ss-lakshmi)" />
         <text x="378" y="158" style={label}>
           Lakshmi
         </text>
-      </motion.g>
-      <motion.g initial={false} animate={show(2)} transition={soft}>
+      </m.g>
+      <m.g initial={false} animate={show(2)} transition={soft}>
         <rect x="176" y="26" width="140" height="44" rx="14" fill="#FFFFFF" />
         <rect x="190" y="39" width="18" height="18" rx="5" fill="none" stroke={C.green} strokeWidth="2.2" />
         <text x="216" y="54" style={{ ...label, textAnchor: "start", fontSize: 14 }}>
           Refill · today
         </text>
-      </motion.g>
+      </m.g>
 
       {/* Doctor brief */}
-      <motion.g initial={false} animate={show(3)} transition={soft}>
+      <m.g initial={false} animate={show(3)} transition={soft}>
         <rect x="344" y="266" width="68" height="84" rx="11" fill="#FFFFFF" />
         <g stroke={C.sand} strokeWidth="5" strokeLinecap="round">
           <path d="M357 286h42M357 300h42M357 314h26" />
         </g>
         <circle cx="402" cy="340" r="15" fill={C.success} />
-        <motion.path
+        <m.path
           d="M395.5 340.5l4.5 4.5 8-9"
           fill="none"
           stroke={C.cream}
@@ -161,7 +161,7 @@ function Stage({
         <text x="378" y="376" style={label}>
           {steps[3].time}
         </text>
-      </motion.g>
+      </m.g>
     </svg>
   );
 }
@@ -233,11 +233,11 @@ export function ScrollStory({
             <div className="flex gap-5">
               {/* progress rail */}
               <div className="relative mt-1 w-1 shrink-0 rounded-full" style={{ background: C.sand }} aria-hidden="true">
-                <motion.div className="absolute inset-x-0 top-0 h-full origin-top rounded-full" style={{ background: C.green, scaleY: scrollYProgress }} />
+                <m.div className="absolute inset-x-0 top-0 h-full origin-top rounded-full" style={{ background: C.green, scaleY: scrollYProgress }} />
               </div>
               <ol className="relative min-h-[11.5rem] flex-1 md:min-h-[13rem]">
                 {four.map((s, i) => (
-                  <motion.li
+                  <m.li
                     key={s.title}
                     className="absolute inset-0"
                     aria-current={i === step ? "step" : undefined}
@@ -254,7 +254,7 @@ export function ScrollStory({
                     <p className="mt-3 text-lg leading-relaxed md:text-xl" style={{ color: C.muted }}>
                       {s.body}
                     </p>
-                  </motion.li>
+                  </m.li>
                 ))}
               </ol>
             </div>

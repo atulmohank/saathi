@@ -6,7 +6,7 @@
  * prefers-reduced-motion → everything is simply there.
  * Only dependency: framer-motion.
  */
-import { motion, type Variants } from "framer-motion";
+import { m, type Variants } from "framer-motion";
 import { useStill } from "./useStill";
 
 export type TimelineTone = "info" | "gentle" | "urgent" | "resolved";
@@ -52,7 +52,7 @@ export function TimelineReveal({ steps, stagger = 0.55, label = "What happened, 
   };
 
   return (
-    <motion.ol
+    <m.ol
       aria-label={label}
       className={className}
       style={{ listStyle: "none", margin: 0, padding: 0, color: "#1F2A24" }}
@@ -65,15 +65,15 @@ export function TimelineReveal({ steps, stagger = 0.55, label = "What happened, 
         const tone = s.tone ?? "info";
         const last = i === steps.length - 1;
         return (
-          <motion.li key={`${s.time}-${s.title}`} variants={row} style={{ display: "grid", gridTemplateColumns: "28px 1fr", columnGap: 16 }}>
+          <m.li key={`${s.time}-${s.title}`} variants={row} style={{ display: "grid", gridTemplateColumns: "28px 1fr", columnGap: 16 }}>
             <div style={{ position: "relative", display: "flex", justifyContent: "center" }} aria-hidden="true">
               {!last && (
-                <motion.span
+                <m.span
                   variants={line}
                   style={{ position: "absolute", top: 24, bottom: -4, width: 3, borderRadius: 3, background: "#D9D3C4", transformOrigin: "top" }}
                 />
               )}
-              <motion.span
+              <m.span
                 variants={dot}
                 style={{
                   position: "relative",
@@ -92,17 +92,17 @@ export function TimelineReveal({ steps, stagger = 0.55, label = "What happened, 
                     <path d="M6.5 11.5l3 3 6-6.5" fill="none" stroke="#FBF7F0" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 )}
-              </motion.span>
+              </m.span>
             </div>
             <div style={{ paddingBottom: last ? 0 : 28 }}>
               <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: tone === "urgent" ? "#B3261E" : "#1F5C4A" }}>{s.time}</p>
               <p style={{ margin: "2px 0 0", fontSize: 18, fontWeight: 600, lineHeight: 1.35 }}>{s.title}</p>
               {s.detail && <p style={{ margin: "4px 0 0", fontSize: 16, lineHeight: 1.5, color: "#5A6358" }}>{s.detail}</p>}
             </div>
-          </motion.li>
+          </m.li>
         );
       })}
-    </motion.ol>
+    </m.ol>
   );
 }
 

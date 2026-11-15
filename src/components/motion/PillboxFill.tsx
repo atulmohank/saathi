@@ -9,7 +9,7 @@
  * Only dependency: framer-motion.
  */
 import { useId } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { useStill } from "./useStill";
 
 export type DoseStatus = "upcoming" | "taken" | "skipped" | "missed";
@@ -47,7 +47,7 @@ export function PillboxFill({ status, label, size = 64, onPress, disabled, class
           <rect x="4" y="4" width="56" height="56" rx="15" />
         </clipPath>
       </defs>
-      <motion.rect
+      <m.rect
         x="4"
         y="4"
         width="56"
@@ -60,7 +60,7 @@ export function PillboxFill({ status, label, size = 64, onPress, disabled, class
       />
       {/* the fill that rises from the bottom */}
       <g clipPath={`url(#${clipId})`}>
-        <motion.rect
+        <m.rect
           x="4"
           y="4"
           width="56"
@@ -73,7 +73,7 @@ export function PillboxFill({ status, label, size = 64, onPress, disabled, class
         />
       </g>
       {/* check mark draws after the fill settles */}
-      <motion.path
+      <m.path
         d="M20 33.5l8.5 8.5L45 24"
         fill="none"
         stroke="#FBF7F0"
