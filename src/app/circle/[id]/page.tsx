@@ -308,6 +308,9 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
                   <p className="text-sm">{fmtDateTime(a.starts_at)}</p>
                   {a.location && <p className="text-sm text-muted">{a.location}</p>}
                   {a.notes && <p className="mt-1 text-sm">{a.notes}</p>}
+                  <Link href={`/circle/${id}/brief/${a.id}`} className="btn-ghost mt-1 px-0 text-sm font-semibold">
+                    Doctor Visit Brief →
+                  </Link>
                 </div>
                 {can("edit_medicine") && <RemoveAppointment elderId={elder.id} id={a.id} label={a.doctor_name} />}
               </li>
