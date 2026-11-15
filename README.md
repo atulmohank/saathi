@@ -119,7 +119,7 @@ See [SECURITY.md](SECURITY.md). `npm audit --omit=dev`: 0 vulnerabilities (7 mod
 
 ## Testing
 
-`npm test` → **342 tests, 11 files, all passing** · `npm run test:coverage` → v8 coverage with thresholds (CI fails below them)
+`npm test` → **342 tests, 12 files, all passing** · `npm run test:coverage` → v8 coverage with thresholds (CI fails below them)
 
 | Coverage (v8, `src/lib`)                  | Statements | Branches | Functions | Lines |
 | ----------------------------------------- | ---------- | -------- | --------- | ----- |
