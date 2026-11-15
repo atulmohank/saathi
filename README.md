@@ -23,6 +23,18 @@
 
 Honest scope: a hackathon prototype, **not a certified medical device**; the doctor decides.
 
+## A fully working product, not a mock
+
+Everything above runs for real. **Create your own care circle** at [`/create`](src/app/create/page.tsx) and you get real passcode sign-in ([`/signin`](src/app/signin/page.tsx)), real data in Supabase Postgres ([migrations](supabase/migrations)), real email reminders sent by a scheduler every 5 minutes ([`/api/cron/tick`](src/app/api/cron/tick/route.ts) via cron-job.org), and one-click email actions ([`/a/[token]`](src/app/a/[token]/page.tsx)). The demo personas on the landing page are only a shortcut for judges into a pre-filled, fictional circle.
+
+The real end-to-end flow:
+
+1. **Create a circle** at `/create`: the elder (age, care mode, language, emergency info) and each person with their role, email and own passcode. You get a 6-character circle code.
+2. **Everyone signs in** at `/signin` with the circle code and their own passcode (bcrypt-hashed, 5-try lockout, rate-limited).
+3. **Add medicines and appointments** on the dashboard; changes follow the care mode (the elder approves in Independent mode; a doctor's instruction applies at once).
+4. **The scheduler emails the right person**: a reminder 10 minutes before each dose, the missed-dose escalation ladder for the care mode, and appointment reminders 24 h and 2 h before.
+5. **Act straight from the email**: "I took it", "I've handled it" or "Approve change" — signed, single-use links that update the circle for everyone and land in the audit trail.
+
 ## Try it in 60 seconds
 
 1. Open the live link → **Try the demo as…** and pick **Kamala** (68, Independent), **Priya** (daughter), **Nurse Lakshmi** (caretaker), **Joseph** (84, Supported) or **Ravi** (Joseph's decision partner). One click, no passcode.
@@ -198,4 +210,4 @@ Use **asia-south1 (Mumbai)** to sit next to the Supabase database, keep secrets 
 
 ## Continuous integration
 
-[.github/workflows/ci.yml](.github/workflows/ci.yml) runs on every push and pull request: `npm ci` → lint → typecheck → tests with coverage thresholds → production build. [Dependabot](.github/dependabot.yml) checks npm and GitHub Actions weekly.
+[.github/workflows/ci.yml](.github/workflows/ci.yml) runs on every push and pull request: `npm ci` → lint → typecheck → tests with coverage thresholds → production build. It also runs `npm audit --omit=dev --audit-level=high`, so a high or critical vulnerability in a production dependency fails the build. (No Dependabot: the hackathon allows only the `main` branch, and Dependabot opens a branch per update.)

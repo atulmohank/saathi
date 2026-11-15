@@ -24,6 +24,10 @@ Please open a private security advisory on the GitHub repository (Security → R
 | Abuse of sign-up                           | Circle creation rate limit: 5/hour per IP (per instance) + 60/hour global (DB count)                                                                                                                                         |
 | Emailing real people from the demo         | Demo circle mail always goes to `DEMO_EMAIL_SINK`; demo personas use `@example.invalid`                                                                                                                                      |
 
+## Dependencies
+
+Every push runs `npm audit --omit=dev --audit-level=high` in CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)); a high or critical vulnerability in a production dependency fails the build. Dependabot is intentionally not enabled: the hackathon requires a single `main` branch, and Dependabot opens one branch per update.
+
 ## Demo credentials
 
 `DEMO` / `1234` are intentionally public credentials for the fictional demo circle only, so reviewers can try the real passcode sign-in. The passcode is hashed with bcrypt at seed time and never stored in plain text. They grant access to made-up data only.
