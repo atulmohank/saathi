@@ -5,6 +5,7 @@ import { escalationFeed, recentEmails } from "@/lib/demo-feed";
 import { runScheduler } from "@/lib/scheduler";
 import { redirect } from "next/navigation";
 import { AppointmentForm, MarkDose, MedicineForm, ProposalDecision, RemoveAppointment } from "@/components/DashboardActions";
+import { MembersPanel } from "@/components/MembersPanel";
 import { Pill } from "@/components/Pill";
 import { Pillbox } from "@/components/Pillbox";
 import { SignOut } from "@/components/SignOut";
@@ -374,14 +375,17 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
           <h2 id="mem-h" className="h-section">
             Care circle
           </h2>
-          <ul className="mt-3 flex flex-wrap gap-2" role="list">
-            {members.map((m) => (
-              <li key={m.id} className="card px-3 py-2 text-sm">
-                <strong>{m.display_name}</strong> · {ROLE_LABEL[m.role]}
-                {m.is_on_duty && <span className="ml-2 badge bg-[#E4F1E8] text-xs text-success">On duty</span>}
-              </li>
-            ))}
-          </ul>
+          {circle.code && (
+            <p className="mt-1 text-sm text-muted">
+              Circle code for sign-in: <strong className="font-mono text-ink">{circle.code}</strong>
+            </p>
+          )}
+          <MembersPanel
+            elderId={elder.id}
+            meId={actor.memberId}
+            canManage={can("manage_members")}
+            members={members.map((m) => ({ id: m.id, name: m.display_name, role: m.role, roleLabel: ROLE_LABEL[m.role], email: null, onDuty: m.is_on_duty }))}
+          />
         </section>
       </main>
     </div>

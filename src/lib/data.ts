@@ -52,12 +52,12 @@ export const SHOW_MISSED_AFTER_MIN = 60;
 
 export async function getCircle(circleId: string) {
   const [{ data: circle }, { data: elders }, { data: members }] = await Promise.all([
-    db().from("care_circles").select("id, name, is_demo").eq("id", circleId).maybeSingle(),
+    db().from("care_circles").select("id, name, is_demo, code").eq("id", circleId).maybeSingle(),
     db().from("elders").select("*").eq("circle_id", circleId).order("created_at"),
     db().from("members").select("id, display_name, role, elder_id, is_on_duty").eq("circle_id", circleId).order("created_at"),
   ]);
   return {
-    circle: circle as { id: string; name: string; is_demo: boolean } | null,
+    circle: circle as { id: string; name: string; is_demo: boolean; code: string | null } | null,
     elders: (elders ?? []) as ElderRow[],
     members: (members ?? []) as MemberRow[],
   };
