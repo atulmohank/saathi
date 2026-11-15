@@ -38,7 +38,7 @@ export function GeminiBrief({ appointmentId, langName, langCode }: { appointment
             template is used if anything goes wrong.
           </p>
           <button type="button" className="btn-primary no-print mt-4" onClick={go} disabled={busy}>
-            {busy ? "Writing… (up to 20 seconds)" : `Write it with Google Gemini`}
+            {busy ? "Writing… (up to 25 seconds)" : `Write it with Google Gemini`}
           </button>
         </>
       )}

@@ -9,6 +9,7 @@ import type { DoseStatus } from "./engine/types";
 
 export const LANG_NAME: Record<string, string> = { en: "English", hi: "Hindi", ta: "Tamil", te: "Telugu", kn: "Kannada", ml: "Malayalam" };
 export const WINDOW_DAYS = 30;
+export const GEMINI_FALLBACK_MODEL = "gemini-3.5-flash-lite";
 
 /** Loads one appointment's brief data; enforces circle membership + view permission. */
 export async function loadBrief(appointmentId: string) {
@@ -55,8 +56,23 @@ export async function geminiBrief(t: TemplateBrief, elderName: string, lang: str
     "DATA:",
     JSON.stringify({ person: elderName, window_days: WINDOW_DAYS, adherence: t.adherence, per_medicine: t.perMedicine, side_effects: t.sideEffects, skip_reasons: t.skipReasons, suggested_questions: t.questions }),
   ].join("\n");
-  return briefWithFallback(t, async () => {
-    const r = await ai.models.generateContent({ model: e.GEMINI_MODEL, contents: prompt, config: { responseMimeType: "application/json", temperature: 0.2 } });
+  const call = async (model: string, ms: number) => {
+    const r = await Promise.race([
+      ai.models.generateContent({ model, contents: prompt, config: { responseMimeType: "application/json", temperature: 0.2 } }),
+      new Promise<never>((_, rej) => setTimeout(() => rej(new Error("timeout")), ms)),
+    ]);
     return r.text ?? "";
-  }, 25000);
+  };
+  // Primary model first; if it is overloaded (503) or slow, a lighter model; then the template.
+  return briefWithFallback(
+    t,
+    async () => {
+      try {
+        return await call(e.GEMINI_MODEL, 12000);
+      } catch {
+        return await call(GEMINI_FALLBACK_MODEL, 12000);
+      }
+    },
+    26000,
+  );
 }
