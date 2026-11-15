@@ -97,7 +97,7 @@ async function notifyProposal(
       medName,
       summary: describeDiff(diff, "en", !medicineId),
       approveUrl: await createActionLink("approve_change", proposalId, m.id),
-      reviewUrl: `${env().APP_BASE_URL.replace(/\/$/, "")}/`,
+      reviewUrl: `${appBaseUrl()}/`,
     });
     await sendEmail({
       circleId: elder.circle_id,
