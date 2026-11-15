@@ -1,19 +1,23 @@
+/* eslint-disable @next/next/no-img-element -- small fixed-crop avatar */
 import Link from "next/link";
 import { after } from "next/server";
-import { lazyTick } from "@/lib/scheduler";
 import { redirect } from "next/navigation";
+import { lazyTick } from "@/lib/scheduler";
 import { ElderDoseCard, ElderProposal, type NextDose } from "@/components/ElderToday";
+import { ElderSky, SKY_BG, skyPhase } from "@/components/ElderSky";
+import { GLASS } from "@/components/elder-styles";
 import { SignOut } from "@/components/SignOut";
-import { LANG_LABELS, pickLang, t, DICTS, type UiLang } from "@/i18n";
+import { LANG_LABELS, pickLang, t, DICTS, SPEECH_LANG, type UiLang } from "@/i18n";
 import { AuthError, requireActor } from "@/lib/auth/guard";
 import { fmtDateTime, fmtTime, getCircle, getElderCare } from "@/lib/data";
 import { describeDiff } from "@/lib/describe";
+import { demoPhoto } from "@/lib/demo/photos";
 
 export const dynamic = "force-dynamic";
 
-export default async function ElderTodayPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ lang?: string }> }) {
+export default async function ElderTodayPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ lang?: string; sky?: string }> }) {
   const { id } = await params;
-  const { lang: langParam } = await searchParams;
+  const { lang: langParam, sky: skyParam } = await searchParams;
   const actor = await requireActor().catch((e) => {
     if (e instanceof AuthError) redirect("/");
     throw e;
@@ -21,7 +25,7 @@ export default async function ElderTodayPage({ params, searchParams }: { params:
   if (actor.circleId !== id) redirect("/");
   if (actor.role !== "elder") redirect(`/circle/${id}`);
 
-  const { elders, members } = await getCircle(id);
+  const { circle, elders, members } = await getCircle(id);
   const elder = elders.find((e) => e.id === actor.elderId);
   if (!elder) redirect("/");
   const lang: UiLang = pickLang(langParam, elder.preferred_language);
@@ -51,31 +55,74 @@ export default async function ElderTodayPage({ params, searchParams }: { params:
   const later = care.todayDoses.filter((d) => d.id !== pick?.id && new Date(d.scheduled_at) > now && d.status === "pending");
   const appt = care.appointments.find((a) => new Date(a.starts_at) > now);
 
+  // Header: time-of-day sky, date in her language, today's progress.
+  // ?sky=morning|afternoon|evening previews the other skies (demo / review); default is the real IST time.
+  const phase = skyParam === "morning" || skyParam === "afternoon" || skyParam === "evening" ? skyParam : skyPhase(now);
+  const dark = phase === "evening";
+  const date = new Intl.DateTimeFormat(SPEECH_LANG[lang], { weekday: "long", day: "numeric", month: "long", timeZone: "Asia/Kolkata" }).format(now);
+  const taken = care.todayDoses.filter((d) => d.status === "taken").length;
+  const total = care.todayDoses.length;
+  const photo = circle?.is_demo ? demoPhoto(elder.display_name) : null;
+  const sky = dark ? "text-[#FBF7F0]" : "text-ink";
+  const skySoft = dark ? "text-[#E3E9F2]" : "text-ink-soft";
+
   return (
-    <div lang={lang} className="min-h-full flex-1 text-[22px]">
-      <header className="wrap flex max-w-3xl flex-wrap items-center justify-between gap-4 py-5">
-        <p className="font-serif text-[32px] text-primary">{t(lang, "greeting", { name: elder.display_name })}</p>
-        <nav aria-label={t(lang, "language")} className="flex flex-wrap items-center gap-2">
+    <div lang={lang} className={`relative isolate min-h-full flex-1 text-[22px] ${SKY_BG[phase]} ${dark ? "on-dark" : ""}`}>
+      <ElderSky phase={phase} />
+
+      <header className="wrap max-w-3xl pb-6 pt-6 sm:pt-8">
+        <nav aria-label={t(lang, "language")} className="flex flex-wrap justify-end gap-1.5">
           {(Object.keys(DICTS) as UiLang[]).map((l) => (
             <Link
               key={l}
               href={`?lang=${l}`}
               lang={l}
               aria-current={l === lang ? "true" : undefined}
-              className={`inline-flex min-h-12 items-center rounded-xl border-2 px-4 text-[22px] font-semibold ${l === lang ? "border-primary bg-primary text-white" : "border-primary bg-surface text-primary hover:bg-[#EEF4F1]"}`}
+              className={`inline-flex min-h-11 items-center rounded-full px-4 text-[18px] font-semibold transition-colors ${
+                l === lang ? "bg-primary text-white shadow-[var(--lift-1)]" : dark ? "bg-white/12 text-[#FBF7F0] ring-1 ring-white/30 hover:bg-white/20" : "bg-white/70 text-primary ring-1 ring-primary/25 hover:bg-white"
+              }`}
             >
               {LANG_LABELS[l]}
             </Link>
           ))}
         </nav>
+
+        <div className="mt-8 flex items-center gap-5">
+          {photo ? (
+            <img src={photo} alt="" width={96} height={96} className="size-20 shrink-0 rounded-full object-cover ring-4 ring-white/80 shadow-[var(--lift-2)] sm:size-24" />
+          ) : (
+            <span aria-hidden="true" className="grid size-20 shrink-0 place-items-center rounded-full bg-primary font-serif text-4xl text-white ring-4 ring-white/80 sm:size-24">
+              {elder.display_name.slice(0, 1)}
+            </span>
+          )}
+          <div className="min-w-0">
+            <h1 className={`text-[38px] font-semibold leading-tight sm:text-[48px] ${sky}`} style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}>
+              {t(lang, "greeting", { name: elder.display_name })}
+            </h1>
+            <p className={`mt-1 text-[22px] ${skySoft}`}>
+              {date} · {t(lang, phase)}
+            </p>
+          </div>
+        </div>
+
+        {total > 0 && (
+          <p className={`mt-6 inline-flex flex-wrap items-center gap-3 rounded-[22px] px-5 py-2.5 text-[20px] font-semibold ${dark ? "bg-white/12 text-[#FBF7F0] ring-1 ring-white/25" : "bg-white/75 text-ink shadow-[var(--lift-1)]"}`}>
+            <span aria-hidden="true" className="flex gap-1.5">
+              {care.todayDoses.map((d) => (
+                <span key={d.id} className={`size-3.5 rounded-full ${d.status === "taken" ? "bg-success" : d.status === "skipped" ? "bg-accent" : dark ? "bg-white/35" : "bg-[#D6CFC3]"}`} />
+              ))}
+            </span>
+            {t(lang, "takenToday", { taken, total })}
+          </p>
+        )}
       </header>
 
-      <main id="main" className="wrap flex max-w-3xl flex-col gap-8 pb-16">
+      <main id="main" className="wrap flex max-w-3xl flex-col gap-10 pb-20">
         <ElderDoseCard dose={next} lang={lang} readOnly={supported} helperLine={helperLine} />
 
         {elder.autonomy_mode === "independent" && pending.length > 0 && (
           <section aria-labelledby="prop-h">
-            <h2 id="prop-h" className="font-serif text-[30px]">
+            <h2 id="prop-h" className={`text-[30px] font-semibold ${sky}`}>
               {t(lang, "proposalsTitle")}
             </h2>
             <ul className="mt-4 flex flex-col gap-4" role="list">
@@ -93,8 +140,8 @@ export default async function ElderTodayPage({ params, searchParams }: { params:
         )}
 
         {elder.autonomy_mode === "assisted" && care.recentChanges.length > 0 && (
-          <section aria-labelledby="chg-h" className="card p-6">
-            <h2 id="chg-h" className="font-serif text-[30px]">
+          <section aria-labelledby="chg-h" className={`${GLASS} p-6 text-ink sm:p-8`}>
+            <h2 id="chg-h" className="text-[30px] font-semibold">
               {t(lang, "changedTitle")}
             </h2>
             <ul className="mt-3 flex flex-col gap-2" role="list">
@@ -109,14 +156,15 @@ export default async function ElderTodayPage({ params, searchParams }: { params:
 
         {later.length > 0 && (
           <section aria-labelledby="later-h">
-            <h2 id="later-h" className="font-serif text-[30px]">
+            <h2 id="later-h" className={`text-[30px] font-semibold ${sky}`}>
               {t(lang, "laterToday")}
             </h2>
-            <ul className="mt-3 flex flex-col gap-3" role="list">
+            <ul className="mt-4 flex flex-col gap-3" role="list">
               {later.map((d) => (
-                <li key={d.id} className="card flex items-center justify-between gap-4 p-5">
+                <li key={d.id} className={`${GLASS} flex items-center gap-4 px-6 py-5 text-ink`}>
+                  <span className="rounded-full bg-sage px-4 py-1.5 text-[22px] font-semibold text-primary">{fmtTime(d.scheduled_at)}</span>
                   <span>
-                    <span className="font-semibold">{fmtTime(d.scheduled_at)}</span> · {d.medicine.name}, {d.medicine.dose_text}
+                    {d.medicine.name}, {d.medicine.dose_text}
                   </span>
                 </li>
               ))}
@@ -125,20 +173,21 @@ export default async function ElderTodayPage({ params, searchParams }: { params:
         )}
 
         {appt && (
-          <section aria-labelledby="appt-h" className="card p-6">
-            <h2 id="appt-h" className="font-serif text-[30px]">
+          <section aria-labelledby="appt-h" className={`${GLASS} p-6 text-ink sm:p-8`}>
+            <h2 id="appt-h" className="text-[30px] font-semibold">
               {t(lang, "nextAppointment")}
             </h2>
-            <p className="mt-2">
+            <p className="mt-2 font-semibold">
               {appt.doctor_name}
-              {appt.specialty ? ` (${appt.specialty})` : ""} · {fmtDateTime(appt.starts_at)}
+              {appt.specialty ? ` (${appt.specialty})` : ""}
             </p>
-            {appt.location && <p className="text-ink">{appt.location}</p>}
+            <p>{fmtDateTime(appt.starts_at)}</p>
+            {appt.location && <p className="text-ink-soft">{appt.location}</p>}
           </section>
         )}
 
         <div>
-          <SignOut label={t(lang, "signOut")} className="text-[22px]" />
+          <SignOut label={t(lang, "signOut")} className={`text-[22px] ${dark ? "!text-[#FBF7F0]" : ""}`} />
         </div>
       </main>
     </div>

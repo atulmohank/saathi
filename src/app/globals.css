@@ -56,13 +56,16 @@ body {
   font-size: 17px;
   line-height: 1.6;
 }
-h1,
-h2,
-h3 {
-  font-family: var(--font-serif);
-  font-variation-settings: "SOFT" 50;
-  text-wrap: balance;
-  letter-spacing: -0.015em;
+/* In the base layer so utility classes (font-sans, colours) can override it. */
+@layer base {
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+    font-variation-settings: "SOFT" 50;
+    text-wrap: balance;
+    letter-spacing: -0.015em;
+  }
 }
 
 :focus-visible {

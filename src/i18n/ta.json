@@ -39,5 +39,9 @@
   "times": "நேரம்",
   "dose": "அளவு",
   "newMedicine": "புதிய மருந்து சேர்த்தல்",
-  "stopMedicine": "இந்த மருந்தை நிறுத்துதல்"
+  "stopMedicine": "இந்த மருந்தை நிறுத்துதல்",
+  "morning": "காலை",
+  "afternoon": "மதியம்",
+  "evening": "மாலை",
+  "takenToday": "இன்று {total} மருந்துகளில் {taken} எடுக்கப்பட்டன"
 }

@@ -39,5 +39,9 @@
   "times": "time",
   "dose": "dose",
   "newMedicine": "add a new medicine",
-  "stopMedicine": "stop this medicine"
+  "stopMedicine": "stop this medicine",
+  "morning": "Morning",
+  "afternoon": "Afternoon",
+  "evening": "Evening",
+  "takenToday": "{taken} of {total} medicines taken today"
 }

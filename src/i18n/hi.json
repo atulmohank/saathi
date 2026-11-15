@@ -39,5 +39,9 @@
   "times": "समय",
   "dose": "खुराक",
   "newMedicine": "नई दवा जोड़ना",
-  "stopMedicine": "यह दवा बंद करना"
+  "stopMedicine": "यह दवा बंद करना",
+  "morning": "सुबह",
+  "afternoon": "दोपहर",
+  "evening": "शाम",
+  "takenToday": "आज {total} में से {taken} दवाइयाँ ली गईं"
 }

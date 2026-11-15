@@ -40,7 +40,7 @@ export function TimeMachineControls() {
               disabled={busy !== null}
               onClick={() => run(b.action)}
               aria-describedby={`tm-${b.action}`}
-              className={`${b.action === "reset" ? "btn-secondary" : "btn-primary"} h-full w-full flex-col py-3 text-left`}
+              className={`${b.action === "reset" ? "btn-secondary" : "btn-primary"} h-full w-full flex-col items-start !rounded-[24px] px-5 py-4 text-left`}
             >
               <span>{busy === b.action ? "Working… (sending emails)" : b.label}</span>
               <span id={`tm-${b.action}`} className="text-xs font-normal opacity-90">

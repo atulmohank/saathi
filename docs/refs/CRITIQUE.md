@@ -17,3 +17,19 @@ Still amateur / template-like:
 8. **Hero text column vs. visual**: the H1 sits ~120px lower than the arch's top; acceptable, but tighten the top padding so the first screen shows the wordmark's top.
 
 Not a defect: blank persona/mode photos in the full-page capture are `loading="lazy"` images the capture never scrolled to.
+
+## Round 2 — elder view + family dashboard (1440 and 375)
+
+Fixed from round 1: reduced-motion hero bug, blob edge, caption collision, thread through text, tinted trust cards, mobile hero (phone now a fixed-size device scaled down, wordmark visible), Modes outline clear of the heading, shorter persona photos on phones.
+
+Elder view now: a real time-of-day sky (peach sunrise, warm afternoon light, green→indigo night with moon and stars), her photo, the date in her language, "2 of 4 medicines taken today" dots, a translucent card with a 3D pill in its real colour. Next to E-Joy it finally feels like a product for her, not a form.
+
+Still amateur:
+1. **Heading font bug**: a global `h2 { font-family }` was unlayered and beat Tailwind utilities, so "Your next medicine" rendered in serif. Moved into `@layer base`. *(fixed)*
+2. **White pills were outlines** on cream — read as empty. Pills now have a shaded rim, highlight and contact shadow. *(fixed)*
+3. **Tamil "I took it" overflowed** the 375px viewport (one long word in a no-wrap flex button). Buttons now wrap and break long words. *(fixed)*
+4. **Night card looked grey** (90% white over a dark sky) → 96% paper. *(fixed)*
+5. **Moon collided with the language chips** on phones → moon only from `sm` up. *(fixed)*
+6. **Time-machine buttons were pills with two-line text** — ovals look accidental. Rounded rectangles now. *(fixed)*
+7. **Lower dashboard is still a stack of white cards** (Today, Appointments, Medicines, Care circle) — consistent but flat compared with the green band and tinted tiles above. Next round: two-column bento below the pillbox, member cards with faces, tinted section grounds.
+8. **Secondary pages** (sign-in, create, emergency card, audit, Doctor Brief, email-link pages) still use the old layout with the new tokens — need the same header treatment and a warm ground.

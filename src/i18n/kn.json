@@ -39,5 +39,9 @@
   "times": "ಸಮಯ",
   "dose": "ಪ್ರಮಾಣ",
   "newMedicine": "ಹೊಸ ಔಷಧಿ ಸೇರಿಸುವುದು",
-  "stopMedicine": "ಈ ಔಷಧಿ ನಿಲ್ಲಿಸುವುದು"
+  "stopMedicine": "ಈ ಔಷಧಿ ನಿಲ್ಲಿಸುವುದು",
+  "morning": "ಬೆಳಿಗ್ಗೆ",
+  "afternoon": "ಮಧ್ಯಾಹ್ನ",
+  "evening": "ಸಂಜೆ",
+  "takenToday": "ಇಂದು {total} ಔಷಧಿಗಳಲ್ಲಿ {taken} ತೆಗೆದುಕೊಳ್ಳಲಾಗಿದೆ"
 }

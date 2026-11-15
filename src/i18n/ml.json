@@ -39,5 +39,9 @@
   "times": "സമയം",
   "dose": "അളവ്",
   "newMedicine": "പുതിയ മരുന്ന് ചേർക്കൽ",
-  "stopMedicine": "ഈ മരുന്ന് നിർത്തൽ"
+  "stopMedicine": "ഈ മരുന്ന് നിർത്തൽ",
+  "morning": "രാവിലെ",
+  "afternoon": "ഉച്ചയ്ക്ക്",
+  "evening": "വൈകുന്നേരം",
+  "takenToday": "ഇന്ന് {total} മരുന്നുകളിൽ {taken} എണ്ണം കഴിച്ചു"
 }

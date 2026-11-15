@@ -1,4 +1,5 @@
-import { Lockup } from "@/components/Lockup";
+/* eslint-disable @next/next/no-img-element -- fixed-crop avatars and brand SVG */
+import { demoPhoto } from "@/lib/demo/photos";
 import Link from "next/link";
 import { after } from "next/server";
 import { TimeMachineControls } from "@/components/TimeMachine";
@@ -71,72 +72,109 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
   const pending = care.proposals.filter((p) => p.status === "pending");
   const refillsDue = care.refills.filter((r) => r.needsRefill);
   const mode = MODE_INFO[elder.autonomy_mode];
+  const photo = circle.is_demo ? demoPhoto(elder.display_name) : null;
+  const nextAppt = care.appointments.find((a) => new Date(a.starts_at) > now);
 
   return (
     <div className="flex-1">
-      <header className="border-b border-[#E6DFD8] bg-surface">
-        <div className="wrap flex flex-wrap items-center justify-between gap-3 py-4">
-          <div>
-            <Lockup height={32} />
-            <p className="text-sm text-muted">{circle.name}</p>
+      <header className="on-dark relative overflow-hidden bg-green-deep pb-28 text-[#D7E4DC]">
+        <div aria-hidden="true" className="blob -right-24 -top-32 size-96 bg-accent opacity-20" />
+        <div aria-hidden="true" className="blob -bottom-40 left-1/4 size-[28rem] bg-primary opacity-60" />
+        <div className="wrap relative flex flex-wrap items-center justify-between gap-3 py-5">
+          <div className="flex items-center gap-3">
+            <img src="/brand/saathi-lockup-light.svg" alt="Saathi" width={112} height={34} className="h-8 w-auto" />
+            <span className="hidden text-sm text-[#B9CCC2] sm:inline">{circle.name}</span>
           </div>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-            <Link href={`/circle/${id}/emergency?elder=${elder.id}`} className="btn-ghost">
+          <div className="flex flex-wrap items-center gap-x-1 gap-y-1 text-sm">
+            <Link href={`/circle/${id}/emergency?elder=${elder.id}`} className="btn-ghost text-white">
               Emergency card
             </Link>
-            <Link href={`/circle/${id}/audit`} className="btn-ghost">
+            <Link href={`/circle/${id}/audit`} className="btn-ghost text-white">
               Audit trail
             </Link>
-            <span>
-              Signed in as <strong>{actor.name}</strong> · {ROLE_LABEL[actor.role]}
+            <span className="hidden px-2 md:inline">
+              Signed in as <strong className="text-white">{actor.name}</strong> · {ROLE_LABEL[actor.role]}
             </span>
-            <SignOut />
+            <SignOut className="!text-white" />
           </div>
         </div>
-        {elders.length > 1 && (
-          <nav aria-label="Choose elder" className="wrap flex gap-2 pb-3">
-            {elders.map((e) => (
-              <Link
-                key={e.id}
-                href={`?elder=${e.id}`}
-                aria-current={e.id === elder.id ? "page" : undefined}
-                className={`inline-flex min-h-11 items-center rounded-full border-2 px-4 font-semibold ${e.id === elder.id ? "border-primary bg-primary text-white" : "border-[#D8D1C6] bg-surface text-ink hover:border-primary"}`}
-              >
-                {e.display_name}
-              </Link>
-            ))}
-          </nav>
-        )}
+
+        <div className="wrap relative mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex items-center gap-5">
+            {photo ? (
+              <img src={photo} alt="" width={112} height={112} className="size-20 shrink-0 rounded-full object-cover ring-4 ring-white/25 sm:size-28" />
+            ) : (
+              <span aria-hidden="true" className="grid size-20 shrink-0 place-items-center rounded-full bg-primary font-serif text-4xl text-white ring-4 ring-white/25 sm:size-28">
+                {elder.display_name.slice(0, 1)}
+              </span>
+            )}
+            <div>
+              <h1 id="who-h" className="text-[2.5rem] font-medium leading-none text-white sm:text-[3.5rem]" style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}>
+                {elder.display_name}
+                {elder.age ? <span className="text-[#9FB8AC]">, {elder.age}</span> : null}
+              </h1>
+              <p className="mt-3 flex flex-wrap items-center gap-2">
+                <span className="badge bg-white/12 text-white ring-1 ring-white/25">{mode.label} mode</span>
+                <span className="text-[#D7E4DC]">{mode.line.replaceAll("{name}", elder.display_name)}</span>
+              </p>
+            </div>
+          </div>
+          {elders.length > 1 && (
+            <nav aria-label="Choose elder" className="flex gap-2">
+              {elders.map((e) => (
+                <Link
+                  key={e.id}
+                  href={`?elder=${e.id}`}
+                  aria-current={e.id === elder.id ? "page" : undefined}
+                  className={`inline-flex min-h-11 items-center rounded-full px-5 font-semibold transition-colors ${e.id === elder.id ? "bg-accent text-ink" : "bg-white/10 text-white ring-1 ring-white/25 hover:bg-white/20"}`}
+                >
+                  {e.display_name}
+                </Link>
+              ))}
+            </nav>
+          )}
+        </div>
       </header>
 
-      <main id="main" className="wrap flex flex-col gap-10 py-8">
-        <section aria-labelledby="who-h" className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 id="who-h" className="font-serif text-4xl">
-              {elder.display_name}
-              {elder.age ? <span className="text-muted">, {elder.age}</span> : null}
-            </h1>
-            <p className="mt-2 flex flex-wrap items-center gap-2">
-              <span className={`badge ${mode.tone}`}>{mode.label} mode</span>
-              <span className="text-[#3D4A43]">{mode.line.replaceAll("{name}", elder.display_name)}</span>
-            </p>
-          </div>
-          <dl className="flex gap-6">
-            <div>
-              <dt className="text-sm text-muted">Taken, last 7 days</dt>
-              <dd className="font-serif text-3xl">{care.adherence.overallRate ?? "–"}%</dd>
+      <main id="main" className="wrap relative -mt-20 flex flex-col gap-8 pb-16">
+        <section aria-label={`${elder.display_name} at a glance`}>
+          <dl className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <div className="rounded-[28px] bg-[linear-gradient(160deg,#FFFDF9_0%,#E7EFE9_100%)] p-5 shadow-[var(--lift-2)] sm:p-6">
+              <dt className="text-sm font-medium text-ink-soft">Taken, last 7 days</dt>
+              <dd className="mt-2 font-serif text-[2.5rem] font-semibold leading-none text-primary">{care.adherence.overallRate ?? "–"}%</dd>
             </div>
-            <div>
-              <dt className="text-sm text-muted">Not counting {elder.display_name}&apos;s own choices</dt>
-              <dd className="font-serif text-3xl">{care.adherence.rateExcludingChoices ?? "–"}%</dd>
+            <div className="rounded-[28px] bg-[linear-gradient(160deg,#FFFDF9_0%,#F6E3D3_100%)] p-5 shadow-[var(--lift-2)] sm:p-6">
+              <dt className="text-sm font-medium text-ink-soft">Not counting {elder.display_name}&apos;s own choices</dt>
+              <dd className="mt-2 font-serif text-[2.5rem] font-semibold leading-none text-[#9A4F2A]">{care.adherence.rateExcludingChoices ?? "–"}%</dd>
+            </div>
+            <div className="rounded-[28px] bg-[linear-gradient(160deg,#FFFDF9_0%,#FBEACB_100%)] p-5 shadow-[var(--lift-2)] sm:p-6">
+              <dt className="text-sm font-medium text-ink-soft">Today</dt>
+              <dd className="mt-2 font-serif text-[2.5rem] font-semibold leading-none text-saffron-ink">
+                {care.todayDoses.filter((d) => d.status === "taken").length}
+                <span className="text-xl text-ink-soft"> of {care.todayDoses.length} taken</span>
+              </dd>
+            </div>
+            <div className="rounded-[28px] bg-paper p-5 shadow-[var(--lift-2)] sm:p-6">
+              <dt className="text-sm font-medium text-ink-soft">Next doctor visit</dt>
+              <dd className="mt-2 text-lg font-semibold leading-snug text-ink">
+                {nextAppt ? (
+                  <>
+                    {nextAppt.doctor_name}
+                    <span className="block text-sm font-normal text-ink-soft">{fmtDateTime(nextAppt.starts_at)}</span>
+                  </>
+                ) : (
+                  "None booked"
+                )}
+              </dd>
             </div>
           </dl>
         </section>
 
         {circle.is_demo && (
-          <section aria-labelledby="tm-h" className="rounded-2xl border-2 border-dashed border-accent bg-[#FFF8EC] p-4 sm:p-6">
-            <h2 id="tm-h" className="h-section">
-              <span aria-hidden="true">⏩</span> Time machine
+          <section aria-labelledby="tm-h" className="relative overflow-hidden rounded-[40px] border border-[#F0D9BF] bg-[linear-gradient(150deg,#FFF6E6_0%,#F6E3D3_60%,#FBF7F0_100%)] p-5 shadow-[var(--lift-1)] sm:p-8">
+            <p aria-hidden="true" className="outline-title absolute -right-4 -top-6 hidden text-[8rem] text-saffron-ink/15 lg:block">Demo</p>
+            <h2 id="tm-h" className="h-section relative flex items-center gap-3">
+              <span aria-hidden="true" className="grid size-10 place-items-center rounded-full bg-accent text-lg">⏩</span> Time machine
             </h2>
             <p className="mt-1 text-sm text-[#3D4A43]">
               Demo circle only. Plays out a missed dose through each care mode&apos;s escalation ladder. Real emails go only to the
@@ -193,7 +231,7 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
           </section>
         )}
 
-        <section aria-labelledby="pb-h" className="card p-4 sm:p-6">
+        <section aria-labelledby="pb-h" className="card p-5 sm:p-8">
           <h2 id="pb-h" className="h-section">
             This week&apos;s pillbox
           </h2>
@@ -238,7 +276,6 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
               ))}
               {!care.todayDoses.length && (
                 <li className="card flex flex-col items-center gap-3 p-6 text-center text-muted">
-                  {/* eslint-disable-next-line @next/next/no-img-element -- decorative illustration */}
                   <img src="/brand/illustrations/nothing-scheduled.svg" alt="" width={240} height={200} className="h-28 w-auto" />
                   No medicines scheduled today.
                 </li>

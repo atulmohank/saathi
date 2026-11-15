@@ -39,5 +39,9 @@
   "times": "సమయం",
   "dose": "మోతాదు",
   "newMedicine": "కొత్త మందు చేర్చడం",
-  "stopMedicine": "ఈ మందు ఆపడం"
+  "stopMedicine": "ఈ మందు ఆపడం",
+  "morning": "ఉదయం",
+  "afternoon": "మధ్యాహ్నం",
+  "evening": "సాయంత్రం",
+  "takenToday": "ఈ రోజు {total} మందులలో {taken} వేసుకున్నారు"
 }
