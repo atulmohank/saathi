@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { Fraunces, Inter, Noto_Sans_Devanagari } from "next/font/google";
 import "./globals.css";
 
 const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"] });
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
+const deva = Noto_Sans_Devanagari({ variable: "--font-deva", subsets: ["devanagari"] });
 
 export const metadata: Metadata = {
   title: "Saathi — care that adapts",
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${inter.variable} h-full antialiased`}>
+    <html lang="en" className={`${fraunces.variable} ${inter.variable} ${deva.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <a href="#main" className="skip-link">
           Skip to content

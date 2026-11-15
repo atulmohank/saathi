@@ -20,8 +20,8 @@
   --color-danger: var(--danger);
   --color-success: var(--success);
   --color-muted: var(--muted);
-  --font-sans: var(--font-inter), "Noto Sans", system-ui, sans-serif;
-  --font-serif: var(--font-fraunces), Georgia, serif;
+  --font-sans: var(--font-inter), var(--font-deva), "Noto Sans", system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), var(--font-deva), Georgia, serif;
 }
 
 body {
@@ -46,6 +46,62 @@ body {
   background: var(--surface);
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
+}
+
+@layer components {
+  .wrap {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+  }
+  .card {
+    @apply rounded-2xl border border-[#E6DFD8] bg-surface;
+  }
+  .card-link {
+    @apply rounded-2xl border border-[#E6DFD8] bg-surface transition-[transform,box-shadow,border-color] duration-150;
+  }
+  .card-link:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    box-shadow: 0 6px 18px -10px rgb(31 42 36 / 0.35);
+  }
+  .card-link:active {
+    transform: translateY(0);
+  }
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 font-semibold transition-[background-color,transform,box-shadow] duration-150 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-primary:active:not(:disabled),
+  .btn-secondary:active:not(:disabled),
+  .btn-danger:active:not(:disabled) {
+    transform: translateY(1px) scale(0.99);
+  }
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-[#174538];
+  }
+  .btn-secondary {
+    @apply border-2 border-primary bg-surface text-primary hover:bg-[#EEF4F1];
+  }
+  .btn-danger {
+    @apply border-2 border-danger bg-surface text-danger hover:bg-[#FBEDEC];
+  }
+  .btn-ghost {
+    @apply inline-flex min-h-11 items-center rounded-lg px-3 font-medium text-primary underline-offset-4 hover:underline;
+  }
+  .field {
+    @apply flex flex-col gap-1 text-sm font-medium;
+  }
+  .field input,
+  .field select,
+  .field textarea {
+    @apply min-h-11 rounded-lg border border-[#C9C2B8] bg-surface px-3 py-2 text-base font-normal text-ink;
+  }
+  .badge {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold;
+  }
+  .h-section {
+    @apply font-serif text-2xl text-ink;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

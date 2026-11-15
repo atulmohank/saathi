@@ -56,7 +56,7 @@ export async function seedDemo(sb: SupabaseClient, now = new Date()): Promise<{ 
             doctor_phone: "+91 90000 00002",
           },
         },
-      ])
+      ], { defaultToNull: false })
       .select("id, display_name"),
     "elders",
   ) as { id: string; display_name: string }[];
@@ -73,7 +73,7 @@ export async function seedDemo(sb: SupabaseClient, now = new Date()): Promise<{ 
         { circle_id: cid, display_name: "Nurse Lakshmi", role: "caretaker", email: "lakshmi@example.invalid", passcode_hash: hash, is_on_duty: true },
         { circle_id: cid, elder_id: joseph, display_name: "Joseph", role: "elder", email: "joseph@example.invalid", passcode_hash: hash },
         { circle_id: cid, display_name: "Ravi", role: "decision_partner", email: "ravi@example.invalid", passcode_hash: hash },
-      ])
+      ], { defaultToNull: false })
       .select("id, display_name"),
     "members",
   ) as { id: string; display_name: string }[];
@@ -89,7 +89,7 @@ export async function seedDemo(sb: SupabaseClient, now = new Date()): Promise<{ 
         { elder_id: joseph, name: "Donepezil", dose_text: "10 mg, 1 tablet", times: ["21:00"], pill_look: "yellow round", instructions: "At bedtime", stock_count: 20, is_critical: false },
         { elder_id: joseph, name: "Apixaban", dose_text: "2.5 mg, 1 tablet", times: ["08:00", "20:00"], pill_look: "orange oval", instructions: "Do not skip — blood thinner", stock_count: 30, is_critical: true },
         { elder_id: joseph, name: "Paracetamol", dose_text: "500 mg", times: ["13:00"], pill_look: "white round", instructions: "After lunch", stock_count: 15, is_critical: false },
-      ])
+      ], { defaultToNull: false })
       .select("id, elder_id, name, times"),
     "medicines",
   ) as { id: string; elder_id: string; name: string; times: string[] }[];
@@ -113,7 +113,7 @@ export async function seedDemo(sb: SupabaseClient, now = new Date()): Promise<{ 
       return { medicine_id: d.medicineId, scheduled_at: d.scheduledAt.toISOString(), status: "skipped", reason: "side_effect", marked_by: marker, marked_at: takenAt };
     return { medicine_id: d.medicineId, scheduled_at: d.scheduledAt.toISOString(), status: "taken", marked_by: marker, marked_at: takenAt };
   });
-  must(await sb.from("dose_events").insert(rows).select("id"), "dose_events");
+  must(await sb.from("dose_events").insert(rows, { defaultToNull: false }).select("id"), "dose_events");
 
   must(
     await sb
@@ -121,7 +121,7 @@ export async function seedDemo(sb: SupabaseClient, now = new Date()): Promise<{ 
       .insert([
         { elder_id: kamala, doctor_name: "Dr. Meera Nair", specialty: "Diabetologist", location: "Sunrise Clinic, Indiranagar", starts_at: addDays(now, 2).toISOString(), notes: "Quarterly HbA1c review" },
         { elder_id: joseph, doctor_name: "Dr. Thomas Kurian", specialty: "Neurologist", location: "City Neuro Centre", starts_at: addDays(now, 5).toISOString(), notes: "Memory follow-up" },
-      ])
+      ], { defaultToNull: false })
       .select("id"),
     "appointments",
   );
