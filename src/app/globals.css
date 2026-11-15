@@ -286,3 +286,9 @@ td,
 dd {
   font-variant-numeric: tabular-nums;
 }
+
+/* Decorative Indic samples on the landing page use the device's own Indic fonts,
+   so the page doesn't download five web fonts for a few greeting words. */
+.system-indic {
+  font-family: system-ui, "Nirmala UI", "Noto Sans", "Kohinoor Devanagari", sans-serif;
+}

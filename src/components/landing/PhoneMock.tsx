@@ -43,7 +43,7 @@ export function PhoneMock({ className = "" }: { className?: string }) {
           </div>
           <div className="mt-3 flex justify-center gap-1.5 text-[9px] font-semibold text-ink-soft">
             {["English", "हिन्दी", "தமிழ்"].map((l) => (
-              <span key={l} className="rounded-full bg-white/70 px-2 py-1">
+              <span key={l} className="system-indic rounded-full bg-white/70 px-2 py-1">
                 {l}
               </span>
             ))}

@@ -102,7 +102,7 @@ export function Bento() {
             ["നമസ്കാരം", "ml"],
             ["Namaste", "en"],
           ].map(([w, l]) => (
-            <span key={l} lang={l} className="rounded-full bg-white/10 px-5 py-2.5 font-serif text-xl text-white ring-1 ring-white/20 sm:text-2xl">
+            <span key={l} lang={l} className="system-indic rounded-full bg-white/10 px-5 py-2.5 text-xl font-semibold text-white ring-1 ring-white/20 sm:text-2xl">
               {w}
             </span>
           ))}

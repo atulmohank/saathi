@@ -19,7 +19,7 @@ const trust = [
   { tone: "bg-[linear-gradient(165deg,#FFF6E6_0%,#FFFDF9_60%)]", Icon: IconLock, title: "A passcode for each person", body: "Everyone signs in with their own passcode. Five wrong tries pause sign-in for 15 minutes." },
   { tone: "bg-[linear-gradient(165deg,#EAF3EE_0%,#FFFDF9_60%)]", Icon: IconBell, title: "An email when a dose is missed", body: "The right person hears at 10, 30, 60 or 120 minutes, depending on the care mode." },
   { tone: "bg-[linear-gradient(165deg,#FBEAE1_0%,#FFFDF9_60%)]", Icon: IconHandHeart, title: "The elder decides", body: "Family changes arrive as requests. A doctor’s instruction applies straight away." },
-  { tone: "bg-[linear-gradient(165deg,#ECEFF8_0%,#FFFDF9_60%)]", Icon: IconLanguages, title: "Six Indian languages", body: "English, हिन्दी, தமிழ், తెలుగు, ಕನ್ನಡ and മലയാളം, with read-aloud." },
+  { tone: "bg-[linear-gradient(165deg,#ECEFF8_0%,#FFFDF9_60%)]", Icon: IconLanguages, indic: true, title: "Six Indian languages", body: "English, हिन्दी, தமிழ், తెలుగు, ಕನ್ನಡ and മലയാളം, with read-aloud." },
 ];
 
 const modes = [
@@ -145,7 +145,7 @@ export default function Home() {
             <p className="absolute left-[6%] top-[-6%] -rotate-6 font-[family-name:var(--font-hand-deva)] text-[clamp(2.25rem,6vw,4.5rem)] font-bold text-saffron-ink">साथी</p>
           </div>
           <p className="wrap pb-16 pt-6 text-center text-sm text-muted">
-            <span lang="hi">साथी</span> (Saathi) means “companion” in Hindi.
+            <span lang="hi" className="system-indic">साथी</span> (Saathi) means “companion” in Hindi.
           </p>
         </section>
 
@@ -157,11 +157,11 @@ export default function Home() {
               Built for the people who look after each other
             </h2>
             <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" role="list">
-              {trust.map(({ Icon, title, body, tone }) => (
+              {trust.map(({ Icon, title, body, tone, indic }) => (
                 <li key={title} className={`card flex flex-col p-7 pt-8 ${tone}`}>
                   <Icon className="size-20 -ml-1" />
                   <h3 className="mt-6 text-[1.4rem] font-semibold leading-snug">{title}</h3>
-                  <p className="mt-2 text-ink-soft">{body}</p>
+                  <p className={`mt-2 text-ink-soft ${indic ? "system-indic" : ""}`}>{body}</p>
                 </li>
               ))}
             </ul>

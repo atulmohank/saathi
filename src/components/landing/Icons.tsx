@@ -52,9 +52,9 @@ export const IconLanguages = ({ className }: P) => (
   <Shell id="ic-lang" from="#D5DCF2" to="#6B7FBF" className={className}>
     <rect x="13" y="17" width="30" height="22" rx="9" fill="#FFFDF9" />
     <path d="M20 39l-3 7 9-7z" fill="#FFFDF9" />
-    <text x="28" y="33" textAnchor="middle" fontSize="13" fontWeight="700" fill="#2B3A67" fontFamily="var(--font-deva), sans-serif">अ</text>
+    <text x="28" y="33" textAnchor="middle" fontSize="13" fontWeight="700" fill="#2B3A67" fontFamily="system-ui, Nirmala UI, Noto Sans, sans-serif">अ</text>
     <rect x="31" y="31" width="28" height="20" rx="8" fill="#E8A33D" />
     <path d="M52 51l3 6-8-6z" fill="#E8A33D" />
-    <text x="45" y="45.5" textAnchor="middle" fontSize="12" fontWeight="700" fill="#1F2A24" fontFamily="var(--font-tamil), sans-serif">த</text>
+    <text x="45" y="45.5" textAnchor="middle" fontSize="12" fontWeight="700" fill="#1F2A24" fontFamily="system-ui, Nirmala UI, Noto Sans, sans-serif">த</text>
   </Shell>
 );
