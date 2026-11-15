@@ -50,7 +50,7 @@ export async function POST(req: Request) {
     const sc = SCENARIOS[action];
     const { data: elder } = await db().from("elders").select("id, autonomy_mode, display_name").eq("circle_id", circle.id).eq("display_name", sc.elder).single();
     if (!elder) return NextResponse.json({ error: "Demo elder not found. Reset the demo." }, { status: 404 });
-    const { data: medsData } = await db().from("medicines").select("*").eq("elder_id", elder.id).eq("active", true);
+    const { data: medsData } = await db().from("medicines").select("id, elder_id, name, dose_text, times, pill_look, instructions, stock_count, is_critical, active").eq("elder_id", elder.id).eq("active", true);
     const meds = ((medsData ?? []) as MedicineRow[]).filter((m) => m.times.includes(sc.time)).sort((a, b) => Number(b.is_critical) - Number(a.is_critical));
     const med = meds[0];
     if (!med) return NextResponse.json({ error: `No ${sc.time} medicine for ${sc.elder}.` }, { status: 404 });

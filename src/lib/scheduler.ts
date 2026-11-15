@@ -46,13 +46,15 @@ const hm = (iso: string | Date) => formatInTimeZone(typeof iso === "string" ? ne
 const DOSE_SELECT =
   "id, scheduled_at, status, escalation_level, notified_roles, resolved_by, medicines!inner(id, name, dose_text, instructions, is_critical, elders!inner(id, circle_id, display_name, autonomy_mode, care_circles!inner(is_demo)))";
 
-const memberCache = new Map<string, MemberLite[]>();
-async function circleMembers(circleId: string): Promise<MemberLite[]> {
-  if (!memberCache.has(circleId)) {
-    const { data } = await db().from("members").select("id, display_name, email, role, elder_id, is_on_duty").eq("circle_id", circleId);
-    memberCache.set(circleId, (data ?? []) as MemberLite[]);
+/** Per-tick cache of the promise (not the result), so parallel lookups for one circle share one query. */
+const memberCache = new Map<string, Promise<MemberLite[]>>();
+function circleMembers(circleId: string): Promise<MemberLite[]> {
+  let p = memberCache.get(circleId);
+  if (!p) {
+    p = Promise.resolve(db().from("members").select("id, display_name, email, role, elder_id, is_on_duty").eq("circle_id", circleId)).then(({ data }) => (data ?? []) as MemberLite[]);
+    memberCache.set(circleId, p);
   }
-  return memberCache.get(circleId)!;
+  return p;
 }
 
 /** Map ladder roles to real people. Caretaker = whoever is on duty (all caretakers if nobody is). */
@@ -109,11 +111,13 @@ export async function escalateDose(dose: DoseCtx, now: Date): Promise<number> {
     elder.id,
   ).map((m) => m.display_name);
 
-  for (const m of people) {
+  await Promise.all(people.map(async (m) => {
     const forElder = m.role === "elder";
     const canMark = canPerform(m.role, elder.autonomy_mode, "mark_dose").allowed;
-    const takenUrl = canMark ? await createActionLink("dose_taken", dose.id, m.id, now) : "";
-    const handledUrl = forElder ? "" : await createActionLink("handled", dose.id, m.id, now);
+    const [takenUrl, handledUrl] = await Promise.all([
+      canMark ? createActionLink("dose_taken", dose.id, m.id, now) : Promise.resolve(""),
+      forElder ? Promise.resolve("") : createActionLink("handled", dose.id, m.id, now),
+    ]);
     const email = missedDoseEmail({
       toName: m.display_name,
       elderName: elder.display_name,
@@ -137,7 +141,7 @@ export async function escalateDose(dose: DoseCtx, now: Date): Promise<number> {
       entityId: dose.id,
       after: { at: now.toISOString(), to: m.display_name, role: m.role, severity: step.severity, med: med.name, elder: elder.display_name, sent: r.sent },
     });
-  }
+  }));
   return people.length;
 }
 
@@ -165,13 +169,15 @@ export async function runScheduler(opts: { now?: Date; circleId?: string } = {})
     .lte("scheduled_at", new Date(now.getTime() + 10 * 60000).toISOString())
     .limit(50);
   const { data: upcoming } = await scope(upQ, "medicines.elders.circle_id");
-  for (const d of (upcoming ?? []) as unknown as DoseCtx[]) {
+  // Each dose is independent and claimed atomically, so doses and their recipients are processed in parallel.
+  const upcomingCounts = await Promise.all(((upcoming ?? []) as unknown as DoseCtx[]).map(async (d) => {
     const { data: claimed } = await db().from("dose_events").update({ reminded_upcoming: true }).eq("id", d.id).eq("reminded_upcoming", false).select("id");
-    if (!claimed?.length) continue;
+    if (!claimed?.length) return 0;
     const elder = d.medicines.elders;
     const members = await circleMembers(elder.circle_id);
     const roles: Role[] = elder.autonomy_mode === "supported" ? ["caretaker"] : ["elder"];
-    for (const m of recipientsFor(roles, members, elder.id)) {
+    const people = recipientsFor(roles, members, elder.id);
+    await Promise.all(people.map(async (m) => {
       const email = upcomingDoseEmail({
         toName: m.display_name,
         elderName: elder.display_name,
@@ -183,9 +189,10 @@ export async function runScheduler(opts: { now?: Date; circleId?: string } = {})
         takenUrl: await createActionLink("dose_taken", d.id, m.id, now),
       });
       await sendEmail({ circleId: elder.circle_id, isDemo: elder.care_circles.is_demo, to: rcpt(m), kind: "upcoming_dose", email });
-      res.upcoming++;
-    }
-  }
+    }));
+    return people.length;
+  }));
+  res.upcoming = upcomingCounts.reduce((a, b) => a + b, 0);
 
   // 2) Missed-dose escalation (first ladder step is ≥10 min; look back 24h)
   const minFirst = Math.min(...Object.values(LADDERS).map((l) => l[0].afterMinutes));
@@ -199,10 +206,9 @@ export async function runScheduler(opts: { now?: Date; circleId?: string } = {})
     .order("scheduled_at")
     .limit(200);
   const { data: late } = await scope(missQ, "medicines.elders.circle_id");
-  for (const d of (late ?? []) as unknown as DoseCtx[]) {
-    res.dosesChecked++;
-    res.escalationEmails += await escalateDose(d, now);
-  }
+  const lateDoses = (late ?? []) as unknown as DoseCtx[];
+  res.dosesChecked = lateDoses.length;
+  res.escalationEmails = (await Promise.all(lateDoses.map((d) => escalateDose(d, now)))).reduce((a, b) => a + b, 0);
 
   // 3) Appointments: 24h and 2h
   const apQ = db()
@@ -212,7 +218,7 @@ export async function runScheduler(opts: { now?: Date; circleId?: string } = {})
     .lte("starts_at", new Date(now.getTime() + 24 * 3600_000).toISOString())
     .or("reminded_24h.eq.false,reminded_2h.eq.false");
   const { data: appts } = await scope(apQ, "elders.circle_id");
-  for (const a of (appts ?? []) as unknown as {
+  type ApptRow = {
     id: string;
     doctor_name: string;
     specialty: string;
@@ -221,10 +227,11 @@ export async function runScheduler(opts: { now?: Date; circleId?: string } = {})
     reminded_24h: boolean;
     reminded_2h: boolean;
     elders: ElderLite;
-  }[]) {
+  };
+  const apptCounts = await Promise.all(((appts ?? []) as unknown as ApptRow[]).map(async (a) => {
     const within2h = new Date(a.starts_at).getTime() - now.getTime() <= 2 * 3600_000;
     const window: "24h" | "2h" | null = within2h && !a.reminded_2h ? "2h" : !within2h && !a.reminded_24h ? "24h" : null;
-    if (!window) continue;
+    if (!window) return 0;
     const upd = window === "2h" ? { reminded_2h: true, reminded_24h: true } : { reminded_24h: true };
     const { data: claimed } = await db()
       .from("appointments")
@@ -232,11 +239,12 @@ export async function runScheduler(opts: { now?: Date; circleId?: string } = {})
       .eq("id", a.id)
       .eq(window === "2h" ? "reminded_2h" : "reminded_24h", false)
       .select("id");
-    if (!claimed?.length) continue;
+    if (!claimed?.length) return 0;
     const elder = a.elders;
     const members = await circleMembers(elder.circle_id);
     const roles: Role[] = elder.autonomy_mode === "supported" ? ["caretaker", "decision_partner"] : ["elder", "caretaker"];
-    for (const m of recipientsFor(roles, members, elder.id)) {
+    const people = recipientsFor(roles, members, elder.id);
+    await Promise.all(people.map(async (m) => {
       const email = appointmentEmail({
         toName: m.display_name,
         elderName: elder.display_name,
@@ -248,9 +256,10 @@ export async function runScheduler(opts: { now?: Date; circleId?: string } = {})
         window,
       });
       await sendEmail({ circleId: elder.circle_id, isDemo: elder.care_circles.is_demo, to: rcpt(m), kind: `appointment_${window}`, email });
-      res.appointmentEmails++;
-    }
-  }
+    }));
+    return people.length;
+  }));
+  res.appointmentEmails = apptCounts.reduce((a, b) => a + b, 0);
   return res;
 }
 

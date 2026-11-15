@@ -88,7 +88,7 @@ async function notifyProposal(
   const { data: members } = await db().from("members").select("id, display_name, email, role, elder_id").eq("circle_id", elder.circle_id);
   const approvers = (members ?? []).filter((m) => (approverRole === "elder" ? m.role === "elder" && m.elder_id === elderId : m.role === "decision_partner"));
   const medName = medicineId ? ((await db().from("medicines").select("name").eq("id", medicineId).single()).data?.name ?? "a medicine") : String(diff.name ?? "a new medicine");
-  for (const m of approvers) {
+  await Promise.all(approvers.map(async (m) => {
     const email = proposalEmail({
       toName: m.display_name,
       elderName: elder.display_name,
@@ -106,5 +106,5 @@ async function notifyProposal(
       kind: "change_proposal",
       email,
     });
-  }
+  }));
 }

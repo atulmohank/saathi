@@ -18,7 +18,7 @@ export async function applyAction(c: ActionClaims, now = new Date()): Promise<Ac
   const actor = { memberId: m.id, circleId: m.circle_id, role: m.role as Role, elderId: m.elder_id };
 
   if (c.purpose === "approve_change") {
-    const { data: p } = await db().from("change_proposals").select("*").eq("id", c.ref_id).maybeSingle();
+    const { data: p } = await db().from("change_proposals").select("id, elder_id, medicine_id, proposed_by, source, diff, status, decided_by, created_at").eq("id", c.ref_id).maybeSingle();
     if (!p) return "invalid";
     const { data: e } = await db().from("elders").select("id, circle_id, autonomy_mode").eq("id", p.elder_id).single();
     if (!authorize(actor, { id: e!.id, circleId: e!.circle_id, mode: e!.autonomy_mode as Mode }, "approve_change").allowed) return "denied";
