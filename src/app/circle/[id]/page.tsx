@@ -1,3 +1,4 @@
+import { Lockup } from "@/components/Lockup";
 import Link from "next/link";
 import { after } from "next/server";
 import { TimeMachineControls } from "@/components/TimeMachine";
@@ -6,6 +7,7 @@ import { lazyTick } from "@/lib/scheduler";
 import { redirect } from "next/navigation";
 import { AppointmentForm, MarkDose, MedicineForm, ProposalDecision, RemoveAppointment } from "@/components/DashboardActions";
 import { MembersPanel } from "@/components/MembersPanel";
+import { TimelineReveal } from "@/components/motion";
 import { Pill } from "@/components/Pill";
 import { Pillbox } from "@/components/Pillbox";
 import { SignOut } from "@/components/SignOut";
@@ -75,7 +77,7 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
       <header className="border-b border-[#E6DFD8] bg-surface">
         <div className="wrap flex flex-wrap items-center justify-between gap-3 py-4">
           <div>
-            <p className="font-serif text-xl text-primary">Saathi</p>
+            <Lockup height={32} />
             <p className="text-sm text-muted">{circle.name}</p>
           </div>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
@@ -152,18 +154,17 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
                   feed.map(({ title, items }, i) => (
                     <div key={i} className="mt-3">
                     <p className="text-sm font-semibold text-primary">{title}</p>
-                    <ol className="mt-2 ml-1.5 border-l-2 border-[#E6DFD8] pl-4" aria-label={`Escalation steps for ${title}`}>
-                      {items.map((it) => (
-                        <li key={it.id} className="relative pb-3 text-sm">
-                          <span
-                            aria-hidden="true"
-                            className={`absolute -left-[23px] top-1 size-3 rounded-full ${it.kind === "resolved" ? "bg-success" : it.kind === "start" ? "bg-muted" : it.severity === "urgent" ? "bg-danger" : "bg-accent"}`}
-                          />
-                          <span className="font-semibold">{it.time}</span> · {it.text}
-                          {it.severity && <span className="ml-1 text-muted">({it.severity})</span>}
-                        </li>
-                      ))}
-                    </ol>
+                    <TimelineReveal
+                      className="mt-3"
+                      stagger={0.35}
+                      label={`Escalation steps for ${title}`}
+                      steps={items.map((it) => ({
+                        time: it.time,
+                        title: it.text,
+                        detail: it.severity ? `${it.severity === "urgent" ? "Urgent" : "Gentle"} email` : undefined,
+                        tone: it.kind === "resolved" ? "resolved" : it.kind === "start" ? "info" : it.severity === "urgent" ? "urgent" : "gentle",
+                      }))}
+                    />
                     </div>
                   ))
                 )}
@@ -235,7 +236,13 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
                   {d.status === "pending" && can("mark_dose") && <MarkDose doseId={d.id} label={`${d.medicine.name} at ${fmtTime(d.scheduled_at)}`} />}
                 </li>
               ))}
-              {!care.todayDoses.length && <li className="text-muted">No medicines scheduled today.</li>}
+              {!care.todayDoses.length && (
+                <li className="card flex flex-col items-center gap-3 p-6 text-center text-muted">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- decorative illustration */}
+                  <img src="/brand/illustrations/nothing-scheduled.svg" alt="" width={240} height={200} className="h-28 w-auto" />
+                  No medicines scheduled today.
+                </li>
+              )}
             </ol>
           </section>
 

@@ -3,13 +3,13 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { post } from "./client-api";
+import { RevealGroup, RevealItem } from "./motion";
 
 export interface PersonaCard {
   id: "kamala" | "priya" | "lakshmi" | "joseph" | "ravi";
   name: string;
   blurb: string;
   detail: string;
-  initial: string;
 }
 
 export function TryAs({ personas }: { personas: PersonaCard[] }) {
@@ -31,9 +31,9 @@ export function TryAs({ personas }: { personas: PersonaCard[] }) {
 
   return (
     <>
-      <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5" role="list">
+      <RevealGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {personas.map((p) => (
-          <li key={p.id}>
+          <RevealItem key={p.id}>
             <button
               type="button"
               onClick={() => go(p)}
@@ -42,9 +42,8 @@ export function TryAs({ personas }: { personas: PersonaCard[] }) {
               aria-labelledby={`p-${p.id}-n p-${p.id}-b`}
               aria-describedby={`p-${p.id}-d`}
             >
-              <span aria-hidden="true" className="grid size-12 place-items-center rounded-full bg-primary font-serif text-xl text-white">
-                {p.initial}
-              </span>
+              {/* eslint-disable-next-line @next/next/no-img-element -- small static SVG avatar */}
+              <img src={`/brand/avatars/${p.id}.svg`} alt="" width={64} height={64} className="size-16 rounded-full" />
               <span id={`p-${p.id}-n`} className="font-serif text-xl">{p.name}</span>
               <span id={`p-${p.id}-b`} className="text-sm font-medium text-primary">{p.blurb}</span>
               <span id={`p-${p.id}-d`} className="text-sm text-muted">{p.detail}</span>
@@ -52,9 +51,9 @@ export function TryAs({ personas }: { personas: PersonaCard[] }) {
                 {busy === p.id ? "Opening…" : `Continue as ${p.name.split(" ").pop()} →`}
               </span>
             </button>
-          </li>
+          </RevealItem>
         ))}
-      </ul>
+      </RevealGroup>
       <p role="alert" aria-live="assertive" className="mt-3 text-danger">
         {error}
       </p>

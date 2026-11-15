@@ -1,6 +1,6 @@
 "use client";
+import { Lockup } from "@/components/Lockup";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { post } from "@/components/client-api";
@@ -68,7 +68,7 @@ export default function CreateCirclePage() {
   if (done) {
     return (
       <main id="main" className="mx-auto w-full max-w-lg flex-1 px-4 py-12">
-        <p className="font-serif text-2xl text-primary">Saathi</p>
+        <Lockup href="/" />
         <div className="card mt-6 p-8" role="status">
           <h1 className="font-serif text-3xl">Your care circle is ready</h1>
           <p className="mt-4">Share this circle code with everyone you added. They sign in with it and their own passcode.</p>
@@ -83,9 +83,7 @@ export default function CreateCirclePage() {
 
   return (
     <main id="main" className="mx-auto w-full max-w-3xl flex-1 px-4 py-12">
-      <Link href="/" className="font-serif text-2xl text-primary">
-        Saathi
-      </Link>
+      <Lockup href="/" />
       <h1 className="mt-6 font-serif text-4xl">Create your own care circle</h1>
       <p className="mt-3 text-[#3D4A43]">One circle per family. Each person gets their own passcode, stored only as a secure hash.</p>
 

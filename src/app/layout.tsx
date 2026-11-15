@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter, Noto_Sans_Devanagari, Noto_Sans_Kannada, Noto_Sans_Malayalam, Noto_Sans_Tamil, Noto_Sans_Telugu } from "next/font/google";
 import "./globals.css";
+import { MotionProvider, PaperGrain } from "@/components/motion";
 
 const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"] });
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
@@ -24,7 +25,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a href="#main" className="skip-link">
           Skip to content
         </a>
-        {children}
+        <PaperGrain zIndex={-1} />
+        <MotionProvider>{children}</MotionProvider>
       </body>
     </html>
   );

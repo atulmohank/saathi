@@ -27,7 +27,9 @@ export function ElderDoseCard({ dose, lang, readOnly, helperLine }: { dose: Next
 
   if (!dose) {
     return (
-      <section aria-labelledby="next-h" className="card p-6 sm:p-10">
+      <section aria-labelledby="next-h" className="card flex flex-col items-center p-6 text-center sm:p-10">
+        {/* eslint-disable-next-line @next/next/no-img-element -- decorative illustration */}
+        <img src="/brand/illustrations/all-doses-taken.svg" alt="" width={240} height={200} className="mb-4 h-40 w-auto" />
         <h2 id="next-h" className="font-serif text-[32px]">
           {t(lang, "allDone")}
         </h2>
@@ -90,7 +92,7 @@ export function ElderDoseCard({ dose, lang, readOnly, helperLine }: { dose: Next
       ) : stage === "main" ? (
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           <button type="button" className="btn-primary min-h-20 text-[28px]" disabled={busy} onClick={() => mark("taken")}>
-            ✓ {t(lang, "tookIt")}
+            âœ“ {t(lang, "tookIt")}
           </button>
           <button type="button" className="btn-secondary min-h-20 text-[28px]" disabled={busy} onClick={() => setStage("reasons")}>
             {t(lang, "notNow")}

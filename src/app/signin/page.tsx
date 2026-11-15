@@ -1,4 +1,5 @@
 "use client";
+import { Lockup } from "@/components/Lockup";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -40,9 +41,7 @@ export default function SignInPage() {
 
   return (
     <main id="main" className="mx-auto w-full max-w-lg flex-1 px-4 py-12">
-      <Link href="/" className="font-serif text-2xl text-primary">
-        Saathi
-      </Link>
+      <Lockup href="/" />
       <h1 className="mt-6 font-serif text-4xl">Sign in with your passcode</h1>
       <p className="mt-3 text-[#3D4A43]">
         Trying the demo? Circle code <strong>DEMO</strong>, passcode <strong>1234</strong> for everyone.

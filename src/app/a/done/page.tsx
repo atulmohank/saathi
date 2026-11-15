@@ -1,3 +1,4 @@
+import { Lockup } from "@/components/Lockup";
 import Link from "next/link";
 
 export const metadata = { title: "Done — Saathi", robots: { index: false } };
@@ -16,7 +17,7 @@ export default async function Done({ searchParams }: { searchParams: Promise<{ r
   const m = MSG[r ?? ""] ?? MSG.invalid;
   return (
     <main id="main" className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center px-4 py-16 text-[20px]">
-      <p className="font-serif text-2xl text-primary">Saathi</p>
+      <Lockup href="/" />
       <div className="card mt-6 p-8" role="status">
         <p aria-hidden="true" className={`grid size-16 place-items-center rounded-full text-3xl text-white ${m.ok ? "bg-success" : "bg-muted"}`}>
           {m.ok ? "✓" : "!"}
