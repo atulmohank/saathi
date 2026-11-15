@@ -2,7 +2,7 @@ import "server-only";
 import { randomBytes } from "node:crypto";
 import { ACTION_TTL_SECONDS, redeemActionToken, signActionToken, type ActionClaims, type TokenStore } from "./auth/jwt";
 import { db } from "./db";
-import { env } from "./env";
+import { appBaseUrl, env } from "./env";
 
 /** Creates a signed, single-use, ≤12h link. The URL carries only opaque ids — no names, emails or medicines. */
 export async function createActionLink(purpose: ActionClaims["purpose"], refId: string, memberId: string, now = new Date()): Promise<string> {

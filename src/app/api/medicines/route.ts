@@ -12,7 +12,7 @@ import { createActionLink } from "@/lib/action-links";
 import { describeDiff } from "@/lib/describe";
 import { proposalEmail } from "@/lib/email/templates";
 import { sendEmail } from "@/lib/email/send";
-import { env } from "@/lib/env";
+import { appBaseUrl } from "@/lib/env";
 
 const body = z.object({
   elderId: uuid,

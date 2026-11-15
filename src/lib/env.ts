@@ -28,3 +28,14 @@ export function env() {
   }
   return cached;
 }
+
+/**
+ * Public base URL for links in emails. On Vercel, if APP_BASE_URL is missing or
+ * still localhost, fall back to the project's production domain (system env).
+ */
+export function appBaseUrl(): string {
+  const v = env().APP_BASE_URL.replace(/\/$/, "");
+  const prod = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  if (process.env.VERCEL && /localhost|127\.0\.0\.1/.test(v) && prod) return `https://${prod}`;
+  return v;
+}
