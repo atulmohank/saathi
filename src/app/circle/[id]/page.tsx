@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element -- fixed-crop avatars and brand SVG */
 import { demoPhoto } from "@/lib/demo/photos";
+import { isOpen } from "@/lib/next-dose";
 import Link from "next/link";
 import { after } from "next/server";
 import { TimeMachineControls } from "@/components/TimeMachine";
@@ -272,7 +273,7 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
                       </p>
                     </div>
                   </div>
-                  {d.status === "pending" && can("mark_dose") && <MarkDose doseId={d.id} label={`${d.medicine.name} at ${fmtTime(d.scheduled_at)}`} />}
+                  {isOpen(d) && can("mark_dose") && <MarkDose doseId={d.id} label={`${d.medicine.name} at ${fmtTime(d.scheduled_at)}`} />}
                 </li>
               ))}
               {!care.todayDoses.length && (

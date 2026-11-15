@@ -12,6 +12,7 @@ import { AuthError, requireActor } from "@/lib/auth/guard";
 import { fmtDateTime, fmtTime, getCircle, getElderCare } from "@/lib/data";
 import { describeDiff } from "@/lib/describe";
 import { demoPhoto } from "@/lib/demo/photos";
+import { pickNextDose } from "@/lib/next-dose";
 
 export const dynamic = "force-dynamic";
 
@@ -33,8 +34,8 @@ export default async function ElderTodayPage({ params, searchParams }: { params:
   after(() => lazyTick(id).catch((e) => console.error("lazy scheduler", e)));
   const now = new Date();
 
-  const open = care.todayDoses.filter((d) => d.status === "pending");
-  const pick = open.find((d) => d.display === "due" || d.display === "missed") ?? open.find((d) => d.display === "upcoming");
+  // Missed doses stay open: she can still mark one taken late (or say why she skipped it).
+  const pick = pickNextDose(care.todayDoses);
   const next: NextDose | null = pick
     ? {
         id: pick.id,
