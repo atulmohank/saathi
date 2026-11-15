@@ -131,3 +131,21 @@ body {
     text-decoration: none;
   }
 }
+
+/* Web Interface Guidelines quick wins */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+button,
+a,
+summary,
+select,
+label {
+  touch-action: manipulation;
+}
+td,
+dd {
+  font-variant-numeric: tabular-nums;
+}

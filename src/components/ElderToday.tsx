@@ -92,7 +92,7 @@ export function ElderDoseCard({ dose, lang, readOnly, helperLine }: { dose: Next
       ) : stage === "main" ? (
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           <button type="button" className="btn-primary min-h-20 text-[28px]" disabled={busy} onClick={() => mark("taken")}>
-            âœ“ {t(lang, "tookIt")}
+            ✓ {t(lang, "tookIt")}
           </button>
           <button type="button" className="btn-secondary min-h-20 text-[28px]" disabled={busy} onClick={() => setStage("reasons")}>
             {t(lang, "notNow")}

@@ -106,7 +106,7 @@ export function MembersPanel({ elderId, members, meId, canManage }: { elderId: s
             </label>
             <label className="field">
               Email
-              <input name="email" type="email" maxLength={254} autoComplete="off" />
+              <input name="email" type="email" spellCheck={false} maxLength={254} autoComplete="off" />
             </label>
             <label className="field">
               Their passcode

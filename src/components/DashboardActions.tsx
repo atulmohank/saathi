@@ -201,7 +201,9 @@ export function MedicineForm({ elderId, initial, approver, flowHint, canRemove }
           {initial ? "Save medicine" : "Add medicine"}
         </button>
         {initial && canRemove && (
-          <button type="button" className="btn-danger" disabled={busy} onClick={() => send({ active: false }, false)}>
+          <button type="button" className="btn-danger" disabled={busy} onClick={() => {
+              if (confirm(`Stop ${initial.name}? ${flowHint}`)) send({ active: false }, false);
+            }}>
             Stop medicine
           </button>
         )}

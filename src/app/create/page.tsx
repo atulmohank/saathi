@@ -172,7 +172,7 @@ export default function CreateCirclePage() {
               </label>
               <label className="field">
                 Email (for reminders)
-                <input type="email" value={r.email} onChange={(e) => setRow(i, "email", e.target.value)} maxLength={254} autoComplete="off" />
+                <input type="email" spellCheck={false} value={r.email} onChange={(e) => setRow(i, "email", e.target.value)} maxLength={254} autoComplete="off" />
               </label>
               <label className="field">
                 Passcode
