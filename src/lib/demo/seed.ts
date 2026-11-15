@@ -3,6 +3,11 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { addDays } from "date-fns";
 import { expandSchedule, istDate } from "../engine/schedule";
 
+/**
+ * Intentionally PUBLIC demo credential (circle code DEMO, passcode 1234) for the fictional demo circle only.
+ * It is shown on the landing page so judges can try the real passcode sign-in. It is never stored in plain
+ * text: seedDemo() hashes it with bcrypt (cost 10) at seed time. Real circles set their own passcodes.
+ */
 export const DEMO_PASSCODE = "1234";
 
 /**

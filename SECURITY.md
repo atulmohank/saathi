@@ -24,10 +24,14 @@ Please open a private security advisory on the GitHub repository (Security → R
 | Abuse of sign-up | Circle creation rate limit: 5/hour per IP (per instance) + 60/hour global (DB count) |
 | Emailing real people from the demo | Demo circle mail always goes to `DEMO_EMAIL_SINK`; demo personas use `@example.invalid` |
 
+## Demo credentials
+
+`DEMO` / `1234` are intentionally public credentials for the fictional demo circle only, so reviewers can try the real passcode sign-in. The passcode is hashed with bcrypt at seed time and never stored in plain text. They grant access to made-up data only.
+
 ## Known limitations
 
 - The per-IP limiter is in memory per server instance; the global cap is the cross-instance backstop.
 - No passcode reset flow; a family member can add a new member instead.
 - `npm audit`: 0 vulnerabilities in production dependencies; 7 moderate in dev-only ESLint tooling (`minimatch`).
 - The CSP allows `'unsafe-inline'` scripts/styles (Next.js inline runtime + Framer Motion styles); no nonce-based CSP yet.
-- `/api/health` is public and returns only the deployed commit and the email-link host.
+- `/api/health` is public and returns only `{ok: true}`.

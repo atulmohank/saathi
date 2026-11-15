@@ -239,7 +239,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* TRY IT */}
+        {/* TRY IT — the DEMO / 1234 credentials shown here are intentionally public, for the fictional demo circle only (bcrypt-hashed at seed time). */}
         <section id="try" aria-labelledby="try-h" className="relative overflow-hidden bg-[linear-gradient(180deg,var(--cream)_0%,var(--sage)_100%)] py-24 sm:py-32">
           <div aria-hidden="true" className="blob -right-32 top-20 size-96 bg-peach opacity-70" />
           <div className="wrap relative">

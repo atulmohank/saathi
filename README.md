@@ -15,6 +15,9 @@
 5. **⏩ Time machine** (on the dashboard, demo circle only): *Kamala missed 8 AM* / *Joseph missed 1 PM* replays each mode's escalation ladder with real emails (to a test inbox only) and in-app email previews; *Run scheduler now*; *Reset demo*.
 6. Or **Create your own care circle** at `/create`.
 
+> **Demo credentials are public on purpose.** Circle code `DEMO` / passcode `1234` only opens the fictional demo circle (made-up people, `@example.invalid` emails, mail goes to a test inbox). The passcode is bcrypt-hashed at seed time ([`src/lib/demo/seed.ts`](src/lib/demo/seed.ts)); real circles choose their own passcodes. No real secret, key or token is in the repo or its git history (checked against every value in `.env.local`).
+
+
 ## Problem statement → feature
 
 | PS requirement | Saathi feature |
