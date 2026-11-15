@@ -111,3 +111,24 @@ describe("circle codes", () => {
     expect(CODE_ALPHABET).not.toMatch(/[01OIL]/);
   });
 });
+
+import { DICTS, pickLang, t } from "@/i18n";
+
+describe("elder-view dictionaries", () => {
+  const keys = Object.keys(DICTS.en).sort();
+  it.each(Object.keys(DICTS))("%s has every key, non-empty, same placeholders", (lang) => {
+    const d = DICTS[lang as keyof typeof DICTS] as Record<string, string>;
+    expect(Object.keys(d).sort()).toEqual(keys);
+    for (const k of keys) {
+      expect(d[k].trim().length).toBeGreaterThan(0);
+      const ph = (s: string) => (s.match(/\{\w+\}/g) ?? []).sort().join();
+      expect(ph(d[k])).toBe(ph((DICTS.en as Record<string, string>)[k]));
+    }
+  });
+  it("falls back to the elder's language, then English", () => {
+    expect(pickLang("ml", "en")).toBe("ml");
+    expect(pickLang("fr", "ta")).toBe("ta");
+    expect(pickLang(undefined, "xx")).toBe("en");
+    expect(t("ta", "greeting", { name: "Kamala" })).toBe("வணக்கம், Kamala");
+  });
+});

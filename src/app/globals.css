@@ -20,8 +20,8 @@
   --color-danger: var(--danger);
   --color-success: var(--success);
   --color-muted: var(--muted);
-  --font-sans: var(--font-inter), var(--font-deva), "Noto Sans", system-ui, sans-serif;
-  --font-serif: var(--font-fraunces), var(--font-deva), Georgia, serif;
+  --font-sans: var(--font-inter), var(--font-deva), var(--font-tamil), var(--font-telugu), var(--font-kannada), var(--font-malayalam), "Noto Sans", system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), var(--font-deva), var(--font-tamil), var(--font-telugu), var(--font-kannada), var(--font-malayalam), Georgia, serif;
 }
 
 body {

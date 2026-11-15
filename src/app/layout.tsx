@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter, Noto_Sans_Devanagari } from "next/font/google";
+import { Fraunces, Inter, Noto_Sans_Devanagari, Noto_Sans_Kannada, Noto_Sans_Malayalam, Noto_Sans_Tamil, Noto_Sans_Telugu } from "next/font/google";
 import "./globals.css";
 
 const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"] });
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const deva = Noto_Sans_Devanagari({ variable: "--font-deva", subsets: ["devanagari"] });
+// Indic scripts: not preloaded; the browser fetches each only when its glyphs appear (unicode-range).
+const tamil = Noto_Sans_Tamil({ variable: "--font-tamil", subsets: ["tamil"], preload: false });
+const telugu = Noto_Sans_Telugu({ variable: "--font-telugu", subsets: ["telugu"], preload: false });
+const kannada = Noto_Sans_Kannada({ variable: "--font-kannada", subsets: ["kannada"], preload: false });
+const malayalam = Noto_Sans_Malayalam({ variable: "--font-malayalam", subsets: ["malayalam"], preload: false });
 
 export const metadata: Metadata = {
   title: "Saathi — care that adapts",
@@ -14,7 +19,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${inter.variable} ${deva.variable} h-full antialiased`}>
+    <html lang="en" className={`${fraunces.variable} ${inter.variable} ${deva.variable} ${tamil.variable} ${telugu.variable} ${kannada.variable} ${malayalam.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <a href="#main" className="skip-link">
           Skip to content
