@@ -43,5 +43,7 @@
   "morning": "सुबह",
   "afternoon": "दोपहर",
   "evening": "शाम",
-  "takenToday": "आज {total} में से {taken} दवाइयाँ ली गईं"
+  "takenToday": "आज {total} में से {taken} दवाइयाँ ली गईं",
+  "addToCalendar": "Google कैलेंडर में जोड़ें",
+  "newTab": "(नए टैब में खुलेगा)"
 }

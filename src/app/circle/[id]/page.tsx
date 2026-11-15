@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- fixed-crop avatars and brand SVG */
 import { demoPhoto } from "@/lib/demo/photos";
 import { isOpen } from "@/lib/next-dose";
+import { CalendarLink } from "@/components/CalendarLink";
 import Link from "next/link";
 import { after } from "next/server";
 import { TimeMachineControls } from "@/components/TimeMachine";
@@ -409,6 +410,7 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
                     <Link href={`/circle/${id}/brief/${a.id}`} className="btn-ghost mt-1 px-0 text-sm font-semibold">
                       Doctor Visit Brief →
                     </Link>
+                      <CalendarLink title={`${elder.display_name}: ${a.doctor_name}`} startsAt={a.starts_at} location={a.location} details={a.notes} className="text-sm" />
                   </div>
                   {can("edit_medicine") && <RemoveAppointment elderId={elder.id} id={a.id} label={a.doctor_name} />}
                 </li>

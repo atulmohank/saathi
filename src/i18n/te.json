@@ -43,5 +43,7 @@
   "morning": "ఉదయం",
   "afternoon": "మధ్యాహ్నం",
   "evening": "సాయంత్రం",
-  "takenToday": "ఈ రోజు {total} మందులలో {taken} వేసుకున్నారు"
+  "takenToday": "ఈ రోజు {total} మందులలో {taken} వేసుకున్నారు",
+  "addToCalendar": "Google క్యాలెండర్‌కు జోడించండి",
+  "newTab": "(కొత్త ట్యాబ్‌లో తెరుచుకుంటుంది)"
 }

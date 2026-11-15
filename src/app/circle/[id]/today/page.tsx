@@ -13,6 +13,7 @@ import { fmtDateTime, fmtTime, getCircle, getElderCare } from "@/lib/data";
 import { describeDiff } from "@/lib/describe";
 import { demoPhoto } from "@/lib/demo/photos";
 import { pickNextDose } from "@/lib/next-dose";
+import { CalendarLink } from "@/components/CalendarLink";
 
 export const dynamic = "force-dynamic";
 
@@ -184,6 +185,7 @@ export default async function ElderTodayPage({ params, searchParams }: { params:
             </p>
             <p>{fmtDateTime(appt.starts_at)}</p>
             {appt.location && <p className="text-ink-soft">{appt.location}</p>}
+            <CalendarLink title={`${elder.display_name}: ${appt.doctor_name}`} startsAt={appt.starts_at} location={appt.location} label={t(lang, "addToCalendar")} newTabText={t(lang, "newTab")} className="mt-3 text-[22px]" />
           </section>
         )}
 

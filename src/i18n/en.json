@@ -43,5 +43,7 @@
   "morning": "Morning",
   "afternoon": "Afternoon",
   "evening": "Evening",
-  "takenToday": "{taken} of {total} medicines taken today"
+  "takenToday": "{taken} of {total} medicines taken today",
+  "addToCalendar": "Add to Google Calendar",
+  "newTab": "(opens in a new tab)"
 }

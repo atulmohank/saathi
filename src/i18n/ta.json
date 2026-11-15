@@ -43,5 +43,7 @@
   "morning": "காலை",
   "afternoon": "மதியம்",
   "evening": "மாலை",
-  "takenToday": "இன்று {total} மருந்துகளில் {taken} எடுக்கப்பட்டன"
+  "takenToday": "இன்று {total} மருந்துகளில் {taken} எடுக்கப்பட்டன",
+  "addToCalendar": "Google கேலெண்டரில் சேர்",
+  "newTab": "(புதிய தாவலில் திறக்கும்)"
 }

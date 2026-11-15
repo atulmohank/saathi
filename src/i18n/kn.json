@@ -43,5 +43,7 @@
   "morning": "ಬೆಳಿಗ್ಗೆ",
   "afternoon": "ಮಧ್ಯಾಹ್ನ",
   "evening": "ಸಂಜೆ",
-  "takenToday": "ಇಂದು {total} ಔಷಧಿಗಳಲ್ಲಿ {taken} ತೆಗೆದುಕೊಳ್ಳಲಾಗಿದೆ"
+  "takenToday": "ಇಂದು {total} ಔಷಧಿಗಳಲ್ಲಿ {taken} ತೆಗೆದುಕೊಳ್ಳಲಾಗಿದೆ",
+  "addToCalendar": "Google ಕ್ಯಾಲೆಂಡರ್‌ಗೆ ಸೇರಿಸಿ",
+  "newTab": "(ಹೊಸ ಟ್ಯಾಬ್‌ನಲ್ಲಿ ತೆರೆಯುತ್ತದೆ)"
 }

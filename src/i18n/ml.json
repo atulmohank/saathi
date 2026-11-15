@@ -43,5 +43,7 @@
   "morning": "രാവിലെ",
   "afternoon": "ഉച്ചയ്ക്ക്",
   "evening": "വൈകുന്നേരം",
-  "takenToday": "ഇന്ന് {total} മരുന്നുകളിൽ {taken} എണ്ണം കഴിച്ചു"
+  "takenToday": "ഇന്ന് {total} മരുന്നുകളിൽ {taken} എണ്ണം കഴിച്ചു",
+  "addToCalendar": "Google കലണ്ടറിൽ ചേർക്കുക",
+  "newTab": "(പുതിയ ടാബിൽ തുറക്കും)"
 }
