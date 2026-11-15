@@ -5,7 +5,7 @@ import { requirePermission } from "@/lib/auth/guard";
 import { applyMedicineChange, type MedicineDiff } from "@/lib/changes-apply";
 import { db } from "@/lib/db";
 import { handleError, readJson } from "@/lib/http";
-import { medicineSchema, uuid } from "@/lib/validation";
+import { medicinePatchSchema, uuid } from "@/lib/validation";
 
 const body = z.object({ decision: z.enum(["approve", "decline"]) });
 
@@ -29,7 +29,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     if (!claimed?.length) return NextResponse.json({ error: "Already decided." }, { status: 409 });
 
     if (decision === "approve") {
-      const diff = medicineSchema.partial().extend({ active: z.boolean().optional() }).parse(p.diff) as MedicineDiff;
+      const diff = medicinePatchSchema.parse(p.diff) as MedicineDiff;
       await applyMedicineChange({ circleId: actor.circleId, actorId: actor.memberId, elderId: elder.id, medicineId: p.medicine_id, diff });
     }
     await audit({

@@ -16,15 +16,24 @@ export const demoLoginSchema = z.object({
   persona: z.enum(["kamala", "priya", "lakshmi", "joseph", "ravi"]),
 });
 
-export const medicineSchema = z.object({
+const medicineFields = {
   name: trimmed(80),
   doseText: trimmed(60),
   times: z.array(timeHHmm).min(1).max(8).refine((t) => new Set(t).size === t.length, "Times must be unique"),
   pillLook: trimmed(40),
-  instructions: trimmed(300, 0).default(""),
+  instructions: trimmed(300, 0),
   stockCount: z.number().int().min(0).max(10000),
-  isCritical: z.boolean().default(false),
-});
+  isCritical: z.boolean(),
+};
+
+/** A whole new medicine (instructions and critical flag default when omitted). */
+export const medicineSchema = z.object({ ...medicineFields, instructions: medicineFields.instructions.default(""), isCritical: medicineFields.isCritical.default(false) });
+
+/**
+ * A change to an existing medicine: only the fields sent. No defaults on purpose — `.partial()` keeps
+ * `.default()`s, which would silently reset instructions and the critical flag on every edit.
+ */
+export const medicinePatchSchema = z.object(medicineFields).partial().extend({ active: z.boolean().optional() });
 export type MedicineInput = z.infer<typeof medicineSchema>;
 
 export const markDoseSchema = z.object({
@@ -37,7 +46,7 @@ export const changeProposalSchema = z.object({
   elderId: uuid,
   medicineId: uuid.nullable(),
   source: z.enum(CHANGE_SOURCES),
-  diff: medicineSchema.partial(),
+  diff: medicinePatchSchema,
 });
 
 export const appointmentSchema = z.object({

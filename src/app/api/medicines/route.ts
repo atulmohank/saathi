@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 import { resolveChangeFlow } from "@/lib/engine/changes";
 import type { ChangeSource } from "@/lib/engine/types";
 import { handleError, readJson } from "@/lib/http";
-import { medicineSchema, uuid } from "@/lib/validation";
+import { medicinePatchSchema, medicineSchema, uuid } from "@/lib/validation";
 import { createActionLink } from "@/lib/action-links";
 import { describeDiff } from "@/lib/describe";
 import { proposalEmail } from "@/lib/email/templates";
@@ -18,7 +18,7 @@ const body = z.object({
   elderId: uuid,
   medicineId: uuid.nullable(),
   /** Create: full medicine. Edit: partial. Remove: { active: false }. */
-  medicine: medicineSchema.partial().extend({ active: z.boolean().optional() }),
+  medicine: medicinePatchSchema,
   doctorInstruction: z.boolean().default(false),
 });
 

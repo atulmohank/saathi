@@ -1,5 +1,4 @@
 import "server-only";
-import { z } from "zod";
 import type { ActionClaims } from "./auth/jwt";
 import { authorize } from "./auth/access";
 import { audit } from "./audit";
@@ -7,7 +6,7 @@ import { applyMedicineChange, type MedicineDiff } from "./changes-apply";
 import { db } from "./db";
 import { checkDoubleDose } from "./engine/doseGuard";
 import type { Mode, Role } from "./engine/types";
-import { medicineSchema } from "./validation";
+import { medicinePatchSchema } from "./validation";
 
 export type ActionOutcome = "taken" | "handled" | "approved" | "already" | "denied" | "invalid";
 
@@ -29,7 +28,7 @@ export async function applyAction(c: ActionClaims, now = new Date()): Promise<Ac
       .eq("status", "pending")
       .select("id");
     if (!claimed?.length) return "already";
-    const diff = medicineSchema.partial().extend({ active: z.boolean().optional() }).parse(p.diff) as MedicineDiff;
+    const diff = medicinePatchSchema.parse(p.diff) as MedicineDiff;
     await applyMedicineChange({ circleId: m.circle_id, actorId: m.id, elderId: p.elder_id, medicineId: p.medicine_id, diff });
     await audit({ circleId: m.circle_id, actor: m.id, action: "proposal_approved", entity: "change_proposal", entityId: p.id, after: { via: "email" } });
     return "approved";

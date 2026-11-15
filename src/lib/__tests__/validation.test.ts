@@ -132,3 +132,16 @@ describe("elder-view dictionaries", () => {
     expect(t("ta", "greeting", { name: "Kamala" })).toBe("வணக்கம், Kamala");
   });
 });
+
+import { medicinePatchSchema } from "../validation";
+
+describe("medicinePatchSchema (regression: partial edits must not reset other fields)", () => {
+  it("keeps only the fields that were sent", () => {
+    expect(medicinePatchSchema.parse({ times: ["09:00"] })).toEqual({ times: ["09:00"] });
+    expect(medicinePatchSchema.parse({ active: false })).toEqual({ active: false });
+  });
+  it("still validates what is sent", () => {
+    expect(medicinePatchSchema.safeParse({ times: ["9am"] }).success).toBe(false);
+    expect(medicinePatchSchema.safeParse({ stockCount: -1 }).success).toBe(false);
+  });
+});
