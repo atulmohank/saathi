@@ -143,3 +143,11 @@ npm test
 ```
 
 Scheduler in production: cron-job.org → `POST https://<your-app>/api/cron/tick` every 5 min with header `x-cron-secret: <CRON_SECRET>`.
+
+## Design
+
+Design system: [DESIGN.md](DESIGN.md) — cream, ink, deep green and saffron with sage/peach gradients; Fraunces (display), Inter (UI), Caveat + Kalam (script accents); pill buttons, tinted two-layer shadows, a hand-drawn saffron "thread". Reference study and three critique rounds: [docs/refs/NOTES.md](docs/refs/NOTES.md), [docs/refs/CRITIQUE.md](docs/refs/CRITIQUE.md). The elder view's sky follows the IST time of day (`?sky=morning|afternoon|evening` previews the others).
+
+## Photo credits
+
+Photographs of Indian families are from [Unsplash](https://unsplash.com) under the Unsplash Licence and are used as **demo personas — not real users**: Richard Saunders (Kamala), Pranav Rasal (Joseph), Ashwini Chaudhary (Monty) (Priya), Fotos (Lakshmi), Wilfred Sequeira (Ravi), Trương Tuyết Ly (hands), Frederick Shaw (elders laughing), Miles Burke (pill organiser), National Cancer Institute (doctor visit), WorldSikhOrg (family at home). Cropped and converted to WebP (< 150 KB each) in `public/images/`.
