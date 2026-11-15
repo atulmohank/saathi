@@ -258,3 +258,22 @@ export async function loadDose(id: string): Promise<DoseCtx | null> {
   const { data } = await db().from("dose_events").select(DOSE_SELECT).eq("id", id).maybeSingle();
   return (data as unknown as DoseCtx) ?? null;
 }
+
+export const LAZY_TICK_MINUTES = 5;
+
+/**
+ * Page-load check, throttled to once per 5 minutes per circle across all
+ * server instances: an atomic conditional UPDATE on care_circles.last_tick_at.
+ */
+export async function lazyTick(circleId: string, now = new Date()): Promise<boolean> {
+  const cutoff = new Date(now.getTime() - LAZY_TICK_MINUTES * 60000).toISOString();
+  const { data } = await db()
+    .from("care_circles")
+    .update({ last_tick_at: now.toISOString() })
+    .eq("id", circleId)
+    .or(`last_tick_at.is.null,last_tick_at.lt.${cutoff}`)
+    .select("id");
+  if (!data?.length) return false;
+  await runScheduler({ now, circleId });
+  return true;
+}

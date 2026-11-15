@@ -2,7 +2,7 @@ import Link from "next/link";
 import { after } from "next/server";
 import { TimeMachineControls } from "@/components/TimeMachine";
 import { escalationFeed, recentEmails } from "@/lib/demo-feed";
-import { runScheduler } from "@/lib/scheduler";
+import { lazyTick } from "@/lib/scheduler";
 import { redirect } from "next/navigation";
 import { AppointmentForm, MarkDose, MedicineForm, ProposalDecision, RemoveAppointment } from "@/components/DashboardActions";
 import { MembersPanel } from "@/components/MembersPanel";
@@ -50,7 +50,7 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
   const elder = elders.find((e) => e.id === elderParam) ?? elders[0];
   const care = await getElderCare(elder, members);
   // Lazy missed-dose check on page load (runs after the response is sent).
-  after(() => runScheduler({ circleId: id }).catch((e) => console.error("lazy scheduler", e)));
+  after(() => lazyTick(id).catch((e) => console.error("lazy scheduler", e)));
   const [feed, emails] = circle.is_demo ? await Promise.all([escalationFeed(id, care.memberName), recentEmails(id)]) : [[], []];
   const target = { id: elder.id, circleId: elder.circle_id, mode: elder.autonomy_mode };
   const can = (a: Parameters<typeof authorize>[2]) => authorize(actor, target, a).allowed;
