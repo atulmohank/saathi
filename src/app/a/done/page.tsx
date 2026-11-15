@@ -1,4 +1,4 @@
-import { Lockup } from "@/components/Lockup";
+import { PageShell } from "@/components/PageShell";
 import Link from "next/link";
 
 export const metadata = { title: "Done — Saathi", robots: { index: false } };
@@ -16,8 +16,8 @@ export default async function Done({ searchParams }: { searchParams: Promise<{ r
   const { r } = await searchParams;
   const m = MSG[r ?? ""] ?? MSG.invalid;
   return (
+    <PageShell>
     <main id="main" className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center px-4 py-16 text-[20px]">
-      <Lockup href="/" />
       <div className="card mt-6 p-8" role="status">
         <p aria-hidden="true" className={`grid size-16 place-items-center rounded-full text-3xl text-white ${m.ok ? "bg-success" : "bg-muted"}`}>
           {m.ok ? "✓" : "!"}
@@ -29,5 +29,6 @@ export default async function Done({ searchParams }: { searchParams: Promise<{ r
         </Link>
       </div>
     </main>
+    </PageShell>
   );
 }

@@ -1,3 +1,4 @@
+import { PageShell } from "@/components/PageShell";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { GeminiBrief } from "@/components/GeminiBrief";
@@ -25,6 +26,7 @@ export default async function BriefPage({ params }: { params: Promise<{ id: stri
   const { appt, elder, template: t } = b;
 
   return (
+    <PageShell>
     <main id="main" className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
       <div className="no-print mb-6 flex flex-wrap items-center justify-between gap-3">
         <Link href={`/circle/${id}?elder=${appt.elder_id}`} className="btn-ghost px-0">
@@ -101,5 +103,6 @@ export default async function BriefPage({ params }: { params: Promise<{ id: stri
       </div>
       <p className="mt-6 text-sm text-muted">Saathi is not a medical device. This brief summarises what the care circle recorded; the doctor decides.</p>
     </main>
+    </PageShell>
   );
 }

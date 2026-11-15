@@ -1,3 +1,4 @@
+import { PageShell } from "@/components/PageShell";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { PrintButton } from "@/components/PrintButton";
@@ -30,6 +31,7 @@ export default async function EmergencyCard({ params, searchParams }: { params: 
   const back = actor.role === "elder" ? `/circle/${id}/today` : `/circle/${id}?elder=${elder.id}`;
 
   return (
+    <PageShell tone="sage">
     <main id="main" className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 print:p-0">
       <div className="no-print mb-6 flex flex-wrap items-center justify-between gap-3">
         <Link href={back} className="btn-ghost px-0">
@@ -116,5 +118,6 @@ export default async function EmergencyCard({ params, searchParams }: { params: 
         </section>
       </article>
     </main>
+    </PageShell>
   );
 }

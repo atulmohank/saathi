@@ -11,6 +11,7 @@ export interface PanelMember {
   roleLabel: string;
   email: string | null;
   onDuty: boolean;
+  photo?: string | null;
 }
 
 export function MembersPanel({ elderId, members, meId, canManage }: { elderId: string; members: PanelMember[]; meId: string; canManage: boolean }) {
@@ -54,12 +55,22 @@ export function MembersPanel({ elderId, members, meId, canManage }: { elderId: s
           const canToggle = m.role === "caretaker" && (canManage || m.id === meId);
           return (
             <li key={m.id} className="card flex items-center justify-between gap-3 p-3">
-              <div className="min-w-0">
+              <div className="flex min-w-0 items-center gap-3">
+                {m.photo ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- small fixed-crop avatar
+                  <img src={m.photo} alt="" width={44} height={44} className="size-11 shrink-0 rounded-full object-cover" />
+                ) : (
+                  <span aria-hidden="true" className="grid size-11 shrink-0 place-items-center rounded-full bg-sage font-serif text-lg text-primary">
+                    {m.name.slice(0, 1)}
+                  </span>
+                )}
+                <div className="min-w-0">
                 <p className="font-semibold">
                   {m.name}
                   {m.id === meId && <span className="font-normal text-muted"> (you)</span>}
                 </p>
                 <p className="text-sm text-muted">{m.roleLabel}</p>
+                </div>
               </div>
               {m.role === "caretaker" &&
                 (canToggle ? (

@@ -1,3 +1,4 @@
+import { PageShell } from "@/components/PageShell";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { AuthError, requireActor } from "@/lib/auth/guard";
@@ -33,8 +34,11 @@ const LABEL: Record<string, string> = {
 function summary(v: unknown): string {
   if (!v || typeof v !== "object") return "";
   return Object.entries(v as Record<string, unknown>)
-    .filter(([k]) => !["passcode_hash", "marked_by", "resolved_by"].includes(k))
-    .map(([k, x]) => `${k.replace(/_/g, " ")}: ${Array.isArray(x) ? x.join(", ") : typeof x === "object" && x ? JSON.stringify(x) : String(x)}`)
+    .filter(([k]) => !["passcode_hash", "marked_by", "resolved_by", "sent", "elder"].includes(k))
+    .map(([k, x]) => {
+      const v = typeof x === "string" && /^d{4}-d{2}-d{2}T/.test(x) ? fmtDateTime(x) : Array.isArray(x) ? x.join(", ") : typeof x === "object" && x ? JSON.stringify(x) : String(x);
+      return `${k === "at" ? "for" : k.replace(/_/g, " ")}: ${v}`;
+    })
     .join(" · ")
     .slice(0, 240);
 }
@@ -54,6 +58,7 @@ export default async function AuditPage({ params }: { params: Promise<{ id: stri
   const rows = (data ?? []) as { id: string; actor: string | null; action: string; entity: string; before: unknown; after: unknown; created_at: string }[];
 
   return (
+    <PageShell tone="sage">
     <main id="main" className="wrap flex-1 py-8">
       <Link href={`/circle/${id}`} className="btn-ghost px-0">
         ← Back to the dashboard
@@ -93,5 +98,6 @@ export default async function AuditPage({ params }: { params: Promise<{ id: stri
         </table>
       </div>
     </main>
+    </PageShell>
   );
 }

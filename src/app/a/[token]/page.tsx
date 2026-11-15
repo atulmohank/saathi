@@ -1,4 +1,4 @@
-import { Lockup } from "@/components/Lockup";
+import { PageShell } from "@/components/PageShell";
 import Link from "next/link";
 import { verifyActionToken } from "@/lib/auth/jwt";
 import { env } from "@/lib/env";
@@ -20,8 +20,8 @@ export default async function ActionPage({ params }: { params: Promise<{ token: 
   const { token } = await params;
   const claims = await verifyActionToken(token, env().ACTION_LINK_SECRET);
   return (
+    <PageShell>
     <main id="main" className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center px-4 py-16 text-[20px]">
-      <Lockup href="/" />
       {claims ? (
         <form method="post" action="/api/action" className="card mt-6 p-8">
           <h1 className="font-serif text-3xl">{PROMPT[claims.purpose].heading}</h1>
@@ -40,5 +40,6 @@ export default async function ActionPage({ params }: { params: Promise<{ token: 
         </div>
       )}
     </main>
+    </PageShell>
   );
 }

@@ -33,3 +33,18 @@ Still amateur:
 6. **Time-machine buttons were pills with two-line text** — ovals look accidental. Rounded rectangles now. *(fixed)*
 7. **Lower dashboard is still a stack of white cards** (Today, Appointments, Medicines, Care circle) — consistent but flat compared with the green band and tinted tiles above. Next round: two-column bento below the pillbox, member cards with faces, tinted section grounds.
 8. **Secondary pages** (sign-in, create, emergency card, audit, Doctor Brief, email-link pages) still use the old layout with the new tokens — need the same header treatment and a warm ground.
+
+## Round 3 — secondary pages + dashboard body (1440 and 375)
+
+Fixed from round 2: lower dashboard is now a two-column bento (Today + Medicines | tinted Change requests, Tasks, Appointments panels), care-circle members have faces, every secondary page (sign-in, create, emergency card, audit, Doctor Brief, email-link pages) shares one warm shell (peach/sage ground, blob, thread, lockup).
+
+Still weak, fixed this round:
+1. **Sign-in was a lonely card in an empty page.** Now a split: form left, a family-at-home photo right in a 40px frame with a saffron sun and a glass caption — the Honor pattern. *(fixed)*
+2. **Audit trail leaked raw ISO timestamps** ("at: 2026-11-15T08:00:00.000Z"). Dates now read in IST; noise keys hidden. *(fixed)*
+
+Honest remaining gaps (not fixed, by choice or time):
+- On phones the dashboard's Change requests / Tasks come after the medicine list (right column stacks below the left). Acceptable — Today stays first — but a caregiver might want requests higher.
+- The create-circle form is long and plain compared with the rest; it works, but it's a form, not a moment.
+- The time-machine panel is busy at 375 (timeline + email list stack long). It's a demo tool, so I left it.
+
+Verdict: landing, elder view and dashboard now hold up next to the references — warm, photographic, one strong type gesture per screen, real product UI instead of decoration.
