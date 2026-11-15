@@ -13,13 +13,13 @@ import {
 import "./globals.css";
 import { MotionProvider, PaperGrain } from "@/components/motion";
 
-// Display serif with optical sizing + the "SOFT" axis for the big, warm wordmark.
-const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"], axes: ["opsz", "SOFT"] });
+// Display serif with optical sizing (the SOFT axis was dropped: it doubled the font file and slowed LCP).
+const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"], axes: ["opsz"] });
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 // Script accent (Latin) and a handwritten Devanagari for "साथी" (Caveat has no Devanagari glyphs).
-const caveat = Caveat({ variable: "--font-caveat", subsets: ["latin"], weight: ["600", "700"] });
+const caveat = Caveat({ variable: "--font-caveat", subsets: ["latin"], weight: ["700"], preload: false });
 const kalam = Kalam({ variable: "--font-kalam", subsets: ["devanagari"], weight: ["400", "700"], preload: false });
-const deva = Noto_Sans_Devanagari({ variable: "--font-deva", subsets: ["devanagari"] });
+const deva = Noto_Sans_Devanagari({ variable: "--font-deva", subsets: ["devanagari"], preload: false });
 // Indic scripts: not preloaded; the browser fetches each only when its glyphs appear (unicode-range).
 const tamil = Noto_Sans_Tamil({ variable: "--font-tamil", subsets: ["tamil"], preload: false });
 const telugu = Noto_Sans_Telugu({ variable: "--font-telugu", subsets: ["telugu"], preload: false });

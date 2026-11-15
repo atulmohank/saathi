@@ -172,7 +172,7 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
 
         {circle.is_demo && (
           <section aria-labelledby="tm-h" className="relative overflow-hidden rounded-[40px] border border-[#F0D9BF] bg-[linear-gradient(150deg,#FFF6E6_0%,#F6E3D3_60%,#FBF7F0_100%)] p-5 shadow-[var(--lift-1)] sm:p-8">
-            <p aria-hidden="true" className="outline-title absolute -right-4 -top-6 hidden text-[8rem] text-saffron-ink/15 lg:block">Demo</p>
+            <span aria-hidden="true" data-text="Demo" className="outline-title absolute -right-4 -top-6 hidden text-[8rem] text-saffron-ink/15 before:content-[attr(data-text)] lg:block" />
             <h2 id="tm-h" className="h-section relative flex items-center gap-3">
               <span aria-hidden="true" className="grid size-10 place-items-center rounded-full bg-accent text-lg">⏩</span> Time machine
             </h2>

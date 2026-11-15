@@ -183,9 +183,7 @@ export default function Home() {
         <section id="modes" aria-labelledby="modes-h" className="py-24 sm:py-32">
           <div className="wrap">
             <div className="on-dark relative overflow-hidden rounded-[48px] bg-primary px-6 py-16 text-white sm:px-14 sm:py-20">
-              <p aria-hidden="true" className="outline-title absolute -bottom-6 -right-4 text-[clamp(6rem,18vw,16rem)] text-white/15 md:bottom-auto md:-right-6 md:-top-8">
-                Modes
-              </p>
+              <span aria-hidden="true" data-text="Modes" className="outline-title absolute -bottom-6 -right-4 text-[clamp(6rem,18vw,16rem)] text-white/15 before:content-[attr(data-text)] md:bottom-auto md:-right-6 md:-top-8" />
               <div aria-hidden="true" className="blob -bottom-24 -left-24 size-80 bg-accent opacity-25" />
               <h2 id="modes-h" className="relative max-w-xl text-[2.25rem] font-medium leading-tight text-white sm:text-[3.25rem]">
                 Three care modes, chosen with the elder

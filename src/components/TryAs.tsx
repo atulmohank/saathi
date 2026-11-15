@@ -44,8 +44,6 @@ export function TryAs({ personas }: { personas: PersonaCard[] }) {
               onClick={() => go(p)}
               disabled={busy !== null}
               className="card-link group flex h-full w-full flex-col overflow-hidden text-left"
-              aria-labelledby={`p-${p.id}-n p-${p.id}-b`}
-              aria-describedby={`p-${p.id}-d`}
             >
               <span className="relative block aspect-[4/3] w-full overflow-hidden sm:aspect-[4/5]">
                 <img src={p.photo} alt={p.alt} width={800} height={1000} loading="lazy" className="h-full w-full object-cover object-[50%_25%] transition-transform duration-500 group-hover:scale-[1.03]" />
