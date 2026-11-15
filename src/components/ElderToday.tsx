@@ -75,7 +75,7 @@ export function ElderDoseCard({ dose, lang, readOnly, helperLine }: { dose: Next
           <span className="block w-12 sm:w-16 [&_svg]:!h-auto [&_svg]:!w-full"><Pill look={dose.pillLook} size={64} /></span>
         </span>
         <div className="min-w-0">
-          <p className="font-serif text-[36px] font-semibold leading-[1.05] [overflow-wrap:anywhere] sm:text-[56px]" style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}>
+          <p className="font-serif text-[36px] font-semibold leading-[1.05] [overflow-wrap:anywhere] sm:text-[56px]" style={{ fontVariationSettings: '"opsz" 36' }}>
             {dose.name}
           </p>
           <p className="mt-1 text-[24px] text-ink-soft">{dose.dose}</p>

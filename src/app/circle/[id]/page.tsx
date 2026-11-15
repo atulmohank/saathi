@@ -109,7 +109,7 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
               </span>
             )}
             <div>
-              <h1 id="who-h" className="text-[2.5rem] font-medium leading-none text-white sm:text-[3.5rem]" style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}>
+              <h1 id="who-h" className="text-[2.5rem] font-medium leading-none text-white sm:text-[3.5rem]" style={{ fontVariationSettings: '"opsz" 36' }}>
                 {elder.display_name}
                 {elder.age ? <span className="text-[#9FB8AC]">, {elder.age}</span> : null}
               </h1>

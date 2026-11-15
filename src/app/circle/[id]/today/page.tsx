@@ -96,7 +96,7 @@ export default async function ElderTodayPage({ params, searchParams }: { params:
             </span>
           )}
           <div className="min-w-0">
-            <h1 className={`text-[38px] font-semibold leading-tight sm:text-[48px] ${sky}`} style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}>
+            <h1 className={`text-[38px] font-semibold leading-tight sm:text-[48px] ${sky}`} style={{ fontVariationSettings: '"opsz" 36' }}>
               {t(lang, "greeting", { name: elder.display_name })}
             </h1>
             <p className={`mt-1 text-[22px] ${skySoft}`}>
