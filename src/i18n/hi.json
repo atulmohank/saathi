@@ -29,7 +29,7 @@
   "askDoctor": "डॉक्टर से पूछूँगी",
   "changedTitle": "आज क्या बदला",
   "changedLine": "{who} ने {med} बदली",
-  "supportedLine": "{name} आपकी {time} बजे की गोलियों में मदद करेंगी।",
+  "supportedLine": "{name} आपकी {time} बजे की दवाइयों में मदद करेंगी।",
   "helperOnDuty": "आपकी देखभाल करने वाली",
   "language": "भाषा",
   "signOut": "बाहर निकलें",

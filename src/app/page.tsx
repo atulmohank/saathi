@@ -2,17 +2,17 @@ import { Pill } from "@/components/Pill";
 import { TryAs, type PersonaCard } from "@/components/TryAs";
 
 const personas: PersonaCard[] = [
-  { id: "kamala", name: "Kamala", initial: "K", blurb: "Grandma, 68 · Independent", detail: "Sees one big card for her next tablet and approves every change herself." },
+  { id: "kamala", name: "Kamala", initial: "K", blurb: "Grandma, 68 · Independent", detail: "Sees one big card for her next medicine and approves every change herself." },
   { id: "priya", name: "Priya", initial: "P", blurb: "Kamala's daughter", detail: "Watches the week's pillbox from Pune. Her edits go to Kamala as requests." },
   { id: "lakshmi", name: "Nurse Lakshmi", initial: "L", blurb: "Caretaker on duty", detail: "Marks doses for Joseph and picks up refill tasks." },
-  { id: "joseph", name: "Joseph", initial: "J", blurb: "84 · Supported", detail: "A calm, read-only display that says who will help with which tablets." },
+  { id: "joseph", name: "Joseph", initial: "J", blurb: "84 · Supported", detail: "A calm, read-only display that says who will help with which medicines." },
   { id: "ravi", name: "Ravi", initial: "R", blurb: "Joseph's son · Decision partner", detail: "Approves medicine changes for his father." },
 ];
 
 const modes = [
-  { name: "Independent", who: "She uses her phone and decides.", how: "Family edits arrive as requests she approves. Reminders go to her first." },
-  { name: "Assisted", who: "Some forgetfulness.", how: "Changes apply straight away and she gets a plain-language note. She and the caretaker are reminded together." },
-  { name: "Supported", who: "Dementia or frailty.", how: "The caretaker marks doses, a decision partner approves changes, and her screen simply tells her who will help." },
+  { name: "Independent", who: "The elder uses a phone and makes the decisions.", how: "Family edits arrive as requests that the elder approves. Reminders go to the elder first." },
+  { name: "Assisted", who: "The elder is a little forgetful.", how: "Changes apply straight away, and the elder gets a plain-language note. The elder and the caretaker are reminded together." },
+  { name: "Supported", who: "The elder lives with dementia or frailty.", how: "The caretaker marks doses and a decision partner approves changes. The elder's screen simply says who will help." },
 ];
 
 const week: ("t" | "s" | "m" | "u")[][] = [
@@ -41,7 +41,7 @@ function HeroPreview() {
         </div>
       </div>
       <div className="card mt-4 p-5">
-        <p className="text-sm font-semibold text-muted">This week · 95% taken</p>
+        <p className="text-sm font-semibold text-muted">95% of this week&apos;s doses taken</p>
         <div className="mt-3 grid gap-1.5">
           {week.map((row, i) => (
             <div key={i} className="grid grid-cols-7 gap-1.5">
@@ -52,6 +52,7 @@ function HeroPreview() {
           ))}
         </div>
       </div>
+      <p className="mt-3 text-center text-sm text-muted">All times IST</p>
     </div>
   );
 }
@@ -66,9 +67,16 @@ export default function Home() {
           <h1 className="mt-6 max-w-4xl font-serif text-4xl leading-[1.1] tracking-tight sm:text-6xl">
             Shared medicines and doctor visits for elders, caretakers and family.
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-[#3D4A43] sm:text-xl">
-            Saathi adapts to how independent she is, and never stops treating her as the decision-maker. Missed a
-            dose? The right person gets an email at 30, 60 or 120 minutes, depending on her care mode.
+          <p className="mt-6 max-w-2xl text-lg text-ink sm:text-xl">
+            Medication reminders, adherence tracking and doctor appointments — shared securely between elders,
+            caretakers and family, with email alerts when a dose is missed.
+          </p>
+          <p className="mt-4 max-w-2xl text-[#3D4A43]">
+            Saathi adapts to how independent the elder is and keeps the elder as the decision-maker. A missed dose
+            reaches the right person at 30, 60 or 120 minutes, depending on the care mode.
+          </p>
+          <p className="mt-3 text-sm text-muted">
+            <span lang="hi">साथी</span> (Saathi) means &ldquo;companion&rdquo; in Hindi.
           </p>
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
             <a href="#try" className="btn-primary">
@@ -86,7 +94,7 @@ export default function Home() {
       <section id="modes" aria-labelledby="modes-h" className="border-b border-[#E6DFD8] bg-surface">
         <div className="wrap py-16 sm:py-24">
           <h2 id="modes-h" className="font-serif text-3xl sm:text-4xl">
-            Three care modes, chosen with her
+            Three care modes, chosen with the elder
           </h2>
           <ol className="mt-10 grid gap-6 md:grid-cols-3" role="list">
             {modes.map((m, i) => (

@@ -1,4 +1,8 @@
 import Link from "next/link";
+import { after } from "next/server";
+import { TimeMachineControls } from "@/components/TimeMachine";
+import { escalationFeed, recentEmails } from "@/lib/demo-feed";
+import { runScheduler } from "@/lib/scheduler";
 import { redirect } from "next/navigation";
 import { AppointmentForm, MarkDose, MedicineForm, ProposalDecision, RemoveAppointment } from "@/components/DashboardActions";
 import { Pill } from "@/components/Pill";
@@ -44,6 +48,9 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
   if (!circle || !elders.length) redirect("/");
   const elder = elders.find((e) => e.id === elderParam) ?? elders[0];
   const care = await getElderCare(elder, members);
+  // Lazy missed-dose check on page load (runs after the response is sent).
+  after(() => runScheduler({ circleId: id }).catch((e) => console.error("lazy scheduler", e)));
+  const [feed, emails] = circle.is_demo ? await Promise.all([escalationFeed(id, care.memberName), recentEmails(id)]) : [[], []];
   const target = { id: elder.id, circleId: elder.circle_id, mode: elder.autonomy_mode };
   const can = (a: Parameters<typeof authorize>[2]) => authorize(actor, target, a).allowed;
   const now = new Date();
@@ -116,6 +123,67 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
             </div>
           </dl>
         </section>
+
+        {circle.is_demo && (
+          <section aria-labelledby="tm-h" className="rounded-2xl border-2 border-dashed border-accent bg-[#FFF8EC] p-4 sm:p-6">
+            <h2 id="tm-h" className="h-section">
+              <span aria-hidden="true">⏩</span> Time machine
+            </h2>
+            <p className="mt-1 text-sm text-[#3D4A43]">
+              Demo circle only. Plays out a missed dose through each care mode&apos;s escalation ladder. Real emails go only to the
+              demo test inbox.
+            </p>
+            <div className="mt-4">
+              <TimeMachineControls />
+            </div>
+            <div className="mt-6 grid gap-6 lg:grid-cols-2">
+              <div>
+                <h3 className="font-semibold">Escalation timeline</h3>
+                {feed.length === 0 ? (
+                  <p className="mt-2 text-sm text-muted">Nothing yet. Simulate a missed dose.</p>
+                ) : (
+                  feed.map(({ title, items }, i) => (
+                    <div key={i} className="mt-3">
+                    <p className="text-sm font-semibold text-primary">{title}</p>
+                    <ol className="mt-2 ml-1.5 border-l-2 border-[#E6DFD8] pl-4" aria-label={`Escalation steps for ${title}`}>
+                      {items.map((it) => (
+                        <li key={it.id} className="relative pb-3 text-sm">
+                          <span
+                            aria-hidden="true"
+                            className={`absolute -left-[23px] top-1 size-3 rounded-full ${it.kind === "resolved" ? "bg-success" : it.kind === "start" ? "bg-muted" : it.severity === "urgent" ? "bg-danger" : "bg-accent"}`}
+                          />
+                          <span className="font-semibold">{it.time}</span> · {it.text}
+                          {it.severity && <span className="ml-1 text-muted">({it.severity})</span>}
+                        </li>
+                      ))}
+                    </ol>
+                    </div>
+                  ))
+                )}
+              </div>
+              <div>
+                <h3 className="font-semibold">Email previews</h3>
+                {emails.length === 0 ? (
+                  <p className="mt-2 text-sm text-muted">No emails yet.</p>
+                ) : (
+                  <ul className="mt-3 flex flex-col gap-2" role="list">
+                    {emails.map((em) => (
+                      <li key={em.id}>
+                        <details className="card p-3 text-sm">
+                          <summary className="min-h-11 cursor-pointer content-center font-medium">
+                            {em.subject}
+                            <span className={`ml-2 badge text-xs ${em.sent ? "bg-[#E4F1E8] text-success" : "bg-[#FBEDEC] text-danger"}`}>{em.sent ? "sent" : "not sent"}</span>
+                          </summary>
+                          <pre className="mt-2 whitespace-pre-wrap break-words font-sans text-sm text-ink">{em.body_text.replace(/https?:\/\/\S+/g, "[one-time link]")}</pre>
+                        </details>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
 
         <section aria-labelledby="pb-h" className="card p-4 sm:p-6">
           <h2 id="pb-h" className="h-section">

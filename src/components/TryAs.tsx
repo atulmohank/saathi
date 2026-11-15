@@ -39,14 +39,15 @@ export function TryAs({ personas }: { personas: PersonaCard[] }) {
               onClick={() => go(p)}
               disabled={busy !== null}
               className="card-link group flex h-full w-full flex-col items-start gap-3 p-5 text-left"
-              aria-label={`Try the demo as ${p.name}, ${p.blurb}`}
+              aria-labelledby={`p-${p.id}-n p-${p.id}-b`}
+              aria-describedby={`p-${p.id}-d`}
             >
               <span aria-hidden="true" className="grid size-12 place-items-center rounded-full bg-primary font-serif text-xl text-white">
                 {p.initial}
               </span>
-              <span className="font-serif text-xl">{p.name}</span>
-              <span className="text-sm font-medium text-primary">{p.blurb}</span>
-              <span className="text-sm text-muted">{p.detail}</span>
+              <span id={`p-${p.id}-n`} className="font-serif text-xl">{p.name}</span>
+              <span id={`p-${p.id}-b`} className="text-sm font-medium text-primary">{p.blurb}</span>
+              <span id={`p-${p.id}-d`} className="text-sm text-muted">{p.detail}</span>
               <span className="mt-auto pt-2 text-sm font-semibold text-primary underline-offset-4 group-hover:underline">
                 {busy === p.id ? "Opening…" : `Continue as ${p.name.split(" ").pop()} →`}
               </span>

@@ -29,7 +29,7 @@
   "askDoctor": "Ask my doctor",
   "changedTitle": "What changed today",
   "changedLine": "{who} changed {med}",
-  "supportedLine": "{name} will help you with your {time} tablets.",
+  "supportedLine": "{name} will help you with your {time} medicines.",
   "helperOnDuty": "Your caretaker",
   "language": "Language",
   "signOut": "Sign out",

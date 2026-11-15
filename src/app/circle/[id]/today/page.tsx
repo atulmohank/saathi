@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { after } from "next/server";
+import { runScheduler } from "@/lib/scheduler";
 import { redirect } from "next/navigation";
 import { ElderDoseCard, ElderProposal, type NextDose } from "@/components/ElderToday";
 import { SignOut } from "@/components/SignOut";
@@ -24,6 +26,7 @@ export default async function ElderTodayPage({ params, searchParams }: { params:
   if (!elder) redirect("/");
   const lang: UiLang = pickLang(langParam, elder.preferred_language);
   const care = await getElderCare(elder, members);
+  after(() => runScheduler({ circleId: id }).catch((e) => console.error("lazy scheduler", e)));
   const now = new Date();
 
   const open = care.todayDoses.filter((d) => d.status === "pending");

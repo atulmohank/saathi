@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { z } from "zod";
 import { audit } from "@/lib/audit";
 import { requirePermission } from "@/lib/auth/guard";
@@ -8,6 +8,11 @@ import { resolveChangeFlow } from "@/lib/engine/changes";
 import type { ChangeSource } from "@/lib/engine/types";
 import { handleError, readJson } from "@/lib/http";
 import { medicineSchema, uuid } from "@/lib/validation";
+import { createActionLink } from "@/lib/action-links";
+import { describeDiff } from "@/lib/describe";
+import { proposalEmail } from "@/lib/email/templates";
+import { sendEmail } from "@/lib/email/send";
+import { env } from "@/lib/env";
 
 const body = z.object({
   elderId: uuid,
@@ -59,8 +64,47 @@ export async function POST(req: Request) {
       .select("id")
       .single();
     await audit({ circleId: actor.circleId, actor: actor.memberId, action: "proposal_created", entity: "change_proposal", entityId: p?.id, after: input.medicine });
+    if (p?.id) {
+      const proposalId = p.id as string;
+      // Email the approver after the response is sent (SMTP can take a second or two).
+      after(() => notifyProposal(proposalId, elder.id, flow === "needs_elder_approval" ? "elder" : "decision_partner", actor.name, input.medicineId, input.medicine));
+    }
     return NextResponse.json({ ok: true, flow });
   } catch (e) {
     return handleError(e);
+  }
+}
+
+async function notifyProposal(
+  proposalId: string,
+  elderId: string,
+  approverRole: "elder" | "decision_partner",
+  proposer: string,
+  medicineId: string | null,
+  diff: Record<string, unknown>,
+) {
+  const { data: elder } = await db().from("elders").select("id, circle_id, display_name, care_circles!inner(is_demo)").eq("id", elderId).single();
+  if (!elder) return;
+  const { data: members } = await db().from("members").select("id, display_name, email, role, elder_id").eq("circle_id", elder.circle_id);
+  const approvers = (members ?? []).filter((m) => (approverRole === "elder" ? m.role === "elder" && m.elder_id === elderId : m.role === "decision_partner"));
+  const medName = medicineId ? ((await db().from("medicines").select("name").eq("id", medicineId).single()).data?.name ?? "a medicine") : String(diff.name ?? "a new medicine");
+  for (const m of approvers) {
+    const email = proposalEmail({
+      toName: m.display_name,
+      elderName: elder.display_name,
+      forElder: m.role === "elder",
+      proposer,
+      medName,
+      summary: describeDiff(diff, "en", !medicineId),
+      approveUrl: await createActionLink("approve_change", proposalId, m.id),
+      reviewUrl: `${env().APP_BASE_URL.replace(/\/$/, "")}/`,
+    });
+    await sendEmail({
+      circleId: elder.circle_id,
+      isDemo: (elder.care_circles as unknown as { is_demo: boolean }).is_demo,
+      to: { memberId: m.id, name: m.display_name, email: m.email },
+      kind: "change_proposal",
+      email,
+    });
   }
 }
