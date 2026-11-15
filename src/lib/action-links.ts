@@ -17,7 +17,7 @@ export async function createActionLink(purpose: ActionClaims["purpose"], refId: 
       expires_at: new Date(now.getTime() + ACTION_TTL_SECONDS * 1000).toISOString(),
     });
   const token = await signActionToken({ jti, purpose, ref_id: refId, member_id: memberId }, env().ACTION_LINK_SECRET, now);
-  return `${env().APP_BASE_URL.replace(/\/$/, "")}/a/${token}`;
+  return `${appBaseUrl()}/a/${token}`;
 }
 
 /** DB-backed single-use store: one atomic conditional UPDATE. */
