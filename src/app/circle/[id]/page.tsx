@@ -78,7 +78,13 @@ export default async function CirclePage({ params, searchParams }: { params: Pro
             <p className="font-serif text-xl text-primary">Saathi</p>
             <p className="text-sm text-muted">{circle.name}</p>
           </div>
-          <div className="flex items-center gap-3 text-sm">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+            <Link href={`/circle/${id}/emergency?elder=${elder.id}`} className="btn-ghost">
+              Emergency card
+            </Link>
+            <Link href={`/circle/${id}/audit`} className="btn-ghost">
+              Audit trail
+            </Link>
             <span>
               Signed in as <strong>{actor.name}</strong> · {ROLE_LABEL[actor.role]}
             </span>
